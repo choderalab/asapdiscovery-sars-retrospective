@@ -4,10 +4,10 @@
 
 #BSUB -oo run_fragalysis_retrospective_%I.out
 #BSUB -eo run_fragalysis_retrospective_%I.stderr
-#BSUB -n 32
+#BSUB -n 16
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=4]
-#BSUB -W 2:00
+#BSUB -W 1:00
 source ~/.bashrc
 conda activate ad-3.9
 run-docking-oe \
