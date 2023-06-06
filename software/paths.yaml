@@ -1,0 +1,11 @@
+# Requires mounting lilac
+prefix:
+  ap_local: "/Users/alexpayne/lilac-mount-point/asap-datasets/"
+  lilac: "/lila/data/chodera/asap-datasets/"
+
+paths:
+  sars_prepped: current/sars_01_prepped_v3/
+  sars_retrospective: retro_docking/sars_fragalysis_retrospective/
+  sars_hybrid: retro_docking/sars_fragalysis_retrospective/20230606_hybrid_p_only
+  combined_sdf: current/sars_01_prepped_v3/Mpro_combined_labeled.sdf
+  combined_p_only_sdf: current/sars_01_prepped_v3/Mpro_combined_labeled_p_only.sdf
