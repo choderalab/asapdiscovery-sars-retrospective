@@ -9,3 +9,4 @@ paths:
   sars_hybrid: retro_docking/sars_fragalysis_retrospective/20230606_hybrid_p_only
   combined_sdf: current/sars_01_prepped_v3/Mpro_combined_labeled.sdf
   combined_p_only_sdf: current/sars_01_prepped_v3/Mpro_combined_labeled_p_only.sdf
+  combined_p_only_split_sdf: current/sars_01_prepped_v3/sdf_lsf_array_p_only
