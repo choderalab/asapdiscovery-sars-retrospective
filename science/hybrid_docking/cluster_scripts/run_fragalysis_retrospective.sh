@@ -14,6 +14,7 @@ run-docking-oe \
 -o /lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20230606_hybrid_p_only \
 -n 32 \
 --omega \
---relax clash
+--relax clash \
+----hybrid
 echo Done
 date
