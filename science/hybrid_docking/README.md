@@ -11,4 +11,10 @@ but I'd like to split up the sdfs and run as a molecule array
 
 ## split_sdf.sh
 
+## run_fragalysis_retrospective_array.sh
+
+Ran first on 20230607 - forgot to add the hybrid flag.
+
+## 20230608
+rerunning with hybrid flag
 
