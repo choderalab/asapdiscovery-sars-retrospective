@@ -4,6 +4,8 @@ prefix:
   lilac: "/lila/data/chodera/asap-datasets/"
 
 paths:
+  ap_local: "/Users/alexpayne/lilac-mount-point/asap-datasets/"
+  lilac: "/lila/data/chodera/asap-datasets/" 
   fragalysis: current/sars_00_fragalysis/
   sars_prepped: current/sars_01_prepped_v3/
   sars_retrospective: retro_docking/sars_fragalysis_retrospective/
