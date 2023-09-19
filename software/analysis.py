@@ -1,6 +1,7 @@
 import pandas as pd
 from typing import Union
 
+
 def get_df_subset(
     df,
     cutoff_column,
