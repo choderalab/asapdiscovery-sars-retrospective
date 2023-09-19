@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0", "versioningit"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docking-retrospective-analysis"
+authors=[ {name="Alex Payne", email="alex.payne@choderalab.org"} ]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+where = ["."]
