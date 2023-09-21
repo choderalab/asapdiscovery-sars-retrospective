@@ -162,3 +162,7 @@ cython_debug/
 # Figures
 # Ignore figures - these should be regeneratable
 *.png
+
+# Cluster Script results
+*.out
+*.stderr
