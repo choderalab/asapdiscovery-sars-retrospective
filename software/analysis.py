@@ -115,6 +115,78 @@ def calc_perc_good(
     )
 
 
+def calculate_rmsd_stats(
+    df: pd.DataFrame,
+    query_mol_id: str,  # Column name of the molecule ID
+    reference_selection: str,
+    score_column: str,
+    group_by: [str],
+    ref_structure_stride: int = 10,
+    ref_structure_id: str = "Structure_Name",
+    n_bootstraps: int = 3,
+    fraction_structures_used: float = 1.0,
+    rmsd_col="RMSD",
+    rmsd_cutoff: float = 2.0,
+):
+    dfs = []
+    for i in range(n_bootstraps):
+
+        # Randomize the order of the structures
+        randomized = df.sample(frac=1)
+
+        for n_ref in range(
+            1, len(randomized[ref_structure_id].unique()), ref_structure_stride
+        ):
+            # Get subset of structures bassed on reference selection method
+            if reference_selection == "random":
+                subset_df = randomized.groupby([query_mol_id] + group_by).head(n_ref)
+            else:
+                # first sort by the reference selection method
+                subset_df = (
+                    randomized.sort_values(reference_selection)
+                    .groupby([query_mol_id] + group_by)
+                    .head(n_ref)
+                )
+            # Rank the poses by score
+            scored_df = (
+                subset_df.sort_values(score_column)
+                .groupby([query_mol_id] + group_by)
+                .head(1)
+            )
+            rmsd_stats_series = scored_df.groupby(group_by, group_keys=True)[
+                rmsd_col
+            ].apply(lambda x: x <= rmsd_cutoff).groupby(group_by).sum() / len(
+                df[query_mol_id].unique()
+            )
+
+            split_cols_list = []
+            score_list = []
+            n_references = []
+
+            for split_col in rmsd_stats_series.index:
+                split_cols_list.append(split_col)
+                score_list.append(rmsd_stats_series[split_col])
+                n_references.append(n_ref)
+
+            return_df = pd.DataFrame(
+                {
+                    "Fraction": score_list,
+                    "Version": split_cols_list,
+                    "Number of References": n_references,
+                    "Structure_Split": reference_selection,
+                }
+            )
+            if reference_selection == "random":
+                return_df["Split_Value_min"] = "Random"
+                return_df["Split_Value_max"] = "Random"
+            else:
+                return_df["Split_Value_min"] = subset_df[reference_selection].min()
+                return_df["Split_Value_max"] = subset_df[reference_selection].max()
+            dfs.append(return_df)
+
+    combined = pd.concat(dfs)
+    return combined
+
 def calculate_perc_good(
     df,
     id_column: str,
@@ -212,3 +284,98 @@ def calculate_perc_good(
         }
     )
     return return_df
+
+
+def calculate_perc_good_wrapper(split_column_sets: dict, sort_columns, n_refs, **kwargs):
+    """
+    Enables the calculation of the percentage of 'good' scores for scoring functions and docking programs.
+
+    Parameters
+    ----------
+    split_column_sets : dict
+        A dictionary containing the names of the columns used to group the data for calculating the percentage.
+        The keys are the names of the groups, and the values are lists of column names.
+    sort_columns : list
+        A list of the names of the columns used for sorting the data. i.e. ["POSIT_R", "RMSD", "Chemgauss4"]
+    n_refs : int
+        The total number of references used for docking. Used for calculating fractions.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A DataFrame containing the percentages of 'good' scores (`Fraction`), versions (`Version`), and the fraction
+        of molecules selected (`Fraction of References Used`) for each unique combination of cutoff, version, and group
+        (`split_cols`).
+    """
+    split_dfs = []
+    for name, split in split_column_sets.items():
+        sort_dfs = []
+
+        for sort_column in sort_columns:
+            new_df = calculate_perc_good(sort_column=sort_column,
+                                       split_cols=split,
+                                           **kwargs)
+            new_df["Sorted_By"] = sort_column
+            new_df["Fraction of References Used"] = new_df["Number of References"] / n_refs
+            sort_dfs.append(new_df)
+        split_combined = pd.concat(sort_dfs)
+        split_combined["Split"] = name
+        split_dfs.append(split_combined)
+    combined = pd.concat(split_dfs)
+    return combined
+
+
+# I don't think this function should be necessary after changing how I'm doing the structure splits
+def calculate_stats(df,
+                    metric_dict,
+                    summary_col,
+                    filter_column,
+                    filter_cutoffs,
+                    value_column,
+                    extra_groupby_cols=None):
+    """
+    Calculates the mean and standard deviation of a metric for different cutoff values and groups in a DataFrame.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The input DataFrame containing the data to be analyzed.
+    metric_dict : dict
+        A dictionary containing the names of the metrics to be calculated. The keys are the names of the metrics, and
+        the values are the functions used to calculate the metrics.
+    summary_col : str
+        The name of the column used to group the data for calculating the metrics.
+    filter_column : str
+        The name of the column used to filter the data.
+    filter_cutoffs : list
+        A list of the cutoff values used to filter the data.
+    value_column : str
+        The name of the column containing the values to be analyzed.
+    extra_groupby_cols : list, optional
+        A list of the names of the columns used to group the data for calculating the metrics. The default value is None.
+    Returns
+    -------
+    pandas.DataFrame
+        A DataFrame containing the mean and standard deviation of the metrics (`Value`), the names of the metrics
+    """
+    groupby_cols = [summary_col] + extra_groupby_cols
+    dfs = []
+    for name, metric in metric_dict.items():
+        means = []
+        cutoffs = []
+        summary_types = []
+        sds = []
+        for cutoff in filter_cutoffs:
+            values = df[df[filter_column] <= cutoff].groupby(groupby_cols, group_keys=True)[value_column].apply(metric)
+            mean_list = values.groupby([summary_col]).mean()
+            sd_list = values.groupby([summary_col]).std()
+            for summary_type in mean_list.index:
+                means.append(mean_list[summary_type])
+                cutoffs.append(cutoff)
+                summary_types.append(summary_type)
+                sds.append(sd_list[summary_type])
+        mean_df = pd.DataFrame(
+            {f"Value": means, "Metric": name, filter_column: cutoffs, summary_col: summary_types, "STD": sds})
+        dfs.append(mean_df)
+
+    return pd.concat(dfs)
