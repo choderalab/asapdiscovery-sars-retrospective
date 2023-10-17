@@ -121,12 +121,14 @@ def calculate_rmsd_stats(
     reference_selection: str,
     score_column: str,
     group_by: [str],
+    cumulative=True,
     ref_structure_stride: int = 10,
     ref_structure_id: str = "Structure_Name",
     n_bootstraps: int = 3,
     fraction_structures_used: float = 1.0,
     rmsd_col="RMSD",
     rmsd_cutoff: float = 2.0,
+    count_nrefs=False
 ):
     dfs = []
     for i in range(n_bootstraps):
@@ -139,14 +141,26 @@ def calculate_rmsd_stats(
         ):
             # Get subset of structures bassed on reference selection method
             if reference_selection == "random":
-                subset_df = randomized.groupby([query_mol_id] + group_by).head(n_ref)
+                if cumulative:
+                    subset_df = randomized.groupby([query_mol_id] + group_by).head(n_ref)
+                else:
+                    _range = range(n_ref, n_ref + ref_structure_stride)
+                    subset_df = randomized.groupby([query_mol_id] + group_by).nth(_range)
             else:
                 # first sort by the reference selection method
-                subset_df = (
-                    randomized.sort_values(reference_selection)
-                    .groupby([query_mol_id] + group_by)
-                    .head(n_ref)
-                )
+                if cumulative:
+                    subset_df = (
+                        randomized.sort_values(reference_selection)
+                        .groupby([query_mol_id] + group_by)
+                        .head(n_ref)
+                    )
+                else:
+                    _range = range(n_ref, n_ref + ref_structure_stride)
+                    subset_df = (
+                        randomized.sort_values(reference_selection)
+                        .groupby([query_mol_id] + group_by)
+                        .nth(_range)
+                    )
             # Rank the poses by score
             scored_df = (
                 subset_df.sort_values(score_column)
@@ -163,16 +177,34 @@ def calculate_rmsd_stats(
             score_list = []
             n_references = []
 
+            min_nrefs = []
+            max_nrefs = []
+            mean_nrefs = []
+
+            if count_nrefs:
+                nref_data = subset_df.groupby([query_mol_id] + group_by)[score_column].count().groupby(
+                    group_by).describe()
+
             for split_col in rmsd_stats_series.index:
                 split_cols_list.append(split_col)
                 score_list.append(rmsd_stats_series[split_col])
                 n_references.append(n_ref)
+
+                if count_nrefs:
+                    min_nrefs.append(nref_data["min"][split_col])
+                    max_nrefs.append(nref_data["max"][split_col])
+                    mean_nrefs.append(nref_data["mean"][split_col])
+
+            # n_allowed_refs = n_references if cumulative else ref_structure_stride
 
             return_df = pd.DataFrame(
                 {
                     "Fraction": score_list,
                     "Version": split_cols_list,
                     "Number of References": n_references,
+                    "Mean Number of References": mean_nrefs if count_nrefs else None,
+                    "Max Number of References": max_nrefs if count_nrefs else None,
+                    "Min Number of References": min_nrefs if count_nrefs else None,
                     "Structure_Split": reference_selection,
                 }
             )
