@@ -26,12 +26,12 @@ conda activate ad-3.9
 run-docking-oe \
 -l "/lila/data/chodera/asap-datasets/current/sars_01_prepped_v3/sdf_lsf_array_p_only_by_name_2d/"$cmpd".sdf" \
 -r '/lila/data/chodera/asap-datasets/current/sars_01_prepped_v3/Mpro-P*/*_prepped_receptor_0.oedu' \
--o /lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20231016_self_docked_hybrid_p_only_2d \
+-o /lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20231030_cross_docked_hybrid_p_only_2d_50poses \
 -n 16 \
 --docking_sys posit \
 --omega \
 --relax clash \
---timeout 600 \
+--timeout 1200 \
 --max_failures 300 \
 --posit_method hybrid \
 --num_poses 50 \
