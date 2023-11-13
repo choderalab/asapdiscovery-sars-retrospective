@@ -139,7 +139,7 @@ def calculate_rmsd_stats(
         for n_ref in range(
             1, len(randomized[ref_structure_id].unique()), ref_structure_stride
         ):
-            # Get subset of structures bassed on reference selection method
+            # Get subset of structures based on reference selection method
             if reference_selection == "random":
                 if cumulative:
                     subset_df = randomized.groupby([query_mol_id] + group_by).head(n_ref)
