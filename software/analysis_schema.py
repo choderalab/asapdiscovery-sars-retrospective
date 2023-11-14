@@ -66,8 +66,13 @@ class AnalysisWorkflow(BaseModel):
         # Randomize the order of the structures, necessary for bootstrapping to be useful
         self._randomized = self.df.sample(frac=1)
 
-    def sort_by_structure_split(self, structure_split):
-        self.structure_split = structure_split
+    def sort_by_structure_split(self, structure_split=None):
+        if structure_split:
+            self.structure_split = structure_split
+        else:
+            structure_split = self.structure_split
+        if not structure_split:
+            raise ValueError("structure_split must be specified")
         self.structure_sorted = self._randomized.sort_values(structure_split).groupby([self.query_mol_id] + self.group_by)
 
     def get_n_structures(self, n_struc: int):
