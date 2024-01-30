@@ -25,6 +25,7 @@ source ~/.bashrc
 conda activate asapdiscovery
 
 asap-docking cross-docking \
+--no-overwrite \
 --target SARS-CoV-2-Mpro \
 --use-omega --allow-retries --allow-final-clash --multi-reference \
 --ligands "/lila/data/chodera/asap-datasets/current/sars_01_prepped_v3/sdf_lsf_array_p_only_by_name_2d/"$cmpd".sdf" \
