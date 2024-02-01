@@ -25,7 +25,7 @@ source ~/.bashrc
 conda activate asapdiscovery
 
 asap-docking cross-docking \
---no-overwrite \
+--overwrite \
 --target SARS-CoV-2-Mpro \
 --structure-selector LeaveSimilarOutSelector \
 --use-omega --allow-retries --allow-final-clash --multi-reference \
