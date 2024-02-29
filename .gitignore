@@ -161,7 +161,8 @@ cython_debug/
 
 # Figures
 # Ignore figures - these should be regeneratable
-*.png
+# But they're nice to have in the repo for quick reference
+#*.png
 
 # Cluster Script results
 *.out
