@@ -22,7 +22,7 @@ cmpd=${cmpd_arr[ $LSB_JOBINDEX-1]}
 echo $cmpd
 
 source ~/.bashrc
-conda activate ad-3.9
+conda activate asapdiscovery
 run-docking-oe \
 -l "/lila/data/chodera/asap-datasets/current/sars_01_prepped_v3/sdf_lsf_array_p_only_by_name_2d/"$cmpd".sdf" \
 -r '/lila/data/chodera/asap-datasets/current/sars_01_prepped_v3/Mpro-P*/*_prepped_receptor_0.oedu' \
@@ -31,8 +31,8 @@ run-docking-oe \
 --docking_sys posit \
 --omega \
 --relax clash \
---timeout 1200 \
---max_failures 300 \
+--timeout -1 \
+--max_failures 100000 \
 --posit_method hybrid \
 --num_poses 50 \
 -log "run_docking_oe."$LSB_JOBINDEX
