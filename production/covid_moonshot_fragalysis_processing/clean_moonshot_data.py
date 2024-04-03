@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 import argparse
 from collections import defaultdict
-from logging import Logger
+from asapdiscovery.data.util.logging import FileLogger
 
 
 def args():
@@ -22,7 +22,7 @@ def args():
 
 def clean_moonshot_data(data_dir, output_dir):
     schema_paths = list(data_dir.glob("Mpro-P*/*.json"))
-    logger = Logger()
+    logger = FileLogger("clean_moonshot_data", output_dir, logfile="clean_moonshot_data.log").getLogger()
     logger.info(f"Found {len(schema_paths)} complexes in the cache")
     complexes = [PreppedComplex(**json.load(open(complex_json, 'r'))) for complex_json in tqdm(schema_paths)]
 
@@ -55,15 +55,14 @@ def clean_moonshot_data(data_dir, output_dir):
     protein_prepper = ProteinPrepper()
     protein_prepper.cache(list(new_structures.values()),
                           cache_dir=output_dir)
-    with open(output_dir / "README.md", 'w') as f:
-        f.write(
-            f"This cache was created by selecting a single structure for each ligand (identified by the smiles string, "
-            f"not the compound ID) in the P series from the fragalysis cache: '{data_dir.absolute()}'. "
-            f"The selection was based on the dataset number and letter, with the highest dataset number and lowest "
-            f"letter being selected (i.e. datasets that were collected later and chain A if possible). "
-            f"This was performed by '{__file__}'")
-
     logger.info(f"Cache written to {output_dir}!")
+
+    logger.info(
+        f"This cache was created by selecting a single structure for each ligand (identified by the smiles string, "
+        f"not the compound ID) in the P series from the fragalysis cache: '{data_dir.absolute()}'. "
+        f"The selection was based on the dataset number and letter, with the highest dataset number and lowest "
+        f"letter being selected (i.e. datasets that were collected later and chain A if possible). "
+        f"This was performed by '{__file__}'")
 
 
 if __name__ == '__main__':
