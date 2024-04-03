@@ -1,6 +1,6 @@
 #BSUB -J "run_self_docking_multiple_poses"
-#BSUB -oo %J.out
-#BSUB -eo %J.stderr
+#BSUB -oo run_self_docking_multiple_poses.out
+#BSUB -eo run_self_docking_multiple_poses.stderr
 #BSUB -n 32
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=4]
@@ -15,6 +15,7 @@ asap-docking cross-docking \
 --allow-retries \
 --structure-selector SelfDockingSelector \
 --fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
+--ligands /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined.sdf \
 --no-save-to-cache \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
 --use-only-cache \
