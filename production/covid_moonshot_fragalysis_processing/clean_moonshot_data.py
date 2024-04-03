@@ -55,7 +55,7 @@ def clean_moonshot_data(data_dir, output_dir):
     protein_prepper = ProteinPrepper()
     protein_prepper.cache(list(new_structures.values()),
                           cache_dir=output_dir)
-    with open(data_dir.parent / "20240403_fragalysis_p_series_curated_cache" / "README.md", 'w') as f:
+    with open(output_dir / "README.md", 'w') as f:
         f.write(
             f"This cache was created by selecting a single structure for each ligand (identified by the smiles string, "
             f"not the compound ID) in the P series from the fragalysis cache: '{data_dir.absolute()}'. "
