@@ -10,6 +10,7 @@ import json
 from tqdm import tqdm
 import argparse
 from collections import defaultdict
+from logging import Logger
 
 
 def args():
@@ -21,9 +22,12 @@ def args():
 
 def clean_moonshot_data(data_dir, output_dir):
     schema_paths = list(data_dir.glob("Mpro-P*/*.json"))
+    logger = Logger()
+    logger.info(f"Found {len(schema_paths)} complexes in the cache")
     complexes = [PreppedComplex(**json.load(open(complex_json, 'r'))) for complex_json in tqdm(schema_paths)]
 
     # Get just a single structure for each molecule
+    logger.info(f"Selecting a single structure for each ligand")
     new_structures = defaultdict(None)
     for complex in complexes:
         old_complex = new_structures.get(complex.ligand.smiles, None)
@@ -46,6 +50,7 @@ def clean_moonshot_data(data_dir, output_dir):
         if new_dataset_number == old_dataset_number and new_dataset_letter < old_dataset_letter:
             new_structures[complex.ligand.smiles] = complex
             continue
+    logger.info(f"Selected {len(new_structures)} structures. Writing to cache...")
 
     protein_prepper = ProteinPrepper()
     protein_prepper.cache(list(new_structures.values()),
@@ -57,6 +62,8 @@ def clean_moonshot_data(data_dir, output_dir):
             f"The selection was based on the dataset number and letter, with the highest dataset number and lowest "
             f"letter being selected (i.e. datasets that were collected later and chain A if possible). "
             f"This was performed by '{__file__}'")
+
+    logger.info(f"Cache written to {output_dir}!")
 
 
 if __name__ == '__main__':
