@@ -1,0 +1,20 @@
+,Lig1,Lig2,Chemical_Relationships,Lig1 Stereospecific,Lig2 Stereospecific,Diff Stereospecificity
+0,ALP-POS-4483ae88-4,MIK-UNK-78dbf1b8-1,ChemicalRelationship.STEREOISOMER,False,True,True
+1,BEN-BAS-c2bc0d80-6,VLA-UCB-50c39ae8-2,ChemicalRelationship.STEREOISOMER,False,True,True
+2,BEN-DND-f2e727cd-5,MAT-POS-3ccb8ef6-1,ChemicalRelationship.STEREOISOMER,False,True,True
+3,EDG-MED-0e5afe9d-3,PET-UNK-29afea89-2,ChemicalRelationship.STEREOISOMER,False,True,True
+4,EDG-MED-5d232de5-5,MIC-UNK-91acba05-6,ChemicalRelationship.STEREOISOMER,True,False,True
+5,EDG-MED-5d232de5-7,EDG-MED-5d232de5-8,ChemicalRelationship.STEREOISOMER,True,True,False
+6,EDG-MED-5d232de5-7,PET-UNK-c9c1e0d8-4,ChemicalRelationship.STEREOISOMER,True,False,True
+7,EDG-MED-5d232de5-8,PET-UNK-c9c1e0d8-4,ChemicalRelationship.STEREOISOMER,True,False,True
+8,EDJ-MED-015fb6b4-2,MAT-POS-a54ce14d-2,ChemicalRelationship.STEREOISOMER,False,True,True
+9,EDJ-MED-37aac4bd-4,MAT-POS-932d1078-3,ChemicalRelationship.STEREOISOMER,False,True,True
+10,EDJ-MED-8bb691af-4,MAT-POS-c7726e07-5,ChemicalRelationship.STEREOISOMER,False,True,True
+11,EDJ-MED-976a33d5-1,MAT-POS-e48723dc-2,ChemicalRelationship.STEREOISOMER,False,True,True
+12,MAT-POS-090737b9-1,VLA-UCB-50c39ae8-7,ChemicalRelationship.STEREOISOMER,False,True,True
+13,MAT-POS-7174c657-5,MAT-POS-7174c657-6,ChemicalRelationship.IDENTICAL,True,True,False
+14,MAT-POS-7174c657-5,MAT-POS-a13804f0-4,ChemicalRelationship.STEREOISOMER,True,True,False
+15,MAT-POS-7174c657-6,MAT-POS-a13804f0-4,ChemicalRelationship.STEREOISOMER,True,True,False
+16,MAT-POS-a13804f0-3,RAL-THA-05e671eb-10,ChemicalRelationship.STEREOISOMER,True,False,True
+17,MIK-ENA-5d9157e9-5,MIK-ENA-5d9157e9-6,ChemicalRelationship.STEREOISOMER,True,True,False
+18,VLA-UCB-29506327-1,VLA-UNK-cf7facf1-1,ChemicalRelationship.STEREOISOMER,False,True,True
