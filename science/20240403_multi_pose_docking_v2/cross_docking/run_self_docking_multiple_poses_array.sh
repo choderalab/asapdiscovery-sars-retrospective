@@ -7,7 +7,7 @@
 #BSUB -n 1
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=4]
-#BSUB -W 0:10
+#BSUB -W 2:00
 
 source ~/.bashrc
 conda activate asapdiscovery
@@ -16,7 +16,7 @@ asap-docking cross-docking \
 --target SARS-CoV-2-Mpro \
 --use-omega \
 --allow-retries \
---structure-selector SelfDockingSelector \
+--structure-selector LeaveSimilarOutSelector \
 --fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
 --ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_2d/$LSB_JOBINDEX.sdf" \
 --no-save-to-cache \
