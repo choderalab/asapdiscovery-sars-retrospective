@@ -11,4 +11,4 @@ dynamic = ["version"]
 where = ["."]
 
 [project.scripts]
-split_sdf = "production.utils.split_sdf:main"
+split-sdf = "production.utils.split_sdf:main"
