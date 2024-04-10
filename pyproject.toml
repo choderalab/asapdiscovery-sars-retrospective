@@ -9,3 +9,6 @@ dynamic = ["version"]
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[project.scripts]
+split_sdf = "production.utils.split_sdf:main"
