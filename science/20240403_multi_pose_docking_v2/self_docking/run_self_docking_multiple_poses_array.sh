@@ -2,8 +2,8 @@
 ## Example usage:
 ## bsub -J "run_self_docking_multiple_poses[1-205]" < run_self_docking_multiple_poses_array.sh
 
-#BSUB -oo run_self_docking_multiple_poses_%I.out
-#BSUB -eo run_self_docking_multiple_poses_%I.out
+#BSUB -oo array_logs/run_self_docking_multiple_poses_%I.out
+#BSUB -eo array_logs/run_self_docking_multiple_poses_%I.out
 #BSUB -n 1
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=4]
@@ -18,7 +18,7 @@ asap-docking cross-docking \
 --allow-retries \
 --structure-selector SelfDockingSelector \
 --fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
---ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/$LSB_JOBIDEX.sdf" \
+--ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_2d/$LSB_JOBIDEX.sdf" \
 --no-save-to-cache \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
 --use-only-cache \
