@@ -1,0 +1,16 @@
+,Preferred Dataset,Preferred Compound,Preferred Stereo,Excluded Dataset,Excluded Compound,Excluded Stereo
+0,Mpro-P0179_0A,VLA-UCB-50c39ae8-7,Stereospecific,Mpro-P0041_0A,MAT-POS-090737b9-1,Racemic
+1,Mpro-P0793_0A,EDG-MED-5d232de5-7,Stereospecific,Mpro-P0010_0A,PET-UNK-c9c1e0d8-4,Racemic
+2,Mpro-P3038_0A,MAT-POS-e48723dc-2,Stereospecific,Mpro-P2724_0A,EDJ-MED-976a33d5-1,Racemic
+3,Mpro-P0744_0A,MAT-POS-3ccb8ef6-1,Stereospecific,Mpro-P0240_0A,BEN-DND-f2e727cd-5,Racemic
+4,Mpro-P2176_0A,MAT-POS-7174c657-5,Stereospecific,Mpro-P2141_0A,MAT-POS-7174c657-6,Stereospecific
+5,Mpro-P2176_0A,MAT-POS-7174c657-5,Stereospecific,Mpro-P1477_0A,MAT-POS-a13804f0-4,Stereospecific
+6,Mpro-P2385_0A,MAT-POS-c7726e07-5,Stereospecific,Mpro-P2222_0A,EDJ-MED-8bb691af-4,Racemic
+7,Mpro-P2601_0A,MIK-UNK-78dbf1b8-1,Stereospecific,Mpro-P2415_0A,ALP-POS-4483ae88-4,Racemic
+8,Mpro-P0661_0A,MAT-POS-932d1078-3,Stereospecific,Mpro-P0602_0A,EDJ-MED-37aac4bd-4,Racemic
+9,Mpro-P2031_0A,MAT-POS-a54ce14d-2,Stereospecific,Mpro-P1835_0A,EDJ-MED-015fb6b4-2,Racemic
+10,Mpro-P0157_0A,PET-UNK-29afea89-2,Stereospecific,Mpro-P0038_0A,EDG-MED-0e5afe9d-3,Racemic
+11,Mpro-P1800_0A,VLA-UCB-50c39ae8-2,Stereospecific,Mpro-P0207_0A,BEN-BAS-c2bc0d80-6,Racemic
+12,Mpro-P0171_0A,EDG-MED-5d232de5-6,Stereospecific,Mpro-P0033_0A,MIC-UNK-91acba05-6,Racemic
+13,Mpro-P0143_0A,VLA-UCB-34f3ed0c-11,Stereospecific,Mpro-P0022_0A,VLA-UCB-29506327-1,Racemic
+14,Mpro-P0607_0A,MAT-POS-a13804f0-3,Stereospecific,Mpro-P0130_0A,RAL-THA-05e671eb-10,Racemic
