@@ -2,7 +2,7 @@
 #BSUB -oo run_self_docking_multiple_poses.out
 #BSUB -eo run_self_docking_multiple_poses.stderr
 #BSUB -n 32
-#BSUB -q cpuqueue
+#BSUB -q gpuqueue
 #BSUB -R rusage[mem=4]
 #BSUB -W 2:00
 
@@ -19,8 +19,6 @@ asap-docking cross-docking \
 --no-save-to-cache \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
 --use-only-cache \
---use-dask \
---dask-type lilac-cpu \
 --output-dir /lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240403_multi_pose_docking_self_docking \
---overwrite
-
+--overwrite \
+--num-poses 50
