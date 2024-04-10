@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Example usage:
-## bsub -J "run_self_docking_multiple_poses[1-219]" < run_self_docking_multiple_poses_array.sh
+## bsub -J "run_self_docking_multiple_poses[1-205]" < run_self_docking_multiple_poses_array.sh
 
 #BSUB -oo run_self_docking_multiple_poses_%I.out
 #BSUB -eo run_self_docking_multiple_poses_%I.out
@@ -18,7 +18,7 @@ asap-docking cross-docking \
 --allow-retries \
 --structure-selector SelfDockingSelector \
 --fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
---ligands /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined.sdf \
+--ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/$LSB_JOBIDEX.sdf" \
 --no-save-to-cache \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
 --use-only-cache \
