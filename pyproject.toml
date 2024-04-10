@@ -12,3 +12,4 @@ where = ["."]
 
 [project.scripts]
 split-sdf = "production.utils.split_sdf:main"
+combine-sdf = "production.covid_moonshot_fragalysis_processing.combined_sdf_from_cache.py:main"
