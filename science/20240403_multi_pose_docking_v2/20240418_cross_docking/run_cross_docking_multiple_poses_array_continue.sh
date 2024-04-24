@@ -22,6 +22,6 @@ asap-docking cross-docking \
 --no-save-to-cache \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
 --use-only-cache \
---output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240403_multi_pose_docking_cross_docking/$LSB_JOBINDEX.sdf" \
+--output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240418_multi_pose_docking_cross_docking/$LSB_JOBINDEX.sdf" \
 --no-overwrite \
 --num-poses 50
