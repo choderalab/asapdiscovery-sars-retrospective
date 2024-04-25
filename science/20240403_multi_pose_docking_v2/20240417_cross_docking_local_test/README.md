@@ -1,0 +1,1 @@
+I wrote this script to run docking locally, ended up using it to test what I was doing throughout this process.
