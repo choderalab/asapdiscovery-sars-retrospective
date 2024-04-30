@@ -1,4 +1,5 @@
 # Description: Calculate RMSD between ligand poses
+
 from pathlib import Path
 from tqdm import tqdm
 from asapdiscovery.docking.openeye import POSITDockingResults
@@ -30,7 +31,7 @@ def get_args():
     return parser.parse_args()
 
 
-def calculate_ligand_rmsd(ref: Ligand, fit: Ligand) -> list[float]:
+def calculate_ligand_rmsd(ref: Ligand, fit: Ligand):
     from asapdiscovery.data.backend.openeye import oechem
 
     fitmol = fit.to_oemol()
@@ -96,3 +97,6 @@ def main():
 
     df = make_df_from_docking_results(results)
     df.to_csv(output_dir / "docking_results.csv", index=False)
+
+if __name__ == "__main__":
+    main()
