@@ -1,0 +1,1 @@
+The purpose of this experiment is to re-do what I did in 20231116_cross_docking_p_only_2d_multi_reference but this time with the LeaveSimilarOutSelector. I'd also like to run using the MCSSSelector to only run mult-ref POSIT with 1, 10, 50, 100 structures. I'd also like to run that with the TanimotoCombo score (?) maybe just the 2D Tanimoto. 
