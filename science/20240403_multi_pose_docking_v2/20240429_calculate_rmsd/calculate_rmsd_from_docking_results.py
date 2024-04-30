@@ -3,6 +3,8 @@ from pathlib import Path
 from tqdm import tqdm
 from asapdiscovery.docking.openeye import POSITDockingResults
 from asapdiscovery.data.schema.ligand import Ligand
+from asapdiscovery.data.readers.molfile import MolFileFactory
+
 import argparse
 
 
@@ -17,10 +19,10 @@ def get_args():
     )
     parser.add_argument(
         "-l",
-        "--ligand_ref",
+        "--ligands",
         type=Path,
         required=True,
-        help="Path to original ligand sdf file. Must be a single 3d structure",
+        help="Path to original ligand sdf file.",
     )
     parser.add_argument(
         "--output_dir", type=str, required=True, help="Path to output file"
@@ -76,8 +78,11 @@ def make_df_from_docking_results(results=list[POSITDockingResults]):
 def main():
     args = get_args()
     results_dir = args.results_dir
-    ref = Ligand.from_sdf(args.ligand_ref)
     output_dir = args.output_dir
+    
+    mff = MolFileFactory(filename=args.ligands)
+    ligs = mff.load()
+    lig_dict = {lig.compound_name:lig for lig in ligs}
 
     json_paths = list(results_dir.glob("docking_results/*/docking_result.json"))
     results = [
@@ -86,6 +91,7 @@ def main():
 
     for result in tqdm(results):
         posed_lig = result.posed_ligand
+        ref = lig_dict[posed_lig.compound_name]
         calculate_ligand_rmsd(ref, posed_lig)
 
     df = make_df_from_docking_results(results)

@@ -1,0 +1,1 @@
+The purpose of this directory is to calculate the RMSD between the docked poses in `/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240424_multi_pose_docking_cross_docking` and the original
