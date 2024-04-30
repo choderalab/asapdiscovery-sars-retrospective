@@ -1,3 +1,6 @@
+The goal of this directory to test how well the POSIT docking method works with multiple references passed instead of
+docking all of them and evaluating them afterwards.
+
 Ended up running the array version of this! Easier than managing the memory issues
 
 [run_cross_docking_array.sh](cluster_scripts%2Frun_cross_docking_array.sh)
