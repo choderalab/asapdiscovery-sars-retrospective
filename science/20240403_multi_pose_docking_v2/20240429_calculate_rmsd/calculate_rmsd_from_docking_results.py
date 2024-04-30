@@ -5,7 +5,6 @@ from tqdm import tqdm
 from asapdiscovery.docking.openeye import POSITDockingResults
 from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.readers.molfile import MolFileFactory
-
 import argparse
 
 
@@ -26,8 +25,7 @@ def get_args():
         help="Path to original ligand sdf file.",
     )
     parser.add_argument(
-        "-o",
-        "--output_file", type=str, required=True, help="Path to output file"
+        "-o", "--output_file", type=str, required=True, help="Path to output file"
     )
     return parser.parse_args()
 
@@ -80,10 +78,10 @@ def make_df_from_docking_results(results=list[POSITDockingResults]):
 def main():
     args = get_args()
     results_dir = args.results_dir
-    
+
     mff = MolFileFactory(filename=args.ligands)
     ligs = mff.load()
-    lig_dict = {lig.compound_name:lig for lig in ligs}
+    lig_dict = {lig.compound_name: lig for lig in ligs}
 
     json_paths = list(results_dir.glob("docking_results/*/docking_result.json"))
     results = [
@@ -97,6 +95,7 @@ def main():
 
     df = make_df_from_docking_results(results)
     df.to_csv(args.output_file, index=False)
+
 
 if __name__ == "__main__":
     main()
