@@ -26,7 +26,8 @@ def get_args():
         help="Path to original ligand sdf file.",
     )
     parser.add_argument(
-        "--output_dir", type=str, required=True, help="Path to output file"
+        "-o",
+        "--output_file", type=str, required=True, help="Path to output file"
     )
     return parser.parse_args()
 
@@ -79,7 +80,6 @@ def make_df_from_docking_results(results=list[POSITDockingResults]):
 def main():
     args = get_args()
     results_dir = args.results_dir
-    output_dir = args.output_dir
     
     mff = MolFileFactory(filename=args.ligands)
     ligs = mff.load()
@@ -96,7 +96,7 @@ def main():
         calculate_ligand_rmsd(ref, posed_lig)
 
     df = make_df_from_docking_results(results)
-    df.to_csv(output_dir / "docking_results.csv", index=False)
+    df.to_csv(args.output_file, index=False)
 
 if __name__ == "__main__":
     main()
