@@ -71,16 +71,6 @@ class Results(BaseModel):
         return cls(evaluator=evaluator, fraction_good=result)
 
     @classmethod
-    def calculate_results(
-        cls, df: pd.DataFrame, evaluators: list[cd.Evaluator], cpus: int = 1
-    ) -> list["Results"]:
-        with mp.Pool(cpus) as p:
-            return p.starmap(
-                cls.calculate_result,
-                [(evaluator, df) for evaluator in evaluators],
-            )
-
-    @classmethod
     def df_from_results(cls, results: list["Results"]) -> pd.DataFrame:
         return pd.DataFrame.from_records([result.get_records() for result in results])
 
@@ -125,7 +115,7 @@ def main():
         logfile="run_full_cross_docking_evaluation.log",
     ).getLogger()
     logger.info("Reading input data")
-    df = pd.read_csv(args.input)
+    df = pd.read_csv(args.input, index_col=0)
 
     logger.info("Reading parameters")
     if args.parameters:
@@ -167,9 +157,9 @@ def main():
     dataset_splits.extend(
         [
             cd.DateSplit(
-                variable=settings.reference_ligand_column,
-                n_splits=1,
+                variable=settings.reference_structure_column,
                 n_per_split=n_per_split,
+                balanced=True,
                 date_dict=simplified_date_dict,
             )
             for n_per_split in settings.n_per_split
@@ -217,7 +207,24 @@ def main():
     logger.info(f"N Cores: {args.n_cpus}")
     logger.info(f"Running {len(evaluators)} evaluations across {nprocs} cpus")
 
-    results = Results.calculate_results(df, evaluators, cpus=nprocs)
+    import tqdm
+
+    pbar = tqdm.tqdm(total=len(evaluators))
+
+    from functools import partial
+
+    evaluator_with_df = partial(Results.calculate_result, df=df)
+
+    with mp.Pool(nprocs) as p:
+        results = []
+        for result in p.imap_unordered(
+            evaluator_with_df,
+            evaluators,
+        ):
+            results.append(result)
+            if len(results) % 10 == 0:
+                logger.info(f"Completed {len(results)} evaluations")
+                pbar.update(10)
 
     logger.info(f"Writing results to disk at {output_dir}")
     results_df = Results.df_from_results(results)
