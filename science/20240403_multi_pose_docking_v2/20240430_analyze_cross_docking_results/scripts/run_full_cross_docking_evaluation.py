@@ -149,63 +149,68 @@ def main():
 
     # Set up pose selectors
     pose_selectors = [
-        cd.PoseSelector(
-            name="PoseSelection", variable="Pose_ID", number_to_return=n_poses
-        )
-        for n_poses in settings.n_poses
-    ]
-    # add a default one
-    pose_selectors.append(
         cd.PoseSelector(name="Default", variable="Pose_ID", number_to_return=1)
-    )
+    ]
+    # pose_selectors.extend([
+    #     cd.PoseSelector(
+    #         name="PoseSelection", variable="Pose_ID", number_to_return=n_poses
+    #     )
+    #     for n_poses in settings.n_poses
+    # ])
 
     # Set up dataset splits
-    random_splits = [
-        cd.RandomSplit(
-            variable=settings.reference_ligand_column,
-            n_splits=1,
-            n_per_split=n_per_split,
-        )
-        for n_per_split in settings.n_per_split
-    ]
-    date_splits = [
-        cd.DateSplit(
-            variable=settings.reference_ligand_column,
-            n_splits=1,
-            n_per_split=n_per_split,
-            date_dict=simplified_date_dict,
-        )
-        for n_per_split in settings.n_per_split
-    ]
+    dataset_splits = []
+    dataset_splits.extend(
+        [
+            cd.RandomSplit(
+                variable=settings.reference_ligand_column,
+                n_splits=1,
+                n_per_split=n_per_split,
+            )
+            for n_per_split in settings.n_per_split
+        ]
+    )
+    # date_splits = [
+    #     cd.DateSplit(
+    #         variable=settings.reference_ligand_column,
+    #         n_splits=1,
+    #         n_per_split=n_per_split,
+    #         date_dict=simplified_date_dict,
+    #     )
+    #     for n_per_split in settings.n_per_split
+    # ]
 
     # add structure choices
     structure_choices = [
         cd.StructureChoice(
-            name="Dock_to_All", variable="Tanimoto", higher_is_better=True
+            name="Dock_to_All",
+            variable="Tanimoto",
+            higher_is_better=True,
+            number_to_return=None,
         )
     ]
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="ECFP4_Similarity",
-                variable="Tanimoto",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="MCSS_Similarity",
-                variable="Num_Atoms_in_MCS",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
+    # structure_choices.extend(
+    #     [
+    #         cd.StructureChoice(
+    #             name="ECFP4_Similarity",
+    #             variable="Tanimoto",
+    #             higher_is_better=True,
+    #             number_to_return=n_structures,
+    #         )
+    #         for n_structures in settings.n_structures
+    #     ]
+    # )
+    # structure_choices.extend(
+    #     [
+    #         cd.StructureChoice(
+    #             name="MCSS_Similarity",
+    #             variable="Num_Atoms_in_MCS",
+    #             higher_is_better=True,
+    #             number_to_return=n_structures,
+    #         )
+    #         for n_structures in settings.n_structures
+    #     ]
+    # )
 
     # Add scorers
     scorers = [
@@ -214,14 +219,14 @@ def main():
             variable="docking-confidence-POSIT",
             number_to_return=1,
         ),
-        cd.Scorer(
-            name="RMSD", variable="RMSD", higher_is_better=False, number_to_return=1
-        ),
+        # cd.Scorer(
+        #     name="RMSD", variable="RMSD", higher_is_better=False, number_to_return=1
+        # ),
     ]
     rmsd_evaluator = cd.BinaryEvaluation(variable="RMSD", cutoff=settings.rmsd_cutoff)
 
     for scorer in scorers:
-        for split in date_splits + random_splits:
+        for split in dataset_splits:
             for selector in pose_selectors:
                 for structure_choice in structure_choices:
                     evaluators.append(
