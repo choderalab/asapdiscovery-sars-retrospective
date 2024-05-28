@@ -14,6 +14,7 @@ source ~/.bashrc
 mamba activate harbor
 
 echo Start
+date
 # network device info
 ulimit -c 0
 
