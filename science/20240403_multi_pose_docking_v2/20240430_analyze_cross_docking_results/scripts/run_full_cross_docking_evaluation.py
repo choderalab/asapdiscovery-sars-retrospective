@@ -186,7 +186,6 @@ def main():
             name="Dock_to_All",
             variable="Tanimoto",
             higher_is_better=True,
-            number_to_return=None,
         )
     ]
     # structure_choices.extend(
