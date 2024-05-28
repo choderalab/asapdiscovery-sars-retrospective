@@ -1,9 +1,9 @@
 #!/bin/bash
 ## Example usage:
 
-#BSUB -J cross_docking_analysis
-#BSUB -oo logs/cross_docking_analysis.out
-#BSUB -eo logs/cross_docking_analysis.stderr
+#BSUB -J cross_docking_analysis_splits
+#BSUB -oo logs/cross_docking_analysis_splits.out
+#BSUB -eo logs/cross_docking_analysis_splits.stderr
 #BSUB -n 64
 #BSUB -m lt-gpu
 #BSUB -q cpuqueue
@@ -14,6 +14,7 @@ source ~/.bashrc
 mamba activate harbor
 
 echo Start
+date
 # network device info
 ulimit -c 0
 
