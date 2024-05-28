@@ -172,15 +172,17 @@ def main():
             for n_per_split in settings.n_per_split
         ]
     )
-    date_splits = [
-        cd.DateSplit(
-            variable=settings.reference_ligand_column,
-            n_splits=1,
-            n_per_split=n_per_split,
-            date_dict=simplified_date_dict,
-        )
-        for n_per_split in settings.n_per_split
-    ]
+    dataset_splits.extend(
+        [
+            cd.DateSplit(
+                variable=settings.reference_ligand_column,
+                n_splits=1,
+                n_per_split=n_per_split,
+                date_dict=simplified_date_dict,
+            )
+            for n_per_split in settings.n_per_split
+        ]
+    )
 
     # add structure choices
     structure_choices = [
@@ -190,28 +192,6 @@ def main():
             higher_is_better=True,
         )
     ]
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="ECFP4_Similarity",
-                variable="Tanimoto",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="MCSS_Similarity",
-                variable="Num_Atoms_in_MCS",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
 
     # Add scorers
     scorers = [
