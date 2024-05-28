@@ -202,7 +202,7 @@ def main():
                 for structure_choice in structure_choices:
                     evaluators.append(
                         cd.Evaluator(
-                            selector=selector,
+                            pose_selector=selector,
                             dataset_split=split,
                             structure_choice=structure_choice,
                             scorer=scorer,
