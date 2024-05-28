@@ -151,12 +151,6 @@ def main():
     pose_selectors = [
         cd.PoseSelector(name="Default", variable="Pose_ID", number_to_return=1)
     ]
-    # pose_selectors.extend([
-    #     cd.PoseSelector(
-    #         name="PoseSelection", variable="Pose_ID", number_to_return=n_poses
-    #     )
-    #     for n_poses in settings.n_poses
-    # ])
 
     # Set up dataset splits
     dataset_splits = []
@@ -170,15 +164,17 @@ def main():
             for n_per_split in settings.n_per_split
         ]
     )
-    # date_splits = [
-    #     cd.DateSplit(
-    #         variable=settings.reference_ligand_column,
-    #         n_splits=1,
-    #         n_per_split=n_per_split,
-    #         date_dict=simplified_date_dict,
-    #     )
-    #     for n_per_split in settings.n_per_split
-    # ]
+    dataset_splits.extend(
+        [
+            cd.DateSplit(
+                variable=settings.reference_ligand_column,
+                n_splits=1,
+                n_per_split=n_per_split,
+                date_dict=simplified_date_dict,
+            )
+            for n_per_split in settings.n_per_split
+        ]
+    )
 
     # add structure choices
     structure_choices = [
@@ -188,28 +184,6 @@ def main():
             higher_is_better=True,
         )
     ]
-    # structure_choices.extend(
-    #     [
-    #         cd.StructureChoice(
-    #             name="ECFP4_Similarity",
-    #             variable="Tanimoto",
-    #             higher_is_better=True,
-    #             number_to_return=n_structures,
-    #         )
-    #         for n_structures in settings.n_structures
-    #     ]
-    # )
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="MCSS_Similarity",
-                variable="Num_Atoms_in_MCS",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
 
     # Add scorers
     scorers = [
@@ -218,9 +192,6 @@ def main():
             variable="docking-confidence-POSIT",
             number_to_return=1,
         ),
-        # cd.Scorer(
-        #     name="RMSD", variable="RMSD", higher_is_better=False, number_to_return=1
-        # ),
     ]
     rmsd_evaluator = cd.BinaryEvaluation(variable="RMSD", cutoff=settings.rmsd_cutoff)
 
