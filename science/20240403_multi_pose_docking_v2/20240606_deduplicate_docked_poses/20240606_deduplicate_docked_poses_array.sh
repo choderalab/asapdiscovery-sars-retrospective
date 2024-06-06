@@ -18,7 +18,7 @@ date
 ulimit -c 0
 
 python3 filter_similar_molecules.py \
---dock-dir "/home/paynea/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240424_multi_pose_docking_cross_docking"$LSB_JOBINDEX \
+--dock-dir "/home/paynea/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240424_multi_pose_docking_cross_docking/20240424_multi_pose_docking_cross_docking"$LSB_JOBINDEX \
 --out-dir "/home/paynea/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240424_multi_pose_docking_cross_docking/20240606_deduplicated_docked_poses/"$LSB_JOBINDEX
 
 date
