@@ -1,9 +1,9 @@
 #!/bin/bash
 ## Example usage:
 
-#BSUB -J cross_docking_analysis
-#BSUB -oo logs/cross_docking_analysis.out
-#BSUB -eo logs/cross_docking_analysis.stderr
+#BSUB -J cross_docking_analysis_multipose
+#BSUB -oo logs/cross_docking_analysis_multipose.out
+#BSUB -eo logs/cross_docking_analysis_multipose.stderr
 #BSUB -n 64
 #BSUB -m lt-gpu
 #BSUB -q cpuqueue
