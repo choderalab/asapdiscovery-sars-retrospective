@@ -211,10 +211,6 @@ def main():
     logger.info(f"N Cores: {args.n_cpus}")
     logger.info(f"Running {len(evaluators)} evaluations across {nprocs} cpus")
 
-    import tqdm
-
-    pbar = tqdm.tqdm(total=len(evaluators))
-
     from functools import partial
 
     evaluator_with_df = partial(Results.calculate_result, df=df)

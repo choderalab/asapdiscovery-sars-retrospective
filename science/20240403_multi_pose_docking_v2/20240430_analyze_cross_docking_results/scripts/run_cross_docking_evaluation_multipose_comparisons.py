@@ -208,7 +208,11 @@ def main():
                             scorer=scorer,
                             evaluator=rmsd_evaluator,
                             groupby=[settings.query_ligand_column],
-                            n_bootstraps=settings.n_bootstraps,
+                            n_bootstraps=(
+                                settings.n_bootstraps
+                                if isinstance(split, cd.RandomSplit)
+                                else 1
+                            ),
                         )
                     )
 
@@ -217,10 +221,6 @@ def main():
     logger.info(f"N Processes: {len(evaluators)}")
     logger.info(f"N Cores: {args.n_cpus}")
     logger.info(f"Running {len(evaluators)} evaluations across {nprocs} cpus")
-
-    import tqdm
-
-    pbar = tqdm.tqdm(total=len(evaluators))
 
     from functools import partial
 
