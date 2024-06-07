@@ -197,7 +197,11 @@ def main():
                             scorer=scorer,
                             evaluator=rmsd_evaluator,
                             groupby=[settings.query_ligand_column],
-                            n_bootstraps=settings.n_bootstraps,
+                            n_bootstraps=(
+                                settings.n_bootstraps
+                                if isinstance(split, cd.RandomSplit)
+                                else 1
+                            ),
                         )
                     )
 
