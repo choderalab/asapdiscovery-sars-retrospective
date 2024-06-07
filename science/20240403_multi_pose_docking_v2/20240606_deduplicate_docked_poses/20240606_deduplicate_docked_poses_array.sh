@@ -3,11 +3,11 @@
 ## bsub -J deduplicate_docked_poses[1-205] < 20240606_deduplicate_docked_poses_array.sh
 #BSUB -oo logs/deduplicate_docked_poses_%I.out
 #BSUB -eo logs/deduplicate_docked_poses_%I.stderr
-#BSUB -n 64
+#BSUB -n 1
 #BSUB -m lt-gpu
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=1]
-#BSUB -W 2:00
+#BSUB -W 1:00
 
 source ~/.bashrc
 mamba activate asapdiscovery
