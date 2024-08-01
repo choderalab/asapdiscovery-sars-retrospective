@@ -162,7 +162,9 @@ cython_debug/
 # Figures
 # Ignore figures - these should be regeneratable
 # But they're nice to have in the repo for quick reference
+# svgs are annoying and big though
 #*.png
+*.svg
 
 # Cluster Script results
 *.out

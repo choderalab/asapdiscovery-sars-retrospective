@@ -9,3 +9,7 @@ dynamic = ["version"]
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[project.scripts]
+split-sdf = "production.utils.split_sdf:main"
+combine-sdf = "production.covid_moonshot_fragalysis_processing.combined_sdf_from_cache:main"
