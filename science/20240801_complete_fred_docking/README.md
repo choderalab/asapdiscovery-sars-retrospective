@@ -1,0 +1,1 @@
+In order to compare the results we get from referenced-based docking to a more typical docking approach, I'd like to run complete cross-docking with FRED.
