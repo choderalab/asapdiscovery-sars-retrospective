@@ -2,8 +2,8 @@
 ## Example usage:
 ## bsub -J "multiple_poses[1-205]" < run_cross_docking_multiple_poses_local_dask_multipose_saving_array.sh
 
-#BSUB -oo logs/multiple_poses_%I.out
-#BSUB -eo logs/multiple_poses_%I.stderr
+#BSUB -oo logs/test_%I.out
+#BSUB -eo logs/test_%I.stderr
 #BSUB -n 8
 #BSUB -m lt-gpu
 #BSUB -q cpuqueue
@@ -25,9 +25,10 @@ asap-docking cross-docking \
 --target SARS-CoV-2-Mpro \
 --use-omega \
 --omega-dense \
+--posit-method FRED \
 --allow-retries \
 --allow-final-clash \
---structure-selector PairwiseSelector \
+--structure-selector SelfDockingSelector \
 --fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
 --ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_2d/$LSB_JOBINDEX.sdf" \
 --no-save-to-cache \

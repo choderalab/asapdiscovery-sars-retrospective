@@ -1,9 +1,9 @@
 #!/bin/bash
 ## Example usage:
-## bsub -J "multiple_poses[1-205]" < run_cross_docking_multiple_poses_local_dask_multipose_saving_array.sh
+## bsub -J "fred_multiple_poses[1-205]" < run_cross_docking_multiple_poses_fred_array.sh
 
-#BSUB -oo logs/multiple_poses_%I.out
-#BSUB -eo logs/multiple_poses_%I.stderr
+#BSUB -oo logs/fred_%I.out
+#BSUB -eo logs/fred_%I.stderr
 #BSUB -n 8
 #BSUB -m lt-gpu
 #BSUB -q cpuqueue
@@ -27,13 +27,14 @@ asap-docking cross-docking \
 --omega-dense \
 --allow-retries \
 --allow-final-clash \
---structure-selector LeaveSimilarOutSelector \
+--posit-method FRED \
+--structure-selector PairwiseSelector \
 --fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
 --ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_2d/$LSB_JOBINDEX.sdf" \
 --no-save-to-cache \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
 --use-only-cache \
---output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240424_multi_pose_docking_cross_docking/$LSB_JOBINDEX" \
+--output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240816_fred_docking/$LSB_JOBINDEX" \
 --no-overwrite \
 --num-poses 50 \
 --use-dask \
