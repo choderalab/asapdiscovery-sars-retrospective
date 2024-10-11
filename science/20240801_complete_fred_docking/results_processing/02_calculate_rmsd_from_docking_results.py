@@ -5,6 +5,7 @@ from tqdm import tqdm
 from asapdiscovery.docking.openeye import POSITDockingResults
 from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.readers.molfile import MolFileFactory
+from asapdiscovery.data.backend.openeye import oechem
 import argparse
 
 
