@@ -5,7 +5,6 @@
 #BSUB -oo logs/fred_%I.out
 #BSUB -eo logs/fred_%I.stderr
 #BSUB -n 8
-#BSUB -m lt-gpu
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=12]
 #BSUB -W 2:00
