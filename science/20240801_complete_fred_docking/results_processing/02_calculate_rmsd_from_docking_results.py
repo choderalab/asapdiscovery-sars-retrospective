@@ -27,10 +27,13 @@ def get_args():
     parser.add_argument(
         "-o", "--output_file", type=str, required=True, help="Path to output file"
     )
+    parser.add_argument(
+        "--cutoff", type=float, default=2.0, help="RMSD cutoff for distinct poses."
+    )
     return parser.parse_args()
 
 
-def calculate_ligand_rmsd(ref: Ligand, fit: Ligand):
+def calculate_ligand_rmsd(ref: Ligand, fit: Ligand, append_rsmd=True):
     from asapdiscovery.data.backend.openeye import oechem
 
     fitmol = fit.to_oemol()
@@ -40,8 +43,22 @@ def calculate_ligand_rmsd(ref: Ligand, fit: Ligand):
     success = oechem.OERMSD(refmol, fitmol, vecRmsd)
     if not success:
         print("RMSD calculation failed")
-    fit.set_SD_data({"RMSD": list(vecRmsd)})
+
+    if append_rsmd:
+        fit.set_SD_data({"RMSD": list(vecRmsd)})
     return fit
+
+
+def calculate_ligand_rmsd_oemol(ref: oechem.OEMol, fit: oechem.OEMol):
+    from asapdiscovery.data.backend.openeye import oechem
+
+    nConfs = fit.GetMaxConfIdx()
+    vecRmsd = oechem.OEDoubleArray(nConfs)
+    success = oechem.OERMSD(ref, fit, vecRmsd)
+    if not success:
+        print("RMSD calculation failed")
+
+    return vecRmsd
 
 
 def make_df_from_docking_results(results=list[POSITDockingResults]):
@@ -75,6 +92,30 @@ def make_df_from_docking_results(results=list[POSITDockingResults]):
     return df
 
 
+def get_filtered_poses(results: list[POSITDockingResults], cutoff):
+    """
+    Filter out poses with RMSD above cutoff.
+    Heavily based on code by Benjamin Kaminow.
+    """
+    all_oemols = [result.posed_ligand.to_oemol() for result in results]
+    filtered_results_idx = []
+    for i, oemol1 in enumerate(all_oemols):
+
+        # Check if this oemol is similar to any already selected
+        for idx in filtered_results_idx:
+            oemol2 = all_oemols[idx]
+            if calculate_ligand_rmsd_oemol(oemol1, oemol2) <= cutoff:
+                # Similar to an already selected mol so don't need this one
+                break
+        else:
+            # if not similar to any in filtered_results_idx, add index to list
+            filtered_results_idx.append(i)
+
+    # pull Ligand objects from indices
+    filtered_results = [results[i] for i in filtered_results_idx]
+    return filtered_results
+
+
 def main():
     args = get_args()
     results_dir = args.results_dir
@@ -83,17 +124,20 @@ def main():
     ligs = mff.load()
     lig_dict = {lig.compound_name: lig for lig in ligs}
 
-    json_paths = list(results_dir.glob("docking_results/*/docking_result.json"))
+    json_paths = list(results_dir.glob("docking_results/*/docking_result*.json"))
     results = [
         POSITDockingResults.from_json_file(json_file) for json_file in json_paths
     ]
 
-    for result in tqdm(results):
+    # First, filter based on cutoff
+    filtered_results = get_filtered_poses(results, args.cutoff)
+
+    for result in tqdm(filtered_results):
         posed_lig = result.posed_ligand
         ref = lig_dict[posed_lig.compound_name]
         calculate_ligand_rmsd(ref, posed_lig)
 
-    df = make_df_from_docking_results(results)
+    df = make_df_from_docking_results(filtered_results)
     df.to_csv(args.output_file, index=False)
 
 

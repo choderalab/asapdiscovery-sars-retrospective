@@ -1,3 +1,7 @@
+"""
+Author: Benjamin Kaminow
+"""
+
 import click
 from pathlib import Path
 
