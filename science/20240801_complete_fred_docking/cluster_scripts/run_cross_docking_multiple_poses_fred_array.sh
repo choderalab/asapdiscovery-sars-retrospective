@@ -28,12 +28,10 @@ asap-docking cross-docking \
 --allow-final-clash \
 --posit-method FRED \
 --structure-selector PairwiseSelector \
---fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24 \
+--fragalysis-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_p_series \
 --ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_2d/$LSB_JOBINDEX.sdf" \
---no-save-to-cache \
---cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache \
---use-only-cache \
---output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240925_fred_docking/$LSB_JOBINDEX" \
+--cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache_p_series \
+--output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20241018_fred_docking/$LSB_JOBINDEX" \
 --no-overwrite \
 --num-poses 50 \
 --use-dask \
