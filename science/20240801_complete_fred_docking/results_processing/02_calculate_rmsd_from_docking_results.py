@@ -34,7 +34,7 @@ def get_args():
     return parser.parse_args()
 
 
-def calculate_ligand_rmsd(ref: Ligand, fit: Ligand, append_rsmd=True):
+def calculate_ligand_rmsd(ref: Ligand, fit: Ligand, append_rsmd=True) -> Ligand:
     from asapdiscovery.data.backend.openeye import oechem
 
     fitmol = fit.to_oemol()
@@ -50,16 +50,8 @@ def calculate_ligand_rmsd(ref: Ligand, fit: Ligand, append_rsmd=True):
     return fit
 
 
-def calculate_ligand_rmsd_oemol(ref: oechem.OEMol, fit: oechem.OEMol):
-    from asapdiscovery.data.backend.openeye import oechem
-
-    nConfs = fit.GetMaxConfIdx()
-    vecRmsd = oechem.OEDoubleArray(nConfs)
-    success = oechem.OERMSD(ref, fit, vecRmsd)
-    if not success:
-        print("RMSD calculation failed")
-
-    return vecRmsd
+def calculate_ligand_rmsd_oemol(ref: oechem.OEMol, fit: oechem.OEMol) -> float:
+    return oechem.OERMSD(ref, fit)
 
 
 def make_df_from_docking_results(results=list[POSITDockingResults]):
@@ -98,6 +90,9 @@ def get_filtered_poses(results: list[POSITDockingResults], cutoff):
     Filter out poses with RMSD above cutoff.
     Heavily based on code by Benjamin Kaminow.
     """
+
+    # sort by pose id
+    results.sort(key=lambda x: x.posed_ligand.conf_tags["Pose_ID"])
     all_oemols = [result.posed_ligand.to_oemol() for result in results]
     filtered_results_idx = []
     for i, oemol1 in enumerate(all_oemols):
@@ -125,17 +120,23 @@ def main():
     ligs = mff.load()
     lig_dict = {lig.compound_name: lig for lig in ligs}
 
-    json_paths = list(results_dir.glob("docking_results/*/docking_result*.json"))
-    results = [
-        POSITDockingResults.from_json_file(json_file) for json_file in json_paths
-    ]
+    # We don't want to filter across targets (at least at first)
+    target_paths = list(results_dir.glob("docking_results/*"))
+    filtered_results = []
+    for target_path in target_paths:
+        json_paths = list(target_path.glob("docking_result*.json"))
+        results = [
+            POSITDockingResults.from_json_file(json_file) for json_file in json_paths
+        ]
 
-    # First, filter based on cutoff
-    filtered_results = get_filtered_poses(results, args.cutoff)
+        # First, filter based on cutoff
+        filtered_results.extend(get_filtered_poses(results, args.cutoff))
 
     for result in tqdm(filtered_results):
         posed_lig = result.posed_ligand
         ref = lig_dict[posed_lig.compound_name]
+
+        # no need to return anything because the posed_lig is modified directly
         calculate_ligand_rmsd(ref, posed_lig)
 
     df = make_df_from_docking_results(filtered_results)
