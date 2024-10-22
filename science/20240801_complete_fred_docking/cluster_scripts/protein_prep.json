@@ -1,0 +1,20 @@
+{
+  "target": "SARS-CoV-2-Mpro",
+  "pdb_file": null,
+  "fragalysis_dir": "/lila/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_p_series",
+  "structure_dir": null,
+  "cache_dir": "/lila/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache_p_series",
+  "save_to_cache": true,
+  "align": null,
+  "ref_chain": null,
+  "active_site_chain": null,
+  "seqres_yaml": null,
+  "loop_db": "/lila/home/kaminowb/.openeye/rcsb_spruce.loop_db",
+  "oe_active_site_residue": null,
+  "use_dask": true,
+  "dask_type": "local",
+  "dask_n_workers": null,
+  "logname": "",
+  "loglevel": 20,
+  "output_dir": "/lila/data/chodera/paynea/asapdiscovery-sars-retrospective/science/20240801_complete_fred_docking/cluster_scripts/fragalysis_prep_out"
+}

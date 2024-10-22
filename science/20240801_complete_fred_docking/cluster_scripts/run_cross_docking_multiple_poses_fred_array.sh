@@ -33,6 +33,8 @@ asap-docking cross-docking \
 --cache-dir /data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache_p_series \
 --output-dir "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20241018_fred_docking/$LSB_JOBINDEX" \
 --no-overwrite \
+--no-save-to-cache \
+--use-only-cache \
 --num-poses 50 \
 --use-dask \
 --dask-type local
