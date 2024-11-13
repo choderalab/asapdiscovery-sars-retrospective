@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Example usage:
-## bsub -J "calculate_rmsd[1-205]" < calculate_rmsd_array.sh
+## bsub -J "calculate_rmsd[1-205]" < 02_calculate_rmsd_array_by_split_ligs.sh
 
 #BSUB -oo logs/calculate_rmsd_array_%I.out
 #BSUB -eo logs/calculate_rmsd_array_%I.stderr
