@@ -50,6 +50,11 @@ def main():
         ]
     else:
         ligands = [complex.ligand for complex in complexes]
+        ligands = []
+        for complex in complexes:
+            lig = complex.ligand
+            lig.set_SD_data({"xtal_name": complex.target.target_name})
+            ligands.append(lig)
     out_name = f"combined_2d.sdf" if args.flatten else "combined_3d.sdf"
     write_ligands_to_multi_sdf(output_dir / out_name, ligands)
     logger.info(f"Combined {len(ligands)} ligands into {output_dir / out_name}")
