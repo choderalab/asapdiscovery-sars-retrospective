@@ -116,6 +116,8 @@ def main():
     args = get_args()
     results_dir = args.results_dir
 
+    args.output_file.mkdir(parents=True, exist_ok=True)
+
     mff = MolFileFactory(filename=args.ligands)
     ligs = mff.load()
     lig_dict = {lig.compound_name: lig for lig in ligs}
