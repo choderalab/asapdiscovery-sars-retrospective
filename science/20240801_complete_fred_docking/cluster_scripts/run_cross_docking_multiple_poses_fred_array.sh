@@ -7,7 +7,7 @@
 #BSUB -n 8
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=12]
-#BSUB -W 2:00
+#BSUB -W 24:00
 
 source ~/.bashrc
 conda activate asapdiscovery
