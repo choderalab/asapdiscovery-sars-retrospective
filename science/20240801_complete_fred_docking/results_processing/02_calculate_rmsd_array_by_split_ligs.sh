@@ -21,9 +21,9 @@ dask info versions
 ulimit -c 0
 
 python3.10 02_calculate_rmsd_from_docking_results.py \
--d "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240925_fred_docking/$LSB_JOBINDEX" \
+-d "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20241018_fred_docking/$LSB_JOBINDEX" \
 -l "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_3d_20240903/"$LSB_JOBINDEX".sdf" \
--o "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20240925_fred_docking/rmsd_csvs/$LSB_JOBINDEX.csv"
+-o "/lila/data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20241018_fred_docking/rmsd_csvs/$LSB_JOBINDEX.csv"
 
 echo Done
 date
