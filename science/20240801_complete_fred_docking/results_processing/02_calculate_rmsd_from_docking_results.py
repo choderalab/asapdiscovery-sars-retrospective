@@ -116,7 +116,8 @@ def main():
     args = get_args()
     results_dir = args.results_dir
 
-    args.output_file.mkdir(parents=True, exist_ok=True)
+    out_dir = Path(args.output_file)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     mff = MolFileFactory(filename=args.ligands)
     ligs = mff.load()
