@@ -1,0 +1,1 @@
+The goal of this directory is to unify the clustering analysis I've done into a set of scripts so I stop fiddling around in jupyter notebooks.
