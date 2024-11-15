@@ -26,7 +26,7 @@ def get_args():
         help="Path to original ligand sdf file.",
     )
     parser.add_argument(
-        "-o", "--output_file", type=str, required=True, help="Path to output file"
+        "-o", "--output_file", type=Path, required=True, help="Path to output file"
     )
     parser.add_argument(
         "--cutoff", type=float, default=2.0, help="RMSD cutoff for distinct poses."
@@ -116,7 +116,7 @@ def main():
     args = get_args()
     results_dir = args.results_dir
 
-    out_dir = Path(args.output_file)
+    out_dir = args.output_file.parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
     mff = MolFileFactory(filename=args.ligands)
