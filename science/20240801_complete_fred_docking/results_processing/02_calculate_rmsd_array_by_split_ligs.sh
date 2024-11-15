@@ -8,7 +8,7 @@
 #BSUB -m lt-gpu
 #BSUB -q cpuqueue
 #BSUB -R rusage[mem=12]
-#BSUB -W 0:05
+#BSUB -W 1:00
 
 source ~/.bashrc
 conda activate asapdiscovery

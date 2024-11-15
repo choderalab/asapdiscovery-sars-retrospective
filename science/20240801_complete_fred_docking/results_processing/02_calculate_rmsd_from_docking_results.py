@@ -126,6 +126,7 @@ def main():
     # We don't want to filter across targets (at least at first)
     target_paths = list(results_dir.glob("docking_results/*"))
     filtered_results = []
+    print(f"Loading {len(target_paths)} docking results")
     for target_path in target_paths:
         json_paths = list(target_path.glob("docking_result*.json"))
         results = [
@@ -135,6 +136,7 @@ def main():
         # First, filter based on cutoff
         filtered_results.extend(get_filtered_poses(results, args.cutoff))
 
+    print(f"Calculating RMSD for {len(filtered_results)} poses")
     for result in tqdm(filtered_results):
         posed_lig = result.posed_ligand
         ref = lig_dict[posed_lig.compound_name]
@@ -142,6 +144,7 @@ def main():
         # no need to return anything because the posed_lig is modified directly
         calculate_ligand_rmsd(ref, posed_lig)
 
+    print("Writing output")
     df = make_df_from_docking_results(filtered_results)
     df.to_csv(args.output_file, index=False)
 
