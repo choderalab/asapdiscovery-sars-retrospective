@@ -247,7 +247,6 @@ def main():
             results.append(result)
             if len(results) % 10 == 0:
                 logger.info(f"Completed {len(results)} evaluations")
-                p.bar.update(10)
 
     logger.info(f"Writing results to disk at {output_dir}")
     results_df = Results.df_from_results(results)
