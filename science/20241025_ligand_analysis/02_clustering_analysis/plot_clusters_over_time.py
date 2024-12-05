@@ -69,7 +69,7 @@ def make_image(df):
 
     # move legend to inside the plot
     fig.update_layout(
-        legend=dict(yanchor="bottom", y=0.25, xanchor="right", x=1.1),
+        # legend=dict(yanchor="bottom", y=0.25, xanchor="right", x=1.1),
         **update_layout_dict,
     )
 
@@ -91,10 +91,6 @@ def main():
         date_df = pd.DataFrame.from_records(date_dict)
 
     compound_data = pd.read_csv(compound_data_csv)
-    compound_data["structure_name"] = (
-        "Mpro-" + compound_data["series"] + compound_data["number"].astype(str)
-    )
-
     compound_data = compound_data.merge(
         date_df, left_on="structure_name", right_on="Name"
     )

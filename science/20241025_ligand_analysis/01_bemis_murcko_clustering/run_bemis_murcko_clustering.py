@@ -7,11 +7,7 @@ https://github.com/rdkit/rdkit/discussions/6844
 import pandas as pd
 from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.readers.molfile import MolFileFactory
-from rdkit.Chem import Draw, rdMolAlign, rdDepictor
 from rdkit import Chem
-from rdkit import Chem
-from rdkit.Chem import AllChem, Draw
-from rdkit.Chem.Scaffolds import MurckoScaffold
 
 PATT = Chem.MolFromSmarts("[$([D1]=[*])]")
 REPL = Chem.MolFromSmarts("[*]")
