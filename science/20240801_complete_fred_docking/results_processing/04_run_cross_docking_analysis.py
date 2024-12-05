@@ -115,17 +115,13 @@ def main():
     if args.parameters:
         settings = cd.Settings.from_yml_file(args.parameters)
     else:
-        settings = cd.Settings(date_dict_path=args.date_dict_path)
+        settings = cd.Settings()
     settings.to_yml_file(output_dir / "settings.yml")
-
-    logger.info("Loading date dict")
-    import json
-
-    with open(settings.date_dict_path, "r") as f:
-        date_dict = json.load(f)
     simplified_date_dict = {
-        ref_structure: date_dict[ref_structure[:-3]]
-        for ref_structure in df.Reference_Structure.unique()
+        ref_structure: date
+        for ref_structure, date in zip(
+            df.Reference_Structure, df.Reference_Structure_Date
+        )
     }
 
     logger.info("Setting up evaluators")
