@@ -4,7 +4,7 @@
 #SBATCH --output="logs/fragalysis_prep.out"
 #SBATCH --error="logs/fragalysis_prep.stderr"
 #SBATCH --ntasks=64
-#SBATCH --partition=cpuqueue
+#SBATCH --partition=cpu*
 #SBATCH --mem=2GB
 #SBATCH --time=02:00:00
 
