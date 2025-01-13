@@ -52,3 +52,6 @@ def main():
         prepped_complex = PreppedComplex.from_json_file(json_file)
         prepped_complex.ligand = new_lig
         prepped_complex.to_json(json_file)
+
+if __name__ == "__main__":
+    main()

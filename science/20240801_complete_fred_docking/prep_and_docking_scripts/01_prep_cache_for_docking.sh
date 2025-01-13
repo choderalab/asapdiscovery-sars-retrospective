@@ -2,7 +2,7 @@
 
 # fix misc errors
 python3 /data1/choderaj/paynea/asapdiscovery-sars-retrospective/production/covid_moonshot_fragalysis_processing/prep_cache_for_docking.py \
-
+--input_cache /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_cache_20250110
 
 # save 3d
 python3 /data1/choderaj/paynea/asapdiscovery-sars-retrospective/production/covid_moonshot_fragalysis_processing/combined_sdf_from_cache.py \
