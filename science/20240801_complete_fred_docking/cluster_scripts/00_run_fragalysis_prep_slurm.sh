@@ -4,9 +4,9 @@
 #SBATCH --output="logs/fragalysis_prep.out"
 #SBATCH --error="logs/fragalysis_prep.stderr"
 #SBATCH --ntasks=64
-#SBATCH --partition=cpu*
-#SBATCH --mem=2GB
-#SBATCH --time=02:00:00
+#SBATCH --partition=cpu
+#SBATCH --mem=128GB
+#SBATCH --time=24:00:00
 
 # Activate conda environment
 source ~/.bashrc
@@ -29,6 +29,9 @@ asap-cli protein-prep \
   --save-to-cache \
   --ref-chain A \
   --active-site-chain A \
+  --use-dask \
+  --dask-n-workers 64 \
+  --dask-type local \
 
 echo "Done"
 date
