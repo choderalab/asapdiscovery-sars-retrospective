@@ -37,23 +37,26 @@ def main():
         # get rid of 2nd ligand
         rdmol = ligand.to_rdkit()
 
-        # delete second fragment
-        frag_to_delete = [frag for frag in rdkit.Chem.GetMolFrags(rdmol)][1]
-        editable = rdkit.Chem.EditableMol(rdmol)
+        # delete second fragment if it exists
+        frags = [frag for frag in rdkit.Chem.GetMolFrags(rdmol)]
+        if len(frags) == 2:
+            frag_to_delete = frags[1]
+            editable = rdkit.Chem.EditableMol(rdmol)
 
-        # need to change index as we delete
-        # since the indices are already sorted, each time we delete one, the next will
-        # have a lower index
-        for i, idx in enumerate(frag_to_delete):
-            idx = idx - i
-            editable.RemoveAtom(idx)
-        new_mol = editable.GetMol()
-        rdkit.Chem.rdmolops.SanitizeMol(new_mol, sanitizeOps=rdkit.Chem.rdmolops.SANITIZE_ALL)
-        sdf_str = rdkit.Chem.rdmolfiles.MolToMolBlock(new_mol)
-        oemol = sdf_string_to_oemol(sdf_str)
-        new_lig = Ligand.from_oemol(oemol, compound_name=ligand.compound_name)
-        new_lig.to_sdf(prepped_directory / "MAT-POS-5d65ec79-1.sdf")
+            # need to change index as we delete
+            # since the indices are already sorted, each time we delete one, the next will
+            # have a lower index
+            for i, idx in enumerate(frag_to_delete):
+                idx = idx - i
+                editable.RemoveAtom(idx)
+            new_mol = editable.GetMol()
+            rdkit.Chem.rdmolops.SanitizeMol(new_mol, sanitizeOps=rdkit.Chem.rdmolops.SANITIZE_ALL)
+            sdf_str = rdkit.Chem.rdmolfiles.MolToMolBlock(new_mol)
+            oemol = sdf_string_to_oemol(sdf_str)
+            new_lig = Ligand.from_oemol(oemol, compound_name=ligand.compound_name)
+            new_lig.to_sdf(prepped_directory / "MAT-POS-5d65ec79-1.sdf")
 
+        # overwrite old json file
         json_file = list(prepped_directory.glob('*.json'))[0]
         prepped_complex = PreppedComplex.from_json_file(json_file)
         prepped_complex.ligand = new_lig
