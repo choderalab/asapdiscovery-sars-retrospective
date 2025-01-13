@@ -1,7 +1,7 @@
 """This script fixes some bespoke errors with the prepped fragalysis cache"""
 from pathlib import Path
-from asapdiscovery.modeling.protein_prep import ProteinPrepper, PreppedComplex
-from asapdiscovery.data.schema.ligand import Ligand, write_ligands_to_multi_sdf
+from asapdiscovery.modeling.protein_prep import PreppedComplex
+from asapdiscovery.data.schema.ligand import Ligand
 import argparse
 from asapdiscovery.data.util.logging import FileLogger
 import rdkit

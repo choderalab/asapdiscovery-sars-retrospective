@@ -1,4 +1,6 @@
 #!/bin/bash
+source ~/.bashrc
+mamba activate asap2025
 
 # fix misc errors
 python3 /data1/choderaj/paynea/asapdiscovery-sars-retrospective/production/covid_moonshot_fragalysis_processing/prep_cache_for_docking.py \
