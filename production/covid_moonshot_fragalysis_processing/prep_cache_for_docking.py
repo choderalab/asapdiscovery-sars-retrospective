@@ -53,13 +53,13 @@ def main():
             rdkit.Chem.rdmolops.SanitizeMol(new_mol, sanitizeOps=rdkit.Chem.rdmolops.SANITIZE_ALL)
             sdf_str = rdkit.Chem.rdmolfiles.MolToMolBlock(new_mol)
             oemol = sdf_string_to_oemol(sdf_str)
-            new_lig = Ligand.from_oemol(oemol, compound_name=ligand.compound_name)
-            new_lig.to_sdf(prepped_directory / "MAT-POS-5d65ec79-1.sdf")
+            ligand = Ligand.from_oemol(oemol, compound_name=ligand.compound_name)
+            ligand.to_sdf(prepped_directory / "MAT-POS-5d65ec79-1.sdf")
 
         # overwrite old json file
         json_file = list(prepped_directory.glob('*.json'))[0]
         prepped_complex = PreppedComplex.from_json_file(json_file)
-        prepped_complex.ligand = new_lig
+        prepped_complex.ligand = ligand
         prepped_complex.to_json_file(json_file)
 
 if __name__ == "__main__":
