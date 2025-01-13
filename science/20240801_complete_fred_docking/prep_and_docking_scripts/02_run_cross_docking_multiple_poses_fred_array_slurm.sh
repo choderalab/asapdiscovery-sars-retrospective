@@ -26,11 +26,12 @@ asap-docking cross-docking \
   --omega-dense \
   --allow-retries \
   --allow-final-clash \
+  --relax-mode clash \
   --posit-method FRED \
   --structure-selector PairwiseSelector \
-  --fragalysis-dir /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series \
-  --ligands "/data/chodera/asap-datasets/mpro_fragalysis-04-01-24_curated_cache/combined_split_2d/${SLURM_ARRAY_TASK_ID}.sdf" \
-  --cache-dir /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_cache_20250110 \
+  --fragalysis-dir mpro_fragalysis-04-01-24_p_series_curated_20250113 \
+  --ligands "/data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113/split_2d/${SLURM_ARRAY_TASK_ID}.sdf" \
+  --cache-dir /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113 \
   --output-dir "/data1/choderaj/paynea/asap-datasets/20250113_fred_docking/${SLURM_ARRAY_TASK_ID}" \
   --no-overwrite \
   --no-save-to-cache \
