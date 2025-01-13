@@ -19,11 +19,15 @@ def get_args():
 def main():
     args = get_args()
     cache = args.input_cache
+    logger = FileLogger(
+        "prep_cache_for_docking", cache, logfile="combine_sdfs.log"
+    ).getLogger()
     if not cache.exists():
         raise FileNotFoundError(f"Cache file {cache} not found")
 
     # fix ligand in P0097
     prepped_directories = cache.glob("P0097")
+    logger.info(f"Found {len(prepped_directories)} prepped directories in the cache: '{cache}'")
     for prepped_directory in prepped_directories:
         ligand = prepped_directory / "MAT-POS-5d65ec79-1.sdf"
         if not ligand.exists():
