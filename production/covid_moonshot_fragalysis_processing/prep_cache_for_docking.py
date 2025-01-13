@@ -57,7 +57,7 @@ def main():
         json_file = list(prepped_directory.glob('*.json'))[0]
         prepped_complex = PreppedComplex.from_json_file(json_file)
         prepped_complex.ligand = new_lig
-        prepped_complex.to_json(json_file)
+        prepped_complex.to_json_file(json_file)
 
 if __name__ == "__main__":
     main()
