@@ -62,5 +62,8 @@ def main():
         prepped_complex.ligand = ligand
         prepped_complex.to_json_file(json_file)
 
+    # Mpro-P2243_0B
+    # Mpro-P2214_0B
+
 if __name__ == "__main__":
     main()
