@@ -1,6 +1,7 @@
 """This script fixes some bespoke errors with the prepped fragalysis cache"""
 from pathlib import Path
 from asapdiscovery.modeling.protein_prep import PreppedComplex
+from asapdiscovery.data.backend.openeye import sdf_string_to_oemol
 from asapdiscovery.data.schema.ligand import Ligand
 import argparse
 from asapdiscovery.data.util.logging import FileLogger
@@ -49,7 +50,8 @@ def main():
         new_mol = editable.GetMol()
         rdkit.Chem.rdmolops.SanitizeMol(new_mol, sanitizeOps=rdkit.Chem.rdmolops.SANITIZE_ALL)
         sdf_str = rdkit.Chem.rdmolfiles.MolToMolBlock(new_mol)
-        new_lig = Ligand.from_sdf_str(sdf_str, compound_name=ligand.compound_name)
+        oemol = sdf_string_to_oemol(sdf_str)
+        new_lig = Ligand.from_oemol(oemol, compound_name=ligand.compound_name)
         new_lig.to_sdf(prepped_directory / "MAT-POS-5d65ec79-1.sdf")
 
         json_file = list(prepped_directory.glob('*.json'))[0]
