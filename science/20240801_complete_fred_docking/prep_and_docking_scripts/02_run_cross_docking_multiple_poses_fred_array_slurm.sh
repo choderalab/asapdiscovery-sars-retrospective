@@ -4,13 +4,13 @@
 #SBATCH --error=logs/fred_%A_%a.stderr
 #SBATCH --ntasks=8
 #SBATCH --partition=cpu
-#SBATCH --mem=24G
+#SBATCH --mem=256G
 #SBATCH --time=24:00:00
-#SBATCH --array=1-205  # Array jobs range (for jobs 1 through 205)
+#SBATCH --array=1  # Array jobs range (for jobs 1 through n)
 
 # Load your environment (adjust as needed)
 source ~/.bashrc
-conda activate asap2025
+conda activate asap2025e
 
 echo "Start"
 # network device info
@@ -20,7 +20,7 @@ dask info versions
 ulimit -c 0
 
 # Perform docking with the appropriate ligand based on SLURM_ARRAY_TASK_ID
-asap-docking cross-docking \
+asap-cli docking cross-docking \
   --target SARS-CoV-2-Mpro \
   --use-omega \
   --omega-dense \
