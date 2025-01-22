@@ -146,7 +146,7 @@ def main():
     print("Writing output")
     df = make_df_from_docking_results(filtered_results)
     og_df = results_dir / "data_intermediates/docking_scores_raw.csv"
-    if og_df.exists:
+    if og_df.exists():
         og_df = pd.read_csv(og_df)
         og_df = og_df[
             [
