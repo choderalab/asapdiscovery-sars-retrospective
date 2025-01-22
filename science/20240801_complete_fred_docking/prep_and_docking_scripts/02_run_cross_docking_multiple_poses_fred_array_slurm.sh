@@ -2,11 +2,11 @@
 #SBATCH --job-name=fred_multiple_poses
 #SBATCH --output=logs/fred_%A_%a.out
 #SBATCH --error=logs/fred_%A_%a.stderr
-#SBATCH --ntasks=8
+#SBATCH --cpus-per-task 32
 #SBATCH --partition=cpu
-#SBATCH --mem=256G
+#SBATCH --mem=128GB
 #SBATCH --time=24:00:00
-#SBATCH --array=1  # Array jobs range (for jobs 1 through n)
+#SBATCH --array=1-218  # Array jobs range (for jobs 1 through n)
 
 # Load your environment (adjust as needed)
 source ~/.bashrc
@@ -38,7 +38,8 @@ asap-cli docking cross-docking \
   --use-only-cache \
   --num-poses 50 \
   --use-dask \
-  --dask-type local
+  --dask-type local \
+  --dask-n-workers 32
 
 echo "Done"
 date
