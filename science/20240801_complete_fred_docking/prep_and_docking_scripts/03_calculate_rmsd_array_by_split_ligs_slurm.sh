@@ -13,7 +13,7 @@ source ~/.bashrc
 conda activate asap2025e
 
 # don't forget to use the 3d ligands instead of the 2d
-python3.10 03_calculate_rmsd_from_docking_results.py \
+python 03_calculate_rmsd_from_docking_results.py \
 -d "/data1/choderaj/paynea/asap-datasets/20250113_fred_docking/${SLURM_ARRAY_TASK_ID}" \
 -l "/data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113/ligand_files_20250113/split_3d/${SLURM_ARRAY_TASK_ID}.sdf" \
 -o "/data1/choderaj/paynea/asap-datasets/20250113_fred_docking/rmsc_csvs/${SLURM_ARRAY_TASK_ID}.csv"
