@@ -16,7 +16,7 @@ conda activate asap2025e
 python 03_calculate_rmsd_from_docking_results.py \
 -d "/data1/choderaj/paynea/asap-datasets/20250113_fred_docking/${SLURM_ARRAY_TASK_ID}" \
 -l "/data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113/ligand_files_20250113/split_3d/${SLURM_ARRAY_TASK_ID}.sdf" \
--o "/data1/choderaj/paynea/asap-datasets/20250113_fred_docking/rmsc_csvs/${SLURM_ARRAY_TASK_ID}.csv"
+-o "/data1/choderaj/paynea/asap-datasets/20250113_fred_docking/rmsd_csvs/${SLURM_ARRAY_TASK_ID}.csv"
 
 echo Done
 date

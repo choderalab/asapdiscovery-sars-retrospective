@@ -7,6 +7,8 @@ from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.readers.molfile import MolFileFactory
 from asapdiscovery.data.backend.openeye import oechem
 import argparse
+import pandas as pd
+from asapdiscovery.docking.docking_data_validation import DockingResultCols
 
 
 def get_args():
@@ -55,9 +57,6 @@ def calculate_ligand_rmsd_oemol(ref: oechem.OEMol, fit: oechem.OEMol) -> float:
 
 
 def make_df_from_docking_results(results=list[POSITDockingResults]):
-    import pandas as pd
-    from asapdiscovery.docking.docking_data_validation import DockingResultCols
-
     dfs = []
     for result in results:
         docking_dict = {}
@@ -146,6 +145,28 @@ def main():
 
     print("Writing output")
     df = make_df_from_docking_results(filtered_results)
+    og_df = results_dir / "data_intermediates/docking_scores_raw.csv"
+    if og_df.exists:
+        og_df = pd.read_csv(og_df)
+        og_df = og_df[
+            [
+                "docking-structure-POSIT",
+                "docking-confidence-POSIT",
+                "pose_id",
+                "ligand_id",
+                "docking-score-POSIT",
+            ]
+        ]
+        og_df.columns = [
+            "Reference_Structure",
+            DockingResultCols.DOCKING_CONFIDENCE_POSIT.value,
+            "Pose_ID",
+            "Query_Ligand",
+            "Docking_Score",
+        ]
+        df = pd.merge(
+            df, og_df, on=["Reference_Structure", "Pose_ID", "Query_Ligand"], how="left"
+        )
     df.to_csv(args.output_file, index=False)
 
 
