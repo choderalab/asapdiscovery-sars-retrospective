@@ -259,7 +259,19 @@ def main():
     logger.info(f"N Cores: {args.n_cpus}")
     logger.info(f"Running {len(evaluators)} evaluations across {nprocs} cpus")
 
-    results = Results.calculate_results(df, evaluators, cpus=nprocs)
+    from functools import partial
+
+    evaluator_with_df = partial(Results.calculate_result, df=df)
+
+    with mp.Pool(nprocs) as p:
+        results = []
+        for result in p.imap_unordered(
+            evaluator_with_df,
+            evaluators,
+        ):
+            results.append(result)
+            if len(results) % 10 == 0:
+                logger.info(f"Completed {len(results)} evaluations")
 
     logger.info(f"Writing results to disk at {output_dir}")
     results_df = Results.df_from_results(results)
