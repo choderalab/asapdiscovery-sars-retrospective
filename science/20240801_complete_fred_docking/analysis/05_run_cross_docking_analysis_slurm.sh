@@ -15,7 +15,7 @@ date
 # network device info
 ulimit -c 0
 
-python3 04_run_cross_docking_analysis.py \
+python3 05_run_cross_docking_analysis.py \
 --input /data1/choderaj/paynea/asap-datasets/20250113_fred_docking/rmsd_csvs/20250122_combined_results_with_data.csv \
 --output /data1/choderaj/paynea/asap-datasets/20250113_fred_docking/analyzed_data/ \
 --n_cpus 64

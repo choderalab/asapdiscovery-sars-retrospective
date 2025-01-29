@@ -18,7 +18,7 @@ date
 # network device info
 ulimit -c 0
 
-python3 04_run_cross_docking_analysis.py \
+python3 05_run_cross_docking_analysis.py \
 --input /data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20241018_fred_docking/rmsd_csvs/20241205_combined_results_with_data.csv \
 --output /data/chodera/paynea/asapdiscovery-sars-retrospective/science/20240801_complete_fred_docking/analyzed_data \
 --n_cpus 64
