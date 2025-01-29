@@ -4,7 +4,7 @@
 #SBATCH --error=logs/fred_%A_%a.stderr
 #SBATCH --cpus-per-task 32
 #SBATCH --partition=cpu
-#SBATCH --mem=128GB
+#SBATCH --mem=256GB
 #SBATCH --time=24:00:00
 #SBATCH --array=1-218  # Array jobs range (for jobs 1 through n)
 
