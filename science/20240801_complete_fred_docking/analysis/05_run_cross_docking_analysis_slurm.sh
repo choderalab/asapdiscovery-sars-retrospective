@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=cross_docking_analysis
-#SBATCH --output=logs/cross_docking_analysis_%A_%a.out
-#SBATCH --error=logs/cross_docking_analysis_%A_%a.out
+#SBATCH --output=logs/cross_docking_analysis_%A.out
+#SBATCH --error=logs/cross_docking_analysis_%A.out
 #SBATCH --cpus-per-task 32
 #SBATCH --partition=cpu
 #SBATCH --mem=128GB
-#SBATCH --time=2:00:00
+#SBATCH --time=4:00:00
 
 source ~/.bashrc
 conda activate harbor
