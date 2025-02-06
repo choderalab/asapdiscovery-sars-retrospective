@@ -65,6 +65,16 @@ class Results(BaseModel):
         return cls(evaluator=evaluator, fraction_good=result)
 
     @classmethod
+    def calculate_results(
+        cls, df: pd.DataFrame, evaluators: list[cd.Evaluator], cpus: int = 1
+    ) -> list["Results"]:
+        with mp.Pool(cpus) as p:
+            return p.starmap(
+                cls.calculate_result,
+                [(evaluator, df) for evaluator in evaluators],
+            )
+
+    @classmethod
     def df_from_results(cls, results: list["Results"]) -> pd.DataFrame:
         return pd.DataFrame.from_records([result.get_records() for result in results])
 
@@ -115,13 +125,24 @@ def main():
     if args.parameters:
         settings = cd.Settings.from_yml_file(args.parameters)
     else:
-        settings = cd.Settings()
-    settings.to_yml_file(output_dir / "settings.yml")
-    simplified_date_dict = {
-        ref_structure: date
-        for ref_structure, date in zip(
-            df.Reference_Structure, df.Reference_Structure_Date
+        # update settings
+        import numpy as np
+
+        n_per_split = np.arange(1, 21)
+        n_per_split = np.concatenate((n_per_split, np.arange(25, 206, 20)))
+        settings = cd.Settings(
+            date_dict_path=args.date_dict_path, n_per_split=n_per_split
         )
+    settings.to_yml_file(output_dir / "settings.yml")
+
+    logger.info("Loading date dict")
+    import json
+
+    with open(settings.date_dict_path, "r") as f:
+        date_dict = json.load(f)
+    simplified_date_dict = {
+        ref_structure: date_dict[ref_structure[:-3]]
+        for ref_structure in df.Reference_Structure.unique()
     }
 
     logger.info("Setting up evaluators")
@@ -131,14 +152,16 @@ def main():
     pose_selectors = [
         cd.PoseSelector(name="Default", variable="Pose_ID", number_to_return=1)
     ]
-    pose_selectors.extend(
-        [
-            cd.PoseSelector(
-                name="PoseSelection", variable="Pose_ID", number_to_return=n_poses
-            )
-            for n_poses in settings.n_poses
-        ]
-    )
+    # just use single pose
+
+    # pose_selectors.extend(
+    #     [
+    #         cd.PoseSelector(
+    #             name="PoseSelection", variable="Pose_ID", number_to_return=n_poses
+    #         )
+    #         for n_poses in settings.n_poses
+    #     ]
+    # )
 
     # Set up dataset splits
     dataset_splits = []
@@ -159,6 +182,7 @@ def main():
                 n_per_split=n_per_split,
                 balanced=True,
                 date_dict=simplified_date_dict,
+                randomize_by_n_days=1,
             )
             for n_per_split in settings.n_per_split
         ]
@@ -172,28 +196,28 @@ def main():
             higher_is_better=True,
         )
     ]
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="ECFP4_Similarity",
-                variable="Tanimoto",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
-    structure_choices.extend(
-        [
-            cd.StructureChoice(
-                name="MCSS_Similarity",
-                variable="Num_Atoms_in_MCS",
-                higher_is_better=True,
-                number_to_return=n_structures,
-            )
-            for n_structures in settings.n_structures
-        ]
-    )
+    # structure_choices.extend(
+    #     [
+    #         cd.StructureChoice(
+    #             name="ECFP4_Similarity",
+    #             variable="Tanimoto",
+    #             higher_is_better=True,
+    #             number_to_return=n_structures,
+    #         )
+    #         for n_structures in settings.n_structures
+    #     ]
+    # )
+    # structure_choices.extend(
+    #     [
+    #         cd.StructureChoice(
+    #             name="MCSS_Similarity",
+    #             variable="Num_Atoms_in_MCS",
+    #             higher_is_better=True,
+    #             number_to_return=n_structures,
+    #         )
+    #         for n_structures in settings.n_structures
+    #     ]
+    # )
 
     # Add scorers
     scorers = [
@@ -220,11 +244,7 @@ def main():
                             scorer=scorer,
                             evaluator=rmsd_evaluator,
                             groupby=[settings.query_ligand_column],
-                            n_bootstraps=(
-                                settings.n_bootstraps
-                                if isinstance(split, cd.RandomSplit)
-                                else 1
-                            ),
+                            n_bootstraps=settings.n_bootstraps,
                         )
                     )
 
