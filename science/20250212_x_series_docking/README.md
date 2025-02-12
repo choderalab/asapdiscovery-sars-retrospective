@@ -8,5 +8,5 @@ Since a lot of the chemical diversity is lost by only considering the p-series s
 - [ ] filter again to make sure the ligands are in the active site and make sense
 - [ ] run FRED docking
 - [ ] run full POSIT docking
-- [ ] analyze
+- [ ] analyze results
 
