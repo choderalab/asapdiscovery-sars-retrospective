@@ -33,7 +33,7 @@ asap-cli docking cross-docking \
   --posit-method FRED \
   --structure-selector PairwiseSelector \
   --fragalysis-dir /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_x_series_active_site \
-  --ligands "$ligand_files/split_2d/${SLURM_ARRAY_TASK_ID}.sdf" \
+  --ligands "/data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113/ligand_files_20250113/split_2d/${SLURM_ARRAY_TASK_ID}.sdf" \
   --cache-dir $cache \
   --output-dir "/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/${SLURM_ARRAY_TASK_ID}" \
   --no-overwrite \
