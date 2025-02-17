@@ -87,3 +87,7 @@ def main():
         json.dump(date_dict, f)
     with open(args.output_dir / "structure_to_cmpd_dict.json", "w") as f:
         json.dump(structure_to_cmpd_dict, f)
+
+
+if __name__ == "__main__":
+    main()
