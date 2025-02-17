@@ -55,6 +55,8 @@ def process_crystal_data(soaks):
 def main():
     args = get_args()
     fragalysis_dir = args.fragalysis_dir
+    output_dir = args.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
     logger = FileLogger(
         "generate_date_dict", args.output_dir, logfile="generate_date_dict.log"
     ).getLogger()
