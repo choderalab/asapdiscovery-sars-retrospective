@@ -142,8 +142,9 @@ def main():
     ]
     if len(missing) > 0:
         report_dict["err_msg"].append(
-            f"The following Reference_Structure were not in date_dict.json: {missing}"
+            f"The following Reference_Structure were not in date_dict.json:"
         )
+        report_dict["missing_reference_structures"] = missing
 
     df["Reference_Structure_Date"] = df.Reference_Structure.apply(
         lambda x: date_dict.get(x[:-3], None)
