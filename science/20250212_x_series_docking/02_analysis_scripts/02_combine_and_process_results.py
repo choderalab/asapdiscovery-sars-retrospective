@@ -62,8 +62,9 @@ def main():
 
     if args.ligand_cache:
         print("Loading prepped ligand cache")
+        ligand_cache = ProteinPrepper.load_cache(args.ligand_cache)
         cmpd_to_frag_dict.update(
-            {c.ligand.compound_name: c.target.target_name for c in complexes}
+            {c.ligand.compound_name: c.target.target_name for c in ligand_cache}
         )
     else:
         print(f"Using protein as both protein and ligand cache")
