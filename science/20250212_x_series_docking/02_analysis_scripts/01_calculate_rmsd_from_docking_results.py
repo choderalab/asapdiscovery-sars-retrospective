@@ -164,6 +164,8 @@ def main():
             "Query_Ligand",
             "Docking_Score",
         ]
+        print(df.head())
+        print(og_df.head())
         df = pd.merge(
             df, og_df, on=["Reference_Structure", "Pose_ID", "Query_Ligand"], how="left"
         )
