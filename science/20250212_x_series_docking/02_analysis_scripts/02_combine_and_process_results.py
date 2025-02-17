@@ -141,9 +141,11 @@ def main():
         )
 
     df["Reference_Structure_Date"] = df.Reference_Structure.apply(
-        lambda x: date_dict[x[:-3]]
+        lambda x: date_dict.get(x[:-3], None)
     )
-    df["Query_Structure_Date"] = df.Query_Structure.apply(lambda x: date_dict[x[:-3]])
+    df["Query_Structure_Date"] = df.Query_Structure.apply(
+        lambda x: date_dict.get(x[:-3], None)
+    )
 
     # Add chemical similarity info
     print("Adding chemical similarity info")
