@@ -137,7 +137,7 @@ def main():
         date_dict = json.load(f)
     missing = [
         ref_structure
-        for ref_structure in df.Reference_structure.unique()
+        for ref_structure in df.Reference_Structure.unique()
         if ref_structure not in date_dict.keys()
     ]
     if len(missing) > 0:
