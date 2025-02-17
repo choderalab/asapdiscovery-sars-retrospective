@@ -16,21 +16,26 @@ def get_args():
     )
     parser.add_argument(
         "-r",
-        "--results_dir",
+        "--results-dir",
         type=Path,
         required=True,
         help="Path to directory containing docking results",
     )
     parser.add_argument(
-        "-c",
-        "--cache",
+        "--protein-cache",
         type=Path,
         required=True,
-        help="Path to directory containing prepped input cache",
+        help="Path to directory containing prepped protein structures cache",
+    )
+    parser.add_argument(
+        "--ligand-cache",
+        type=Path,
+        required=False,
+        help="Path to directory containing prepped ligand cache. If false, protein cache will be used as ligand cache.",
     )
     parser.add_argument(
         "-d",
-        "--data_path",
+        "--data-path",
         type=Path,
         required=True,
         help="Path to directory containing additional data",
@@ -39,13 +44,29 @@ def get_args():
         "--add-padding", action=argparse.BooleanOptionalAction, default=True
     )
     parser.add_argument(
-        "-o", "--output_file", type=Path, required=True, help="Path to output file"
+        "-o", "--output-file", type=Path, required=True, help="Path to output file"
     )
     return parser.parse_args()
 
 
 def main():
     args = get_args()
+
+    # Load protein if protein cache is provided
+    cache_source = args.protein_cache
+    print(f"Loading prepped protein cache")
+    complexes = ProteinPrepper.load_cache(cache_source)
+    cmpd_to_frag_dict = {
+        c.ligand.compound_name: c.target.target_name for c in complexes
+    }
+
+    if args.ligand_cache:
+        print("Loading prepped ligand cache")
+        cmpd_to_frag_dict.update(
+            {c.ligand.compound_name: c.target.target_name for c in complexes}
+        )
+    else:
+        print(f"Using protein as both protein and ligand cache")
 
     report_dict = {"err_msg": []}
     print("Loading csvs")
@@ -55,12 +76,6 @@ def main():
     ref_lig_set = {lig for lig in df["Reference_Ligand"]}
     report_dict["never_docked"] = list(ref_lig_set - query_lig_set)
     report_dict["never_used_as_ref"] = list(query_lig_set - ref_lig_set)
-
-    print("Loading prepped protein cache")
-    complexes = ProteinPrepper.load_cache(args.cache)
-    cmpd_to_frag_dict = {
-        c.ligand.compound_name: c.target.target_name for c in complexes
-    }
 
     if args.add_padding:
         print("Padding the data with the missing pairs")
