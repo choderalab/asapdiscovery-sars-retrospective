@@ -135,9 +135,14 @@ def main():
     print("Adding date information")
     with open(args.data_path / "date_dict.json", "r") as f:
         date_dict = json.load(f)
-    if not all(df.Reference_Structure.isin(date_dict.keys())):
+    missing = [
+        ref_structure
+        for ref_structure in df.Reference_structure.unique()
+        if ref_structure not in date_dict.keys()
+    ]
+    if len(missing) > 0:
         report_dict["err_msg"].append(
-            "Not all Reference_Structure in date_dict.json. Check date_dict.json"
+            f"The following Reference_Structure were not in date_dict.json: {missing}"
         )
 
     df["Reference_Structure_Date"] = df.Reference_Structure.apply(
