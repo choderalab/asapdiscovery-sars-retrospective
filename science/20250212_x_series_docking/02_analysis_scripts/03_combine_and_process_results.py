@@ -80,7 +80,11 @@ def main():
 
     report_dict = {"err_msg": []}
     print("Loading csvs")
-    dfs = [pd.read_csv(csv) for csv in args.results_dir.glob("*.csv")]
+    dfs = [
+        pd.read_csv(csv)
+        for csv in args.results_dir.glob("*.csv")
+        if not args.output_file.name in csv.name
+    ]
     df = pd.concat(dfs)
     query_lig_set = {lig for lig in df["Query_Ligand"]}
     ref_lig_set = {lig for lig in df["Reference_Ligand"]}
