@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=calculate_rmsd
 #SBATCH --output=logs/calculate_rmsd_%A_%a.out
-#SBATCH --error=logs/calculate_rmsd_%A_%a.out
+#SBATCH --error=logs/calculate_rmsd_%A_%a.err
 #SBATCH --cpus-per-task 6
 #SBATCH --partition=cpu
 #SBATCH --mem=128GB

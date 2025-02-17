@@ -172,3 +172,4 @@ cython_debug/
 
 # Misc Data Folder
 data/
+logs/
