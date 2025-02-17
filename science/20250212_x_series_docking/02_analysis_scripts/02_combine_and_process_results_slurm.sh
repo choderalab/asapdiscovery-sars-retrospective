@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=combine_and_process
-#SBATCH --output=logs/$SLURM_JOB_NAME_%A_%a.out
-#SBATCH --error=logs/$SLURM_JOB_NAME_%A_%a.err
+#SBATCH --output=logs/combine_and_process_%A_%a.out
+#SBATCH --error=logs/combine_and_process_%A_%a.err
 #SBATCH --cpus-per-task 1
 #SBATCH --partition=cpu
 #SBATCH --mem=64GB
