@@ -68,6 +68,9 @@ def main():
     else:
         print(f"Using protein as both protein and ligand cache")
 
+    with open("cmpd_to_frag_dict.json", "w") as f:
+        json.dump(cmpd_to_frag_dict, f, indent=4)
+
     report_dict = {"err_msg": []}
     print("Loading csvs")
     dfs = [pd.read_csv(csv) for csv in args.results_dir.glob("*.csv")]
