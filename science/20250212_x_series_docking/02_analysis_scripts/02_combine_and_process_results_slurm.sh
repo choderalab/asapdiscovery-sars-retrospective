@@ -1,3 +1,12 @@
+#!/bin/bash
+#SBATCH --job-name=combine_and_process
+#SBATCH --output=logs/%J_%A_%a.out
+#SBATCH --error=logs/%J_%A_%a.err
+#SBATCH --cpus-per-task 1
+#SBATCH --partition=cpu
+#SBATCH --mem=64GB
+#SBATCH --time=00:30:00
+
 #python3 03_combine_and_process_results.py \
 #-r /Users/alexpayne/Scientific_Projects/mers-drug-discovery/sars2-retrospective-analysis/20241018_fred_docking/rmsd_csvs/ \
 #-c /Users/alexpayne/Scientific_Projects/mers-drug-discovery/sars2-retrospective-analysis/mpro_fragalysis-04-01-24_curated_cache_p_series \
