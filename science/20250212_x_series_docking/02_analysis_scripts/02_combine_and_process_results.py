@@ -35,7 +35,9 @@ def get_args():
         required=True,
         help="Path to directory containing additional data",
     )
-    parser.add_argument("--add-padding/--no-add-padding", action="store_true")
+    parser.add_argument(
+        "--add-padding", action=argparse.BooleanOptionalAction, default=True
+    )
     parser.add_argument(
         "-o", "--output_file", type=Path, required=True, help="Path to output file"
     )
