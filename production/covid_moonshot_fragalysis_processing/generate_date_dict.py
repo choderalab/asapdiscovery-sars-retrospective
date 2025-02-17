@@ -64,7 +64,7 @@ def main():
         raise FileNotFoundError(f"Fragalysis directory {fragalysis_dir} not found")
 
     # load soaks first
-    soaks_path = fragalysis_dir / "extra_files" / "mpro_soaks.csv"
+    soaks_path = fragalysis_dir / "extra_files" / "Mpro_soaks.csv"
     soaks = pd.read_csv(soaks_path)
     date_dict, structure_to_cmpd_dict = process_crystal_data(soaks)
 
