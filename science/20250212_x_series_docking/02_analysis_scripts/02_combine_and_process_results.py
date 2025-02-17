@@ -89,18 +89,18 @@ def main():
 
         padded = pd.concat([df, null_df])
         df = padded.copy()
-    df = df.reindex()
+        df = df.reindex()
 
-    refs = df.Reference_Ligand
-    queries = df.Query_Ligand
-    pairs = {(ref, query) for ref, query in zip(refs, queries)}
+        refs = df.Reference_Ligand
+        queries = df.Query_Ligand
+        pairs = {(ref, query) for ref, query in zip(refs, queries)}
 
-    padding_success = len(pairs) == len(possible_pairs)
-    report_dict["padding_success"] = padding_success
-    if not padding_success:
-        report_dict["err_msg"].append(
-            f"Expected {len(possible_pairs)} pairs after padding, got {len(pairs)} pairs"
-        )
+        padding_success = len(pairs) == len(possible_pairs)
+        report_dict["padding_success"] = padding_success
+        if not padding_success:
+            report_dict["err_msg"].append(
+                f"Expected {len(possible_pairs)} pairs after padding, got {len(pairs)} pairs"
+            )
 
     if not all(
         df["Reference_Structure"]
