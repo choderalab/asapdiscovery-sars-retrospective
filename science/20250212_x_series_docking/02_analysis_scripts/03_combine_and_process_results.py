@@ -41,6 +41,12 @@ def get_args():
         help="Path to directory containing additional data",
     )
     parser.add_argument(
+        "--date-dict",
+        type=Path,
+        required=True,
+        help="Path to date_dict.json file",
+    )
+    parser.add_argument(
         "--add-padding", action=argparse.BooleanOptionalAction, default=True
     )
     parser.add_argument(
@@ -133,7 +139,7 @@ def main():
 
     # Add Date Information
     print("Adding date information")
-    with open(args.data_path / "date_dict.json", "r") as f:
+    with open(args.date_dict, "r") as f:
         date_dict = json.load(f)
     missing = [
         ref_structure
