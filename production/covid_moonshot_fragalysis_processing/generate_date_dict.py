@@ -14,13 +14,13 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i",
-        "--fragalysis_dir",
+        "--fragalysis-dir",
         type=Path,
         help="Path to fragalysis_download.",
     )
     parser.add_argument(
         "-o",
-        "--output_dir",
+        "--output-dir",
         type=Path,
         help="Path to output directory.",
     )
