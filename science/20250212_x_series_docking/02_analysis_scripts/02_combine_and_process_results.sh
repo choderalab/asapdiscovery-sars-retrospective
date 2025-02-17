@@ -10,8 +10,8 @@
 #-o /data/chodera/asap-datasets/retro_docking/sars_fragalysis_retrospective/20241018_fred_docking/rmsd_csvs/20241205_combined_results_with_data.csv
 source ~/.bashrc
 conda activate asap2025e
-python3 04_combine_and_process_results.py \
--r /data1/choderaj/paynea/asap-datasets/20250113_fred_docking/rmsd_csvs \
--c /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113 \
+python3 02_combine_and_process_results.py \
+-r /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs \
+-c /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_x_series_active_site_cache_20250212 \
 -d /data1/choderaj/paynea/asapdiscovery-sars-retrospective/science/20240403_multi_pose_docking_v2/20240430_analyze_cross_docking_results/20240503_inputs_analysis \
--o /data1/choderaj/paynea/asap-datasets/20250113_fred_docking/rmsd_csvs/20250122_combined_results_with_data.csv
+-o /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs/20250217_combined_results_with_data.csv
