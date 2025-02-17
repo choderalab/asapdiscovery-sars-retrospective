@@ -164,8 +164,8 @@ def main():
             "Query_Ligand",
             "Docking_Score",
         ]
-        print(df.head())
-        print(og_df.head())
+        # make sure Pose_ID is an int
+        og_df["Pose_ID"] = og_df["Pose_ID"].astype(int)
         df = pd.merge(
             df, og_df, on=["Reference_Structure", "Pose_ID", "Query_Ligand"], how="left"
         )
