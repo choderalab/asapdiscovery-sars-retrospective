@@ -35,6 +35,7 @@ def get_args():
         required=True,
         help="Path to directory containing additional data",
     )
+    parser.add_argument("--add-padding/--no-add-padding", action="store_true")
     parser.add_argument(
         "-o", "--output_file", type=Path, required=True, help="Path to output file"
     )
@@ -59,32 +60,33 @@ def main():
         c.ligand.compound_name: c.target.target_name for c in complexes
     }
 
-    print("Padding the data with the missing pairs")
-    all_ligs = query_lig_set | ref_lig_set
-    refs = df.Reference_Ligand
-    queries = df.Query_Ligand
-    pairs = {(ref, query) for ref, query in zip(refs, queries)}
-    from itertools import permutations
+    if args.add_padding:
+        print("Padding the data with the missing pairs")
+        all_ligs = query_lig_set | ref_lig_set
+        refs = df.Reference_Ligand
+        queries = df.Query_Ligand
+        pairs = {(ref, query) for ref, query in zip(refs, queries)}
+        from itertools import permutations
 
-    possible_pairs = set(list(permutations(all_ligs, 2)))
+        possible_pairs = set(list(permutations(all_ligs, 2)))
 
-    missing_pairs = possible_pairs - pairs
-    report_dict["missing_pairs"] = list(missing_pairs)
-    null_df = pd.DataFrame(
-        {
-            "Reference_Ligand": [i for i, j in missing_pairs],
-            "Query_Ligand": [j for i, j in missing_pairs],
-            "RMSD": np.nan,
-            "Pose_ID": 0,
-            "POSIT_Method": "Failed",
-        }
-    )
-    null_df["Reference_Structure"] = null_df.Reference_Ligand.apply(
-        lambda x: cmpd_to_frag_dict[x]
-    )
+        missing_pairs = possible_pairs - pairs
+        report_dict["missing_pairs"] = list(missing_pairs)
+        null_df = pd.DataFrame(
+            {
+                "Reference_Ligand": [i for i, j in missing_pairs],
+                "Query_Ligand": [j for i, j in missing_pairs],
+                "RMSD": np.nan,
+                "Pose_ID": 0,
+                "POSIT_Method": "Failed",
+            }
+        )
+        null_df["Reference_Structure"] = null_df.Reference_Ligand.apply(
+            lambda x: cmpd_to_frag_dict[x]
+        )
 
-    padded = pd.concat([df, null_df])
-    df = padded.copy()
+        padded = pd.concat([df, null_df])
+        df = padded.copy()
     df = df.reindex()
 
     refs = df.Reference_Ligand
