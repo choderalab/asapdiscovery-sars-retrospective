@@ -307,6 +307,7 @@ class ProcessingState:
 
 def process_batch(batch, settings: Settings, logger):
     """Process a batch of molecule pairs"""
+    logger.info(f"Processing batch of {len(batch)} pairs")
     calculate_similarities_partial = partial(calculate_similarities, settings=settings)
     batch_results = []
 
@@ -376,7 +377,11 @@ def main():
         )
 
     # Use partial
-    process_batch_partial = partial(process_batch, settings=settings, logger=logger)
+    process_batch_partial = partial(
+        process_batch,
+        settings=settings,
+        logger=logger,
+    )
     logger.info("Starting processing...")
 
     # Process in batches
@@ -385,7 +390,9 @@ def main():
 
         with ProcessPool(max_workers=n_processes) as pool:
             future = pool.schedule(
-                process_batch_partial, batch, timeout=args.timeout * len(batch)
+                process_batch_partial,
+                args=[batch],
+                timeout=args.timeout * len(batch),
             )
 
             try:
