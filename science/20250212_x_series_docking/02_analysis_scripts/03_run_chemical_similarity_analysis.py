@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     ECFP_Radius: int = 2
     ECFP_BitSize: int = 2048
     OETanimotoCombo: bool = False
-    MCS_Tanimoto: bool = True
+    MCS_Tanimoto: bool = False
     batch_size: int = 32
     cache_frequency: int = 32  # Save cache every N pairs
     report_frequency: int = 32  # Report progress every N pairs
