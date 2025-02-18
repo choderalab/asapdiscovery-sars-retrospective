@@ -329,11 +329,16 @@ def main():
 
     # Initialize or load state
     if args.resume and (output_dir / "processing_cache.pkl").exists():
-        state = ProcessingState.load_cache(output_dir, total_pairs, settings)
+        state = ProcessingState.load_cache(
+            output_dir, total_pairs, settings, logger=logger
+        )
         # Skip already processed pairs
         all_pairs = all_pairs[state.processed_pairs :]
     else:
-        state = ProcessingState(output_dir, total_pairs, settings)
+        state = ProcessingState(output_dir, total_pairs, settings, logger=logger)
+
+    # Use partial
+    process_batch_partial = partial(process_batch, settings=settings, logger=logger)
 
     # Process in batches
     for i in range(0, len(all_pairs), settings.batch_size):
@@ -341,7 +346,7 @@ def main():
 
         with ProcessPool(max_workers=n_processes) as pool:
             future = pool.schedule(
-                process_batch, args=(batch, settings), timeout=args.timeout * len(batch)
+                process_batch_partial, batch, timeout=args.timeout * len(batch)
             )
 
             try:
