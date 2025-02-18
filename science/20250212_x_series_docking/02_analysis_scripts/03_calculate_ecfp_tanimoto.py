@@ -110,8 +110,8 @@ def main():
     bit_sizes = [1024, 2048]
     dfs = []
     for radius, bit_sizes in itertools.product(radii, bit_sizes):
-        logger.info(f"Calculating {settings.Fingerprint} similarities...")
         settings = Settings(ECFP_Radius=radius, ECFP_BitSize=bit_sizes)
+        logger.info(f"Calculating {settings.Fingerprint} similarities...")
 
         similarities = [
             (ref, query, calculate_tanimoto(ref_fps[ref], query_fps[query]))
