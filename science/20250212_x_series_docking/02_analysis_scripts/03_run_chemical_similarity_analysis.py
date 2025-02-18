@@ -2,10 +2,6 @@
 Script to generate chemical similarity analysis between reference and query ligands in a docking experiment.
 """
 
-"""
-Script to generate chemical similarity analysis between reference and query ligands in a docking experiment.
-With enhanced progress tracking, batch processing, and caching.
-"""
 from rdkit import Chem
 from rdkit.Chem.rdFMCS import FindMCS
 from asapdiscovery.data.backend.openeye import oechem, oeshape
@@ -140,27 +136,6 @@ def calculate_tanimoto_combo(refmol: oechem.OEMol, querymol: oechem.OEMol):
     prep.Prep(querymol)
     shapeFunc.Overlap(querymol, res)
     return res.GetTanimotoCombo()
-
-
-class Settings(BaseSettings):
-    ECFP_Tanimoto: bool = True
-    ECFP_Radius: int = 2
-    ECFP_BitSize: int = 2048
-    OETanimotoCombo: bool = False
-    MCS_Tanimoto: bool = True
-
-    @property
-    def Fingerprint(self):
-        return f"ECFP{self.ECFP_Radius*2}_{self.ECFP_BitSize}"
-
-    def save(self, path):
-        with open(path, "w") as f:
-            f.write(self.json(indent=4))
-
-    @classmethod
-    def load(cls, path):
-        with open(path, "r") as f:
-            return cls(**json.load(f))
 
 
 def get_relevant_mols(mol_pair: (Ligand, Ligand)):
