@@ -81,9 +81,9 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
-        "run_chemical_similarity_analysis",
+        "calculate_ecfp_tanimoto",
         output_dir,
-        logfile="run_chemical_similarity_analysis.log",
+        logfile="calculate_ecfp_tanimoto.log",
     ).getLogger()
 
     logger.info("Loading molecules...")
