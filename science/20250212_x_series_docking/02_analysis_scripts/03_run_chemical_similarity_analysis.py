@@ -24,6 +24,38 @@ import pickle
 from asapdiscovery.data.util.logging import FileLogger
 
 
+class LigandPair(BaseSettings):
+    """Class to represent a pair of ligands."""
+
+    ref_ligand: Ligand
+    query_ligand: Ligand
+
+    @property
+    def unique_name(self):
+        return f"{self.ref_ligand.compound_name}_{self.query_ligand.compound_name}"
+
+    def __eq__(self, other):
+        if not isinstance(other, LigandPair):
+            return False
+        return (
+            self.ref_ligand == other.ref_ligand
+            and self.query_ligand == other.query_ligand
+        )
+
+    def __hash__(self):
+        return hash((self.ref_ligand, self.query_ligand))
+
+    def __repr__(self):
+        return f"LigandPair(ref_ligand={self.ref_ligand.compound_name}, query_ligand={self.query_ligand.compound_name})"
+
+    def to_tuple(self):
+        return (self.ref_ligand, self.query_ligand)
+
+    @classmethod
+    def from_tuple(cls, pair: tuple[Ligand, Ligand]):
+        return cls(ref_ligand=pair[0], query_ligand=pair[1])
+
+
 class Settings(BaseSettings):
     ECFP_Tanimoto: bool = True
     ECFP_Radius: int = 2
@@ -128,9 +160,9 @@ def calculate_tanimoto_combo(refmol: oechem.OEMol, querymol: oechem.OEMol):
     return res.GetTanimotoCombo()
 
 
-def get_relevant_mols(mol_pair: (Ligand, Ligand)):
+def get_relevant_mols(mol_pair: LigandPair):
     """Get the relevant molecules from a pair of Ligand objects."""
-    mol1, mol2 = mol_pair
+    mol1, mol2 = mol_pair.to_tuple()
     mol1_oe = mol1.to_oemol()
     mol2_oe = mol2.to_oemol()
     mol1_rdkit = mol1.to_rdkit()
@@ -206,7 +238,7 @@ class ProcessingState:
         self._update_progress()
         self._maybe_cache()
 
-    def add_failed(self, pair):
+    def add_failed(self, pair: LigandPair):
         """Add a failed pair"""
         self.failed_pairs.append(pair)
         self.processed_pairs += 1
@@ -319,7 +351,10 @@ def main():
     )
 
     # Create all pairs
-    all_pairs = list(itertools.product(references, queries))
+    all_pairs = [
+        LigandPair(ref_ligand=ref, query_ligand=query)
+        for ref, query in itertools.product(references, queries)
+    ]
     total_pairs = len(all_pairs)
     logger.info(f"Total pairs to process: {total_pairs}")
 
