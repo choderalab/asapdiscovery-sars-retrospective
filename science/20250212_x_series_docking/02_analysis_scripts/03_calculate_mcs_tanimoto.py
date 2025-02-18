@@ -4,12 +4,13 @@ Script to calculate the Maximum Common Substructure between reference and query 
 
 from openeye import oechem
 from asapdiscovery.data.readers.molfile import MolFileFactory
+from asapdiscovery.data.schema.ligand import Ligand
 import pandas as pd
 import argparse
 from pathlib import Path
 from asapdiscovery.data.util.logging import FileLogger
 import numpy as np
-from tqdm import tqdm
+import multiprocessing as mp
 
 
 def parse_args():
@@ -68,6 +69,29 @@ def one_to_many_mcs(refmol: oechem.OEMol, querymols: list[oechem.OEMol]):
     return mcs_num_atoms, total_num_atoms
 
 
+def parallelize(ref: Ligand, queries: list[Ligand]):
+    """
+    Calculate the MCS between a reference ligand and a list of query ligands.
+    :param ref: Reference ligand
+    :param queries: List of query ligands
+    :return: Dataframe with MCS results
+    """
+    refmol = ref.to_oemol()
+    query_mols = [query.to_oemol() for query in queries]
+    mcs_num_atoms, total_num_atoms = one_to_many_mcs(refmol, query_mols)
+    tanimoto = mcs_num_atoms / total_num_atoms
+    df = pd.DataFrame(
+        {
+            "Reference_Ligand": ref.compound_name,
+            "Query_Ligand": [query.compound_name for query in queries],
+            "MCS_Num_Atoms": mcs_num_atoms,
+            "Total_Num_Atoms": total_num_atoms,
+            "Tanimoto": tanimoto,
+        }
+    )
+    return df
+
+
 def main():
     args = parse_args()
     output_dir = args.output_dir
@@ -86,30 +110,15 @@ def main():
         if args.query_ligand_sdf
         else references.copy()
     )
-    query_mols = [query.to_oemol() for query in queries]
-    query_names = [query.compound_name for query in queries]
 
     logger.info("Calculating similarities...")
-    dfs = []
-    for ref in tqdm(references):
-        logger.info(f"Calculating similarities for {ref.compound_name}")
-        refmol = ref.to_oemol()
-        mcs_num_atoms, total_num_atoms = one_to_many_mcs(refmol, query_mols)
-        tanimoto = mcs_num_atoms / total_num_atoms
-        df = pd.DataFrame(
-            {
-                "Reference_Ligand": ref.compound_name,
-                "Query_Ligand": query_names,
-                "MCS_Num_Atoms": mcs_num_atoms,
-                "Total_Num_Atoms": total_num_atoms,
-                "Tanimoto": tanimoto,
-            }
-        )
-        dfs.append(df)
-
+    # Parallelize the MCS calculation
+    with mp.Pool(mp.cpu_count()) as pool:
+        results = pool.starmap(parallelize, [(ref, queries) for ref in references])
+        results = [result for result in results if result is not None]
     # Save results
     logger.info("Saving results...")
-    df = pd.concat(dfs, ignore_index=True)
+    df = pd.concat(results, ignore_index=True)
     output_path = output_dir / "mcs_tanimoto.csv"
     df.to_csv(output_path, index=False)
     logger.info(f"Results saved to {output_path}")
