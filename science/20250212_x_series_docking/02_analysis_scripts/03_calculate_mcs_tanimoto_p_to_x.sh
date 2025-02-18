@@ -3,6 +3,7 @@
 #SBATCH --output=logs/calculate_mcs_tanimoto.out
 #SBATCH --error=logs/calculate_mcs_tanimoto.err
 #SBATCH --partition=cpu
+#SBATCH --cpus-per-task=32
 #SBATCH --mem=64GB
 #SBATCH --time=02:00:00
 #SBATCH --array=1-218  # Array jobs range (for jobs 1 through n)
