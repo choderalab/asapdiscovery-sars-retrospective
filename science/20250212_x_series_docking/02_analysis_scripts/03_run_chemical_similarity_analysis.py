@@ -15,7 +15,7 @@ from pebble import ProcessPool
 from concurrent.futures import TimeoutError
 import multiprocessing as mp
 from pathlib import Path
-from pydantic import BaseSettings
+from pydantic import BaseSettings, BaseModel
 import json
 from functools import partial
 import time
@@ -24,7 +24,7 @@ import pickle
 from asapdiscovery.data.util.logging import FileLogger
 
 
-class LigandPair(BaseSettings):
+class LigandPair(BaseModel):
     """Class to represent a pair of ligands."""
 
     ref_ligand: Ligand
