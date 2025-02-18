@@ -71,6 +71,7 @@ def parse_args():
     parser.add_argument(
         "--settings", type=Path, required=False, help="Path to settings json file"
     )
+    parser.add_argument("--test-n", type=int, default=-1, help="Test n pairs")
     parser.add_argument(
         "--n-processes",
         type=int,
@@ -320,6 +321,11 @@ def main():
     all_pairs = list(itertools.product(references, queries))
     total_pairs = len(all_pairs)
     logger.info(f"Total pairs to process: {total_pairs}")
+
+    if args.test_n > 0:
+        all_pairs = all_pairs[: args.test_n]
+        total_pairs = len(all_pairs)
+        logger.info(f"Testing on {total_pairs} pairs")
 
     # Initialize or load state
     if args.resume and (output_dir / "processing_cache.pkl").exists():
