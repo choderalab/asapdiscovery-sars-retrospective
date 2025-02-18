@@ -9,6 +9,7 @@ import argparse
 from pathlib import Path
 from asapdiscovery.data.util.logging import FileLogger
 import numpy as np
+from tqdm import tqdm
 
 
 def parse_args():
@@ -90,7 +91,8 @@ def main():
 
     logger.info("Calculating similarities...")
     dfs = []
-    for ref in references:
+    for ref in tqdm(references):
+        logger.info(f"Calculating similarities for {ref.compound_name}")
         refmol = ref.to_oemol()
         mcs_num_atoms, total_num_atoms = one_to_many_mcs(refmol, query_mols)
         tanimoto = mcs_num_atoms / total_num_atoms
