@@ -18,8 +18,6 @@ from pathlib import Path
 from pydantic import BaseSettings
 import json
 from functools import partial
-import logging
-import sys
 import time
 from datetime import datetime
 import pickle
@@ -218,7 +216,7 @@ class ProcessingState:
     def _update_progress(self):
         """Update progress display"""
         if (
-            self.processed_pairs % self.settings.report_freq == 0
+            self.processed_pairs % self.settings.report_frequency == 0
         ):  # Update every 10 pairs
             elapsed = time.time() - self.start_time
             pairs_per_second = self.processed_pairs / elapsed
