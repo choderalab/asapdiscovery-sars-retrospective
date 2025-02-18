@@ -112,6 +112,9 @@ def main():
         else references.copy()
     )
 
+    logger.info(f"Loaded {len(references)} reference molecules.")
+    logger.info(f"Loaded {len(queries)} query molecules.")
+
     logger.info("Calculating similarities...")
     # Parallelize the MCS calculation
     with mp.Pool(mp.cpu_count()) as pool:

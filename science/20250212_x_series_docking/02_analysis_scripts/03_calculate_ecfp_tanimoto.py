@@ -92,6 +92,8 @@ def main():
         if args.query_ligand_sdf
         else references.copy()
     )
+    logger.info(f"Loaded {len(references)} reference molecules.")
+    logger.info(f"Loaded {len(queries)} query molecules.")
 
     # Create all pairs and calculate similarities
     logger.info("Calculating fingerprints...")
