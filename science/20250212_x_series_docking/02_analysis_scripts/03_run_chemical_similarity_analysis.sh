@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=calculate_chemical_similarity
-#SBATCH --output=logs/calculate_chemical_similarity_%A_%a.out
-#SBATCH --error=logs/calculate_chemical_similarity_%A_%a.err
+#SBATCH --output=logs/calculate_chemical_similarity.out
+#SBATCH --error=logs/calculate_chemical_similarity.err
 #SBATCH --cpus-per-task 32
 #SBATCH --partition=cpu
 #SBATCH --mem=64GB
