@@ -2,7 +2,6 @@
 Script to generate ECFP fingerprint similarity analysis between reference and query ligands.
 """
 
-from asapdiscovery.data.backend.openeye import oechem
 from openeye import oegraphsim
 from asapdiscovery.data.readers.molfile import MolFileFactory
 import pandas as pd
@@ -109,9 +108,10 @@ def main():
     radii = [2, 3, 4, 5]
     bit_sizes = [1024, 2048]
     dfs = []
-    for radius, bit_sizes in itertools.product(radii, bit_sizes):
-        settings = Settings(ECFP_Radius=radius, ECFP_BitSize=bit_sizes)
-        logger.info(f"Calculating {settings.Fingerprint} similarities...")
+    for radius, bit_size in itertools.product(radii, bit_sizes):
+        logger.info(
+            f"Calculating similarities for radius {radius} and bit size {bit_size}"
+        )
 
         similarities = [
             (ref, query, calculate_tanimoto(ref_fps[ref], query_fps[query]))
@@ -120,7 +120,8 @@ def main():
         df = pd.DataFrame(
             similarities, columns=["Molecule1", "Molecule2", "ECFP_Tanimoto"]
         )
-        df["Fingerprint"] = settings.Fingerprint
+        df["Fingerprint"] = f"ECFP{radius * 2}"
+        df["BitSize"] = bit_size
         dfs.append(df)
 
     # Save results
