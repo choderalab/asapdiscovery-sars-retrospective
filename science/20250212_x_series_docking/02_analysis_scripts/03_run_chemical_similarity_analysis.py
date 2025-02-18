@@ -382,7 +382,7 @@ def main():
         settings=settings,
         logger=logger,
     )
-    logger.info("Starting processing...")
+    logger.info(f"Starting processing using {n_processes}...")
 
     # Process in batches
     for i in range(0, len(all_pairs), settings.batch_size):
