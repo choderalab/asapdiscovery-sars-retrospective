@@ -1,8 +1,8 @@
 """
-Script to calculate the Maximum Common Substructure between reference and query ligands.
+Script to calculate the TanimotoCombo between reference and query ligands.
 """
 
-from openeye import oechem
+from openeye import oeshape, oechem
 from asapdiscovery.data.readers.molfile import MolFileFactory
 from asapdiscovery.data.schema.ligand import Ligand
 import pandas as pd
@@ -11,11 +11,12 @@ from pathlib import Path
 from asapdiscovery.data.util.logging import FileLogger
 import numpy as np
 import multiprocessing as mp
+from enum import Enum
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Calculate maximum common substructure tanimoto between ligands"
+        description="Calculate TanimotoCombo between ligands"
     )
     parser.add_argument(
         "--ref-ligand-sdf",
@@ -35,38 +36,72 @@ def parse_args():
     return parser.parse_args()
 
 
-def one_to_many_mcs(refmol: oechem.OEMol, querymols: list[oechem.OEMol]):
+class TanimotoType(str, Enum):
     """
-    Get the number of atoms in the maximum common substructure between each pair of molecules.
-    :param mols:
-    :return:
+    Enum for the different types of Tanimoto coefficients that can be calculated.
     """
 
-    # these are the defaaults for atom and bond expressions but just to be explicit I'm putting them here
-    atomexpr = (
-        oechem.OEExprOpts_Aromaticity
-        | oechem.OEExprOpts_AtomicNumber
-        | oechem.OEExprOpts_FormalCharge
-    )
-    bondexpr = oechem.OEExprOpts_Aromaticity | oechem.OEExprOpts_BondOrder
+    SHAPE = "TanimotoShape"
+    COLOR = "TanimotoColor"
+    COMBO = "TanimotoCombo"
 
-    # Set up the search pattern and MCS objects
-    mcs_num_atoms = np.zeros((len(querymols)), dtype=int)
-    total_num_atoms = np.array([refmol.NumAtoms()] * len(querymols), dtype=int)
-    pattern_query = oechem.OEQMol(refmol)
-    pattern_query.BuildExpressions(atomexpr, bondexpr)
-    mcss = oechem.OEMCSSearch(pattern_query)
-    mcss.SetMCSFunc(oechem.OEMCSMaxAtomsCompleteCycles())
 
-    for j, querymol in enumerate(querymols):
-        # MCS search
-        try:
-            mcs = next(iter(mcss.Match(querymol, True)))
-            mcs_num_atoms[j] = mcs.NumAtoms()
-        except StopIteration:  # no match found
-            mcs_num_atoms[j] = 0
-        total_num_atoms[j] += querymol.NumAtoms()
-    return mcs_num_atoms, total_num_atoms
+def compute_result(results, tanimoto_type):
+    if tanimoto_type == TanimotoType.SHAPE:
+        return results.GetShapeTanimoto()
+    elif tanimoto_type == TanimotoType.COLOR:
+        return results.GetColorTanimoto()
+    elif tanimoto_type == TanimotoType.COMBO:
+        return results.GetTanimotoCombo()
+
+
+def calculate_one_to_many_tanimoto_oe(
+    refmol: oechem.OEMol,
+    fitmols: [oechem.OEMol],
+    compute_type: TanimotoType = TanimotoType.COMBO,
+    align: bool = False,
+):
+    """
+    Calculate the Tanimoto coefficient between two molecules using OpenEye's shape toolkit.
+
+    Parameters
+    ----------
+    refmol : Ligand
+        The reference molecule to which the docked molecule is compared.
+    fitmol : Ligand
+        The docked molecule to be compared to the reference molecule.
+
+    Returns
+    -------
+    float
+        The Tanimoto coefficient between the two molecules.
+    """
+    tanimoto = []
+
+    if align:
+        # OEROCS aligns the molecules before calculating the Tanimoto coefficient
+        res = oeshape.OEROCSResult()
+        for fitmol in fitmols:
+            oeshape.OEROCSOverlay(res, refmol, fitmol)
+            tanimoto.append(compute_result(res, compute_type))
+        return tanimoto
+
+    if not align:
+        # Prepare reference molecule for calculation
+        # With default options this will remove any explicit hydrogens present
+        prep = oeshape.OEOverlapPrep()
+        prep.Prep(refmol)
+
+        # Get appropriate function to calculate exact shape
+        shapeFunc = oeshape.OEOverlapFunc()
+        shapeFunc.SetupRef(refmol)
+
+        res = oeshape.OEOverlapResults()
+        for fitmol in fitmols:
+            prep.Prep(fitmol)
+            shapeFunc.Overlap(fitmol, res)
+            tanimoto.append(compute_result(res, compute_type))
+        return tanimoto
 
 
 def parallelize(ref: Ligand, queries: list[Ligand], logger):
@@ -79,15 +114,12 @@ def parallelize(ref: Ligand, queries: list[Ligand], logger):
     logger.info(f"Calculating MCS for {ref.compound_name}...")
     refmol = ref.to_oemol()
     query_mols = [query.to_oemol() for query in queries]
-    mcs_num_atoms, total_num_atoms = one_to_many_mcs(refmol, query_mols)
-    tanimoto = mcs_num_atoms / total_num_atoms
+    tanimoto = calculate_one_to_many_tanimoto_oe(refmol, query_mols)
     df = pd.DataFrame(
         {
             "Reference_Ligand": ref.compound_name,
             "Query_Ligand": [query.compound_name for query in queries],
-            "MCS_Num_Atoms": mcs_num_atoms,
-            "Total_Num_Atoms": total_num_atoms,
-            "Tanimoto": tanimoto,
+            "TanimotoCombo": tanimoto,
         }
     )
     return df
@@ -99,9 +131,9 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
-        "calculate_mcs_tanimoto",
+        "calculate_tanimoto_combo",
         output_dir,
-        logfile="calculate_mcs_tanimoto.log",
+        logfile="calculate_tanimoto_combo.log",
     ).getLogger()
 
     logger.info("Loading molecules...")
@@ -122,7 +154,7 @@ def main():
     # Save results
     logger.info("Saving results...")
     df = pd.concat(results, ignore_index=True)
-    output_path = output_dir / "mcs_tanimoto.csv"
+    output_path = output_dir / "tanimoto_combo.csv"
     df.to_csv(output_path, index=False)
     logger.info(f"Results saved to {output_path}")
 
