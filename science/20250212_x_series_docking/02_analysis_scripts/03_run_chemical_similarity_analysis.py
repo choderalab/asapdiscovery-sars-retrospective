@@ -377,6 +377,7 @@ def main():
 
     # Use partial
     process_batch_partial = partial(process_batch, settings=settings, logger=logger)
+    logger.info("Starting processing...")
 
     # Process in batches
     for i in range(0, len(all_pairs), settings.batch_size):
@@ -388,6 +389,7 @@ def main():
             )
 
             try:
+                logger.info(f"Processing batch {i // settings.batch_size}")
                 batch_results = future.result()
                 for result in batch_results:
                     state.add_result(result)
