@@ -69,13 +69,14 @@ def one_to_many_mcs(refmol: oechem.OEMol, querymols: list[oechem.OEMol]):
     return mcs_num_atoms, total_num_atoms
 
 
-def parallelize(ref: Ligand, queries: list[Ligand]):
+def parallelize(ref: Ligand, queries: list[Ligand], logger):
     """
     Calculate the MCS between a reference ligand and a list of query ligands.
     :param ref: Reference ligand
     :param queries: List of query ligands
     :return: Dataframe with MCS results
     """
+    logger.info(f"Calculating MCS for {ref.compound_name}...")
     refmol = ref.to_oemol()
     query_mols = [query.to_oemol() for query in queries]
     mcs_num_atoms, total_num_atoms = one_to_many_mcs(refmol, query_mols)
@@ -114,7 +115,9 @@ def main():
     logger.info("Calculating similarities...")
     # Parallelize the MCS calculation
     with mp.Pool(mp.cpu_count()) as pool:
-        results = pool.starmap(parallelize, [(ref, queries) for ref in references])
+        results = pool.starmap(
+            parallelize, [(ref, queries, logger) for ref in references]
+        )
         results = [result for result in results if result is not None]
     # Save results
     logger.info("Saving results...")
