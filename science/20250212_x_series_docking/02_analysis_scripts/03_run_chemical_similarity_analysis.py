@@ -290,12 +290,12 @@ class ProcessingState:
         """Load state from cache"""
         cache_path = output_dir / "processing_cache.pkl"
         if not cache_path.exists():
-            return cls(output_dir, total_pairs, settings)
+            return cls(output_dir, total_pairs, settings, logger)
 
         with open(cache_path, "rb") as f:
             cache_data = pickle.load(f)
 
-        state = cls(output_dir, total_pairs, settings)
+        state = cls(output_dir, total_pairs, settings, logger)
         state.results = cache_data["results"]
         state.failed_pairs = cache_data["failed_pairs"]
         state.processed_pairs = cache_data["processed_pairs"]
