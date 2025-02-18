@@ -173,7 +173,7 @@ def get_relevant_mols(mol_pair: LigandPair):
     return mol1_oe, mol2_oe, mol1_rdkit, mol2_rdkit, name1, name2
 
 
-def calculate_similarities(mol_pair: (Ligand, Ligand), settings: Settings = Settings()):
+def calculate_similarities(mol_pair: (Ligand, Ligand), settings: Settings):
     """Calculate all similarity metrics for a pair of molecules."""
     lig1, lig2 = mol_pair
     mol1_oe, mol2_oe, mol1_rdkit, mol2_rdkit, name1, name2 = get_relevant_mols(mol_pair)
@@ -305,7 +305,7 @@ class ProcessingState:
         return state
 
 
-def process_batch(batch, settings, logger):
+def process_batch(batch, settings: Settings, logger):
     """Process a batch of molecule pairs"""
     calculate_similarities_partial = partial(calculate_similarities, settings=settings)
     batch_results = []
