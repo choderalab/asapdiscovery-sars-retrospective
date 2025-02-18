@@ -23,17 +23,7 @@ import sys
 import time
 from datetime import datetime
 import pickle
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler("chemical_similarity.log"),
-    ],
-)
-logger = logging.getLogger(__name__)
+from asapdiscovery.data.util.logging import FileLogger
 
 
 class Settings(BaseSettings):
@@ -196,7 +186,7 @@ def calculate_similarities(mol_pair: (Ligand, Ligand), settings: Settings = Sett
 class ProcessingState:
     """Class to track processing state and handle caching"""
 
-    def __init__(self, output_dir: Path, total_pairs: int, settings: Settings):
+    def __init__(self, output_dir: Path, total_pairs: int, settings: Settings, logger):
         self.output_dir = output_dir
         self.total_pairs = total_pairs
         self.settings = settings
@@ -206,6 +196,7 @@ class ProcessingState:
         self.start_time = time.time()
         self.cache_path = output_dir / "processing_cache.pkl"
         self.last_cache_time = time.time()
+        self.logger = logger
 
     def add_result(self, result):
         """Add a result and update progress"""
@@ -232,7 +223,7 @@ class ProcessingState:
                 remaining_pairs / pairs_per_second if pairs_per_second > 0 else 0
             )
 
-            logger.info(
+            self.logger.info(
                 f"Progress: {self.processed_pairs}/{self.total_pairs} "
                 f"({(self.processed_pairs / self.total_pairs * 100):.1f}%) | "
                 f"Speed: {pairs_per_second:.1f} pairs/s | "
@@ -258,10 +249,10 @@ class ProcessingState:
         with open(self.cache_path, "wb") as f:
             pickle.dump(cache_data, f)
         self.last_cache_time = time.time()
-        logger.info(f"Cached progress at {self.processed_pairs} pairs")
+        self.logger.info(f"Cached progress at {self.processed_pairs} pairs")
 
     @classmethod
-    def load_cache(cls, output_dir: Path, total_pairs: int, settings: Settings):
+    def load_cache(cls, output_dir: Path, total_pairs: int, settings: Settings, logger):
         """Load state from cache"""
         cache_path = output_dir / "processing_cache.pkl"
         if not cache_path.exists():
@@ -280,7 +271,7 @@ class ProcessingState:
         return state
 
 
-def process_batch(batch, settings):
+def process_batch(batch, settings, logger):
     """Process a batch of molecule pairs"""
     calculate_similarities_partial = partial(calculate_similarities, settings=settings)
     batch_results = []
@@ -310,6 +301,12 @@ def main():
 
     # Use number of CPU cores if n_processes not specified
     n_processes = args.n_processes or mp.cpu_count()
+
+    logger = FileLogger(
+        "run_chemical_similarity_analysis",
+        output_dir,
+        logfile="run_chemical_similarity_analysis.log",
+    ).getLogger()
 
     logger.info("Loading molecules...")
     references = MolFileFactory(filename=args.ref_ligand_sdf).load()
