@@ -2,10 +2,14 @@
 Script to generate chemical similarity analysis between reference and query ligands in a docking experiment.
 """
 
+"""
+Script to generate chemical similarity analysis between reference and query ligands in a docking experiment.
+With enhanced progress tracking, batch processing, and caching.
+"""
 from rdkit import Chem
 from rdkit.Chem.rdFMCS import FindMCS
 from asapdiscovery.data.backend.openeye import oechem, oeshape
-from openeye import oegraphsim  # not in asap repo
+from openeye import oegraphsim
 from asapdiscovery.data.readers.molfile import MolFileFactory
 from asapdiscovery.data.schema.ligand import Ligand
 import pandas as pd
@@ -14,11 +18,49 @@ import argparse
 from pebble import ProcessPool
 from concurrent.futures import TimeoutError
 import multiprocessing as mp
-from tqdm import tqdm
 from pathlib import Path
 from pydantic import BaseSettings
 import json
 from functools import partial
+import logging
+import sys
+import time
+from datetime import datetime
+import pickle
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler("chemical_similarity.log"),
+    ],
+)
+logger = logging.getLogger(__name__)
+
+
+class Settings(BaseSettings):
+    ECFP_Tanimoto: bool = True
+    ECFP_Radius: int = 2
+    ECFP_BitSize: int = 2048
+    OETanimotoCombo: bool = False
+    MCS_Tanimoto: bool = True
+    batch_size: int = 1000
+    cache_frequency: int = 5000  # Save cache every N pairs
+
+    @property
+    def Fingerprint(self):
+        return f"ECFP{self.ECFP_Radius * 2}_{self.ECFP_BitSize}"
+
+    def save(self, path):
+        with open(path, "w") as f:
+            f.write(self.json(indent=4))
+
+    @classmethod
+    def load(cls, path):
+        with open(path, "r") as f:
+            return cls(**json.load(f))
 
 
 def parse_args():
@@ -38,7 +80,7 @@ def parse_args():
         "--query-ligand-sdf",
         type=Path,
         required=False,
-        help="Path to directory containing prepped query ligand sdf.  If false, ref-ligand-sdf will be used.",
+        help="Path to directory containing prepped query ligand sdf. If false, ref-ligand-sdf will be used.",
     )
     parser.add_argument(
         "--settings", type=Path, required=False, help="Path to settings json file"
@@ -55,7 +97,15 @@ def parse_args():
         default=300,
         help="Timeout in seconds for each pair calculation (default: 300)",
     )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume from last cached state",
+    )
     return parser.parse_args()
+
+
+# Your existing similarity calculation functions here...
 
 
 def get_fp(mol, bit_size=2048, radius=2):
@@ -168,11 +218,111 @@ def calculate_similarities(mol_pair: (Ligand, Ligand), settings: Settings = Sett
         return None
 
 
+class ProcessingState:
+    """Class to track processing state and handle caching"""
+
+    def __init__(self, output_dir: Path, total_pairs: int, settings: Settings):
+        self.output_dir = output_dir
+        self.total_pairs = total_pairs
+        self.settings = settings
+        self.results = []
+        self.failed_pairs = []
+        self.processed_pairs = 0
+        self.start_time = time.time()
+        self.cache_path = output_dir / "processing_cache.pkl"
+        self.last_cache_time = time.time()
+
+    def add_result(self, result):
+        """Add a result and update progress"""
+        if result is not None:
+            self.results.append(result)
+        self.processed_pairs += 1
+        self._update_progress()
+        self._maybe_cache()
+
+    def add_failed(self, pair):
+        """Add a failed pair"""
+        self.failed_pairs.append(pair)
+        self.processed_pairs += 1
+        self._update_progress()
+        self._maybe_cache()
+
+    def _update_progress(self):
+        """Update progress display"""
+        if self.processed_pairs % 10 == 0:  # Update every 10 pairs
+            elapsed = time.time() - self.start_time
+            pairs_per_second = self.processed_pairs / elapsed
+            remaining_pairs = self.total_pairs - self.processed_pairs
+            eta_seconds = (
+                remaining_pairs / pairs_per_second if pairs_per_second > 0 else 0
+            )
+
+            logger.info(
+                f"Progress: {self.processed_pairs}/{self.total_pairs} "
+                f"({(self.processed_pairs / self.total_pairs * 100):.1f}%) | "
+                f"Speed: {pairs_per_second:.1f} pairs/s | "
+                f"ETA: {datetime.fromtimestamp(time.time() + eta_seconds).strftime('%H:%M:%S')}"
+            )
+
+    def _maybe_cache(self):
+        """Cache results if enough time has passed or enough pairs processed"""
+        if (
+            self.processed_pairs % self.settings.cache_frequency == 0
+            or time.time() - self.last_cache_time > 300
+        ):  # Cache every 5 minutes
+            self.save_cache()
+
+    def save_cache(self):
+        """Save current state to cache"""
+        cache_data = {
+            "results": self.results,
+            "failed_pairs": self.failed_pairs,
+            "processed_pairs": self.processed_pairs,
+            "start_time": self.start_time,
+        }
+        with open(self.cache_path, "wb") as f:
+            pickle.dump(cache_data, f)
+        self.last_cache_time = time.time()
+        logger.info(f"Cached progress at {self.processed_pairs} pairs")
+
+    @classmethod
+    def load_cache(cls, output_dir: Path, total_pairs: int, settings: Settings):
+        """Load state from cache"""
+        cache_path = output_dir / "processing_cache.pkl"
+        if not cache_path.exists():
+            return cls(output_dir, total_pairs, settings)
+
+        with open(cache_path, "rb") as f:
+            cache_data = pickle.load(f)
+
+        state = cls(output_dir, total_pairs, settings)
+        state.results = cache_data["results"]
+        state.failed_pairs = cache_data["failed_pairs"]
+        state.processed_pairs = cache_data["processed_pairs"]
+        state.start_time = cache_data["start_time"]
+
+        logger.info(f"Resumed from cache at {state.processed_pairs} pairs")
+        return state
+
+
+def process_batch(batch, settings):
+    """Process a batch of molecule pairs"""
+    calculate_similarities_partial = partial(calculate_similarities, settings=settings)
+    batch_results = []
+
+    for pair in batch:
+        try:
+            result = calculate_similarities_partial(pair)
+            if result is not None:
+                batch_results.append(result)
+        except Exception as e:
+            logger.error(f"Error processing pair: {str(e)}")
+
+    return batch_results
+
+
 def main():
-
     args = parse_args()
-
-    # make output dir
     output_dir = args.output_dir
     output_dir.mkdir(exist_ok=True, parents=True)
 
@@ -181,62 +331,66 @@ def main():
         settings = Settings.load(args.settings)
     else:
         settings = Settings()
-        settings.save(args.output_dir / "settings.json")
+        settings.save(output_dir / "settings.json")
 
     # Use number of CPU cores if n_processes not specified
-    n_processes = args.n_processes
-    if n_processes is None:
-        n_processes = mp.cpu_count()
+    n_processes = args.n_processes or mp.cpu_count()
 
-    print("Loading molecules...")
-    # load from file
+    logger.info("Loading molecules...")
     references = MolFileFactory(filename=args.ref_ligand_sdf).load()
-
-    if args.query_ligand_sdf:
-        queries = MolFileFactory(filename=args.query_ligand_sdf).load()
-    else:
-        queries = references.copy()
+    queries = (
+        MolFileFactory(filename=args.query_ligand_sdf).load()
+        if args.query_ligand_sdf
+        else references.copy()
+    )
 
     # Create all pairs
-    print("Creating molecule pairs...")
     all_pairs = list(itertools.product(references, queries))
     total_pairs = len(all_pairs)
-    print(f"Total pairs to process: {total_pairs}")
+    logger.info(f"Total pairs to process: {total_pairs}")
 
-    # Use partial function
-    calculate_similarities_partial = partial(calculate_similarities, settings=settings)
-    results = []
-    failed_pairs = []
+    # Initialize or load state
+    if args.resume and (output_dir / "processing_cache.pkl").exists():
+        state = ProcessingState.load_cache(output_dir, total_pairs, settings)
+        # Skip already processed pairs
+        all_pairs = all_pairs[state.processed_pairs :]
+    else:
+        state = ProcessingState(output_dir, total_pairs, settings)
 
-    # Process pairs using Pebble
-    with ProcessPool(max_workers=n_processes) as pool:
-        # Create iterator of futures
-        future_results = pool.map(
-            calculate_similarities_partial, all_pairs, timeout=args.timeout
-        )
+    # Process in batches
+    for i in range(0, len(all_pairs), settings.batch_size):
+        batch = all_pairs[i : i + settings.batch_size]
 
-        # Process results with progress bar
-        with tqdm(total=total_pairs) as pbar:
+        with ProcessPool(max_workers=n_processes) as pool:
+            future = pool.schedule(
+                process_batch, args=(batch, settings), timeout=args.timeout * len(batch)
+            )
+
             try:
-                for result in future_results:
-                    if result is not None:
-                        results.append(result)
-                    pbar.update(1)
-            except TimeoutError as error:
-                failed_pairs.append(error.args[1])
-                print(f"\nFunction timed out for pair {error.args[1]}")
-            except Exception as error:
-                print(f"\nFunction raised {error}")
+                batch_results = future.result()
+                for result in batch_results:
+                    state.add_result(result)
+            except TimeoutError:
+                logger.error(f"Batch {i // settings.batch_size} timed out")
+                for pair in batch:
+                    state.add_failed(pair)
+            except Exception as e:
+                logger.error(f"Error processing batch: {str(e)}")
+                for pair in batch:
+                    state.add_failed(pair)
 
-    # Convert results to DataFrame
-    df = pd.DataFrame(results)
-
-    # Save results
+    # Save final results
+    df = pd.DataFrame(state.results)
     df.to_csv(output_dir / "chemical_similarities.csv", index=False)
-    print(f"\nResults saved to {output_dir}")
 
-    if failed_pairs:
-        print(f"\nNumber of failed pairs: {len(failed_pairs)}")
+    # Save failed pairs
+    if state.failed_pairs:
+        with open(output_dir / "failed_pairs.json", "w") as f:
+            json.dump(state.failed_pairs, f)
+        logger.info(f"\nNumber of failed pairs: {len(state.failed_pairs)}")
+
+    logger.info(f"Results saved to {output_dir}")
+    logger.info(f"Total processing time: {time.time() - state.start_time:.1f} seconds")
 
 
 if __name__ == "__main__":
