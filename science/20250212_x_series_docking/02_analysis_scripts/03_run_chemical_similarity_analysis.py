@@ -404,8 +404,9 @@ def main():
 
     # Save failed pairs
     if state.failed_pairs:
-        with open(output_dir / "failed_pairs.json", "w") as f:
-            json.dump(state.failed_pairs, f)
+        with open(output_dir / "failed_pairs.json", "a") as f:
+            for pair in state.failed_pairs:
+                f.write(pair.model_dump_json() + "\n")
         logger.info(f"\nNumber of failed pairs: {len(state.failed_pairs)}")
 
     logger.info(f"Results saved to {output_dir}")
