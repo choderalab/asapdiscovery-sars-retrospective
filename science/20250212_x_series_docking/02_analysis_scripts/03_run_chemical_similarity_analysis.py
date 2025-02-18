@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     MCS_Tanimoto: bool = True
     batch_size: int = 1000
     cache_frequency: int = 5000  # Save cache every N pairs
+    report_frequency: int = 1000  # Report progress every N pairs
 
     @property
     def Fingerprint(self):
@@ -216,7 +217,9 @@ class ProcessingState:
 
     def _update_progress(self):
         """Update progress display"""
-        if self.processed_pairs % 10 == 0:  # Update every 10 pairs
+        if (
+            self.processed_pairs % self.settings.report_freq == 0
+        ):  # Update every 10 pairs
             elapsed = time.time() - self.start_time
             pairs_per_second = self.processed_pairs / elapsed
             remaining_pairs = self.total_pairs - self.processed_pairs
