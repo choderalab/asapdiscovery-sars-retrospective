@@ -2,7 +2,7 @@
 #SBATCH --job-name=calculate_chemical_similarity
 #SBATCH --output=logs/calculate_chemical_similarity_%A_%a.out
 #SBATCH --error=logs/calculate_chemical_similarity_%A_%a.err
-#SBATCH --cpus-per-task 128
+#SBATCH --ntasks 128
 #SBATCH --partition=cpu
 #SBATCH --mem=64GB
 #SBATCH --time=00:30:00
