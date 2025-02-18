@@ -62,9 +62,9 @@ class Settings(BaseSettings):
     ECFP_BitSize: int = 2048
     OETanimotoCombo: bool = False
     MCS_Tanimoto: bool = True
-    batch_size: int = 1000
-    cache_frequency: int = 5000  # Save cache every N pairs
-    report_frequency: int = 1000  # Report progress every N pairs
+    batch_size: int = 32
+    cache_frequency: int = 32  # Save cache every N pairs
+    report_frequency: int = 32  # Report progress every N pairs
 
     @property
     def Fingerprint(self):
