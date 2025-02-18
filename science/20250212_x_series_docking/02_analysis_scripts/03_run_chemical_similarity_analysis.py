@@ -366,12 +366,14 @@ def main():
     # Initialize or load state
     if args.resume and (output_dir / "processing_cache.pkl").exists():
         state = ProcessingState.load_cache(
-            output_dir, total_pairs, settings, logger=logger
+            output_dir, total_pairs, settings=settings, logger=logger
         )
         # Skip already processed pairs
         all_pairs = all_pairs[state.processed_pairs :]
     else:
-        state = ProcessingState(output_dir, total_pairs, settings, logger=logger)
+        state = ProcessingState(
+            output_dir, total_pairs, settings=settings, logger=logger
+        )
 
     # Use partial
     process_batch_partial = partial(process_batch, settings=settings, logger=logger)
