@@ -415,7 +415,7 @@ def main():
 
     # Save failed pairs
     if state.failed_pairs:
-        with open(output_dir / "failed_pairs.json", "a") as f:
+        with open(output_dir / "failed_pairs.json", "w") as f:
             json.dump([ligpair.json() for ligpair in state.failed_pairs], f)
         logger.info(f"\nNumber of failed pairs: {len(state.failed_pairs)}")
 
