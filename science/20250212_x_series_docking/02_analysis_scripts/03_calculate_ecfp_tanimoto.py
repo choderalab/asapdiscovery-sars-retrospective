@@ -8,8 +8,6 @@ import pandas as pd
 import itertools
 import argparse
 from pathlib import Path
-from pydantic import BaseSettings
-import json
 from asapdiscovery.data.util.logging import FileLogger
 from chemical_similarity_schema import ECFPSimilarity
 
@@ -100,9 +98,9 @@ def main():
 
         similarities = [
             ECFPSimilarity(
-                mol1=ref,
-                mol2=query,
-                tanimoto=calculate_tanimoto(ref_fps[ref], query_fps[query]),
+                Reference_Ligand=ref,
+                Query_Ligand=query,
+                Tanimoto=calculate_tanimoto(ref_fps[ref], query_fps[query]),
                 radius=radius,
                 bitsize=bit_size,
             )

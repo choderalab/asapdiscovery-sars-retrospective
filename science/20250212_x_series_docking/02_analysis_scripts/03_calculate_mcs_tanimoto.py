@@ -85,11 +85,11 @@ def parallelize(ref: Ligand, queries: list[Ligand], logger):
     return MCSSimilarity.construct_dataframe(
         [
             MCSSimilarity(
-                mol1=ref.compound_name,
-                mol2=query,
-                tanimoto=tanimoto,
-                num_atoms_in_mcs=mcs,
-                num_atoms_in_union=union,
+                Reference_Ligand=ref.compound_name,
+                Query_Ligand=query,
+                Tanimoto=tanimoto,
+                N_Atoms_in_MCS=mcs,
+                N_Atoms_in_Union=union,
             )
             for (query, tanimoto, mcs, union) in zip(
                 query_mols, tanimoto_array, num_atoms_mcs_array, num_atoms_union_array

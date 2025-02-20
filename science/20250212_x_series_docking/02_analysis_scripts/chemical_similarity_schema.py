@@ -9,10 +9,10 @@ class MoleculeSimilarity(BaseModel):
     MoleculeSimilarity
     """
 
-    mol1: str = Field(..., description="Molecule 1")
-    mol2: str = Field(..., description="Molecule 2")
-    type: str = Field(..., description="Type of similarity")
-    tanimoto: confloat(ge=0, le=1) = Field(
+    Reference_Ligand: str = Field(..., description="Molecule 1")
+    Query_Ligand: str = Field(..., description="Molecule 2")
+    Type: str = Field(..., description="Type of similarity")
+    Tanimoto: confloat(ge=0, le=1) = Field(
         ..., description="Tanimoto similarity from 0 to 1"
     )
 
@@ -26,7 +26,7 @@ class MoleculeSimilarity(BaseModel):
             return cls(**json.load(f))
 
     def __str__(self):
-        return f"{self.type} similarity between {self.mol1} and {self.mol2}: {self.tanimoto}"
+        return f"{self.Type} similarity between {self.Reference_Ligand} and {self.Query_Ligand}: {self.Tanimoto}"
 
     @classmethod
     def construct_dataframe(cls, similarity_list):
@@ -40,18 +40,18 @@ class ECFPSimilarity(MoleculeSimilarity):
     ECFPSimilarity
     """
 
-    type: str = Field("ECFP", description="Type of similarity")
+    Type: str = Field("ECFP", description="Type of similarity")
     radius: int = 2
     bitsize: int = 2048
 
     @property
-    def fingerprint(self):
+    def Fingerprint(self):
         return f"ECFP{self.radius * 2}_{self.bitsize}"
 
     # add fingerprint property to output dictionary
     def dict(self, *args, **kwargs):
         return_dict = super().dict()
-        return_dict.update({"fingerprint": self.fingerprint})
+        return_dict.update({"fingerprint": self.Fingerprint})
         return return_dict
 
 
@@ -60,9 +60,9 @@ class MCSSimilarity(MoleculeSimilarity):
     MCSSimilarity
     """
 
-    type: str = Field("MCS", description="Type of similarity")
-    num_atoms_in_mcs: int = Field(..., description="Number of atoms in the MCS")
-    num_atoms_in_union: int = Field(
+    Type: str = Field("MCS", description="Type of similarity")
+    N_Atoms_in_MCS: int = Field(..., description="Number of atoms in the MCS")
+    N_Atoms_in_Union: int = Field(
         ..., description="Total number of atoms between the two molecules"
     )
 
@@ -94,56 +94,56 @@ class TanimotoComboSimilarity(MoleculeSimilarity):
     TanimotoComboSimilarity
     """
 
-    type: str = Field("TanimotoCombo", description="Type of similarity")
-    tanimoto_shape: confloat(ge=0, le=1) = Field(..., description="Shape Tanimoto")
-    tanimoto_color: confloat(ge=0, le=1) = Field(..., description="Color Tanimoto")
+    Type: str = Field("TanimotoCombo", description="Type of similarity")
+    Tanimoto_Shape: confloat(ge=0, le=1) = Field(..., description="Shape Tanimoto")
+    Tanimoto_Color: confloat(ge=0, le=1) = Field(..., description="Color Tanimoto")
 
     @classmethod
-    def from_tanimoto_results(cls, mol1, mol2, results):
+    def from_tanimoto_results(cls, ref, query, results) -> "TanimotoComboSimilarity":
         """
         This uses the OpenEye results class to get the TanimotoCombo similarity.
-        :param mol1:
-        :param mol2:
+        :param ref:
+        :param query:
         :param results:
         :return:
         """
         return cls(
-            mol1=mol1,
-            mol2=mol2,
-            tanimoto=results.GetTanimotoCombo(),
-            tanimoto_shape=results.GetShapeTanimoto(),
-            tanimoto_color=results.GetColorTanimoto(),
+            Reference_Ligand=ref,
+            Query_Ligand=query,
+            Tanimoto=results.GetTanimotoCombo(),
+            Tanimoto_Shape=results.GetShapeTanimoto(),
+            Tanimoto_Color=results.GetColorTanimoto(),
         )
 
 
 # just test within this file
 if __name__ == "__main__":
     ecfp = ECFPSimilarity(
-        mol1="mol1",
-        mol2="mol2",
-        tanimoto=0.5,
+        Reference_Ligand="mol1",
+        Query_Ligand="mol2",
+        Tanimoto=0.5,
     )
     ecfp.save("ecfp.json")
     ecfp2 = ECFPSimilarity.load("ecfp.json")
     assert ecfp == ecfp2
 
     mcs = MCSSimilarity(
-        mol1="mol1",
-        mol2="mol2",
-        num_atoms_in_mcs=5,
-        num_atoms_in_union=10,
-        tanimoto=0.5,
+        Reference_Ligand="mol1",
+        Query_Ligand="mol2",
+        N_Atoms_in_MCS=5,
+        N_Atoms_in_Union=10,
+        Tanimoto=0.5,
     )
     mcs.save("mcs.json")
     mcs2 = MCSSimilarity.load("mcs.json")
 
     try:
         mcs3 = MCSSimilarity(
-            mol1="mol1",
-            mol2="mol2",
-            num_atoms_in_mcs=5,
-            num_atoms_in_union=10,
-            tanimoto=0.6,
+            Reference_Ligand="mol1",
+            Query_Ligand="mol2",
+            N_Atoms_in_MCS=5,
+            N_Atoms_in_Union=10,
+            Tanimoto=0.6,
         )
         raise AssertionError("Tanimoto should not match")
     except ValidationError as e:

@@ -66,7 +66,7 @@ def calculate_one_to_many_tanimoto_oe(
             oeshape.OEROCSOverlay(res, refmol, fitmol)
             similarity_array.append(
                 TanimotoComboSimilarity.from_tanimoto_results(
-                    mol1=ref_name, mol2=fit_names[i], results=res
+                    ref=ref_name, query=fit_names[i], results=res
                 )
             )
         return similarity_array
@@ -87,7 +87,7 @@ def calculate_one_to_many_tanimoto_oe(
             shapeFunc.Overlap(fitmol, res)
             similarity_array.append(
                 TanimotoComboSimilarity.from_tanimoto_results(
-                    mol1=ref_name, mol2=fit_names[i], results=res
+                    ref=ref_name, query=fit_names[i], results=res
                 )
             )
         return similarity_array
