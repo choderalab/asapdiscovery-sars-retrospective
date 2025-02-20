@@ -30,7 +30,7 @@ def main():
     for csv in args.csvs:
         dfs.append(pd.read_csv(csv))
     df = pd.concat(dfs)
-    df.to_csv("combined_data.csv", index=False)
+    df.to_csv(output_dir / "combined_data.csv", index=False)
 
 
 if __name__ == "__main__":
