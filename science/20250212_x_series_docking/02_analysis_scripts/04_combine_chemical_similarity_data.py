@@ -14,13 +14,24 @@ def parse_args():
 
     # add any number of csv files
     parser.add_argument("data_csvs", nargs="+")
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    output_dir = args.output_dir
+    output_dir.mkdir(exist_ok=True, parents=True)
     dfs = []
     for csv in args.csvs:
         dfs.append(pd.read_csv(csv))
     df = pd.concat(dfs)
     df.to_csv("combined_data.csv", index=False)
+
+
+if __name__ == "__main__":
+    main()
