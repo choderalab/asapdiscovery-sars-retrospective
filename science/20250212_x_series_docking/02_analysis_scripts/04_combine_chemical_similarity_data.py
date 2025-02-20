@@ -13,7 +13,7 @@ def parse_args():
     )
 
     # add any number of csv files
-    parser.add_argument("data_csvs", nargs="+")
+    parser.add_argument("csvs", nargs="+")
     parser.add_argument(
         "--output-dir",
         type=Path,
