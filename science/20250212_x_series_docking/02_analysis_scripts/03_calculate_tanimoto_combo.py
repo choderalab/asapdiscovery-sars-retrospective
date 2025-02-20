@@ -9,9 +9,8 @@ import pandas as pd
 import argparse
 from pathlib import Path
 from asapdiscovery.data.util.logging import FileLogger
-import numpy as np
 import multiprocessing as mp
-from enum import Enum
+from chemical_similarity_schema import TanimotoComboSimilarity
 
 
 def parse_args():
@@ -36,29 +35,11 @@ def parse_args():
     return parser.parse_args()
 
 
-class TanimotoType(str, Enum):
-    """
-    Enum for the different types of Tanimoto coefficients that can be calculated.
-    """
-
-    SHAPE = "TanimotoShape"
-    COLOR = "TanimotoColor"
-    COMBO = "TanimotoCombo"
-
-
-def compute_result(results, tanimoto_type):
-    if tanimoto_type == TanimotoType.SHAPE:
-        return results.GetShapeTanimoto()
-    elif tanimoto_type == TanimotoType.COLOR:
-        return results.GetColorTanimoto()
-    elif tanimoto_type == TanimotoType.COMBO:
-        return results.GetTanimotoCombo()
-
-
 def calculate_one_to_many_tanimoto_oe(
     refmol: oechem.OEMol,
+    ref_name: str,
     fitmols: [oechem.OEMol],
-    compute_type: TanimotoType = TanimotoType.COMBO,
+    fit_names: [str],
     align: bool = False,
 ):
     """
@@ -76,15 +57,19 @@ def calculate_one_to_many_tanimoto_oe(
     float
         The Tanimoto coefficient between the two molecules.
     """
-    tanimoto = []
+    similarity_array = []
 
     if align:
         # OEROCS aligns the molecules before calculating the Tanimoto coefficient
         res = oeshape.OEROCSResult()
-        for fitmol in fitmols:
+        for i, fitmol in enumerate(fitmols):
             oeshape.OEROCSOverlay(res, refmol, fitmol)
-            tanimoto.append(compute_result(res, compute_type))
-        return tanimoto
+            similarity_array.append(
+                TanimotoComboSimilarity.from_tanimoto_results(
+                    mol1=ref_name, mol2=fit_names[i], results=res
+                )
+            )
+        return similarity_array
 
     if not align:
         # Prepare reference molecule for calculation
@@ -97,11 +82,15 @@ def calculate_one_to_many_tanimoto_oe(
         shapeFunc.SetupRef(refmol)
 
         res = oeshape.OEOverlapResults()
-        for fitmol in fitmols:
+        for i, fitmol in enumerate(fitmols):
             prep.Prep(fitmol)
             shapeFunc.Overlap(fitmol, res)
-            tanimoto.append(compute_result(res, compute_type))
-        return tanimoto
+            similarity_array.append(
+                TanimotoComboSimilarity.from_tanimoto_results(
+                    mol1=ref_name, mol2=fit_names[i], results=res
+                )
+            )
+        return similarity_array
 
 
 def parallelize(ref: Ligand, queries: list[Ligand], logger):
@@ -114,14 +103,13 @@ def parallelize(ref: Ligand, queries: list[Ligand], logger):
     logger.info(f"Calculating MCS for {ref.compound_name}...")
     refmol = ref.to_oemol()
     query_mols = [query.to_oemol() for query in queries]
-    tanimoto = calculate_one_to_many_tanimoto_oe(refmol, query_mols)
-    df = pd.DataFrame(
-        {
-            "Reference_Ligand": ref.compound_name,
-            "Query_Ligand": [query.compound_name for query in queries],
-            "TanimotoCombo": tanimoto,
-        }
+    similarity_array = calculate_one_to_many_tanimoto_oe(
+        refmol,
+        ref.compound_name,
+        query_mols,
+        [query.compound_name for query in queries],
     )
+    df = TanimotoComboSimilarity.construct_dataframe(similarity_array)
     return df
 
 
@@ -153,6 +141,7 @@ def main():
             parallelize, [(ref, queries, logger) for ref in references]
         )
         results = [result for result in results if result is not None]
+
     # Save results
     logger.info("Saving results...")
     df = pd.concat(results, ignore_index=True)

@@ -11,6 +11,7 @@ from pathlib import Path
 from asapdiscovery.data.util.logging import FileLogger
 import numpy as np
 import multiprocessing as mp
+from chemical_similarity_schema import MCSSimilarity
 
 
 def parse_args():
@@ -79,18 +80,22 @@ def parallelize(ref: Ligand, queries: list[Ligand], logger):
     logger.info(f"Calculating MCS for {ref.compound_name}...")
     refmol = ref.to_oemol()
     query_mols = [query.to_oemol() for query in queries]
-    mcs_num_atoms, total_num_atoms = one_to_many_mcs(refmol, query_mols)
-    tanimoto = mcs_num_atoms / total_num_atoms
-    df = pd.DataFrame(
-        {
-            "Reference_Ligand": ref.compound_name,
-            "Query_Ligand": [query.compound_name for query in queries],
-            "MCS_Num_Atoms": mcs_num_atoms,
-            "Total_Num_Atoms": total_num_atoms,
-            "Tanimoto": tanimoto,
-        }
+    num_atoms_mcs_array, num_atoms_union_array = one_to_many_mcs(refmol, query_mols)
+    tanimoto_array = num_atoms_mcs_array / num_atoms_union_array
+    return MCSSimilarity.construct_dataframe(
+        [
+            MCSSimilarity(
+                mol1=ref.compound_name,
+                mol2=query,
+                tanimoto=tanimoto,
+                num_atoms_in_mcs=mcs,
+                num_atoms_in_union=union,
+            )
+            for (query, tanimoto, mcs, union) in zip(
+                query_mols, tanimoto_array, num_atoms_mcs_array, num_atoms_union_array
+            )
+        ]
     )
-    return df
 
 
 def main():

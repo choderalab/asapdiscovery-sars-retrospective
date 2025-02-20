@@ -11,24 +11,7 @@ from pathlib import Path
 from pydantic import BaseSettings
 import json
 from asapdiscovery.data.util.logging import FileLogger
-
-
-class Settings(BaseSettings):
-    ECFP_Radius: int = 2
-    ECFP_BitSize: int = 2048
-
-    @property
-    def Fingerprint(self):
-        return f"ECFP{self.ECFP_Radius * 2}_{self.ECFP_BitSize}"
-
-    def save(self, path):
-        with open(path, "w") as f:
-            f.write(self.json(indent=4))
-
-    @classmethod
-    def load(cls, path):
-        with open(path, "r") as f:
-            return cls(**json.load(f))
+from chemical_similarity_schema import ECFPSimilarity
 
 
 def parse_args():
@@ -116,12 +99,16 @@ def main():
         )
 
         similarities = [
-            (ref, query, calculate_tanimoto(ref_fps[ref], query_fps[query]))
+            ECFPSimilarity(
+                mol1=ref,
+                mol2=query,
+                tanimoto=calculate_tanimoto(ref_fps[ref], query_fps[query]),
+                radius=radius,
+                bitsize=bit_size,
+            )
             for ref, query in pairs
         ]
-        df = pd.DataFrame(similarities, columns=["Molecule1", "Molecule2", "Tanimoto"])
-        df["Fingerprint"] = f"ECFP{radius * 2}"
-        df["BitSize"] = bit_size
+        df = ECFPSimilarity.construct_dataframe(similarities)
         dfs.append(df)
 
     # Save results
