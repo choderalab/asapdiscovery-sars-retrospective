@@ -119,9 +119,7 @@ def main():
             (ref, query, calculate_tanimoto(ref_fps[ref], query_fps[query]))
             for ref, query in pairs
         ]
-        df = pd.DataFrame(
-            similarities, columns=["Molecule1", "Molecule2", "ECFP_Tanimoto"]
-        )
+        df = pd.DataFrame(similarities, columns=["Molecule1", "Molecule2", "Tanimoto"])
         df["Fingerprint"] = f"ECFP{radius * 2}"
         df["BitSize"] = bit_size
         dfs.append(df)

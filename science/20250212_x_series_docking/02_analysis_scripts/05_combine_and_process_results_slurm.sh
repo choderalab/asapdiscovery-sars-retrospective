@@ -9,7 +9,7 @@
 
 source ~/.bashrc
 conda activate asap2025e
-python3 04_combine_and_process_results.py \
+python3 05_combine_and_process_results.py \
 -r /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs \
 --protein-cache /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_x_series_active_site_cache_20250212 \
 --ligand-cache /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113 \
