@@ -12,8 +12,6 @@ def parse_args():
         description="Combine all relevant data for analysis"
     )
 
-    #
-
     # add any number of csv files
     parser.add_argument("data_csvs", nargs="+")
     return parser.parse_args()
