@@ -7,7 +7,9 @@ import argparse
 from pathlib import Path
 import numpy as np
 from asapdiscovery.modeling.protein_prep import ProteinPrepper
+from asapdiscovery.data.schema.complex import PreppedComplex
 import json
+from pydantic import ValidationError
 
 
 def get_args():
@@ -55,20 +57,32 @@ def get_args():
     return parser.parse_args()
 
 
+def load_cache(cache_source):
+    complexes = []
+    for complex_path in cache_source.rglob("*.json"):
+        try:
+            complex_obj = PreppedComplex.from_json_file(complex_path)
+            complexes.append(complex_obj)
+        except ValidationError as e:
+            print(f"Failed to load {complex_path}")
+
+    return complexes
+
+
 def main():
     args = get_args()
 
-    # Load protein if protein cache is provided
-    cache_source = args.protein_cache
+    # Load protein cache
     print(f"Loading prepped protein cache")
-    complexes = ProteinPrepper.load_cache(cache_source)
+
+    complexes = load_cache(args.protein_cache)
     cmpd_to_frag_dict = {
         c.ligand.compound_name: c.target.target_name for c in complexes
     }
 
     if args.ligand_cache:
         print("Loading prepped ligand cache")
-        ligand_cache = ProteinPrepper.load_cache(args.ligand_cache)
+        ligand_cache = load_cache(args.ligand_cache)
         cmpd_to_frag_dict.update(
             {c.ligand.compound_name: c.target.target_name for c in ligand_cache}
         )
