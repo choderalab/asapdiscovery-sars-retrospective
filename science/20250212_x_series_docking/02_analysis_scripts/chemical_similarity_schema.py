@@ -102,6 +102,7 @@ class TanimotoComboSimilarity(MoleculeSimilarity):
     def from_tanimoto_results(cls, ref, query, results) -> "TanimotoComboSimilarity":
         """
         This uses the OpenEye results class to get the TanimotoCombo similarity.
+        Here we divide the TanimotoCombo by 2 to get it in the same range as all the others.
         :param ref:
         :param query:
         :param results:
@@ -110,7 +111,7 @@ class TanimotoComboSimilarity(MoleculeSimilarity):
         return cls(
             Reference_Ligand=ref,
             Query_Ligand=query,
-            Tanimoto=results.GetTanimotoCombo(),
+            Tanimoto=results.GetTanimotoCombo() / 2,
             Tanimoto_Shape=results.GetShapeTanimoto(),
             Tanimoto_Color=results.GetColorTanimoto(),
         )
