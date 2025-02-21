@@ -13,7 +13,7 @@ python3 05_combine_and_process_results.py \
 -r /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs \
 --protein-cache /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_x_series_active_site_cache_20250212 \
 --ligand-cache /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113 \
--d /data1/choderaj/paynea/asapdiscovery-sars-retrospective/science/20240403_multi_pose_docking_v2/20240430_analyze_cross_docking_results/20240503_inputs_analysis \
+--data-path /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113/ligand_files_20250113/combined_p_to_x_similarities \
 --date-dict /data1/choderaj/paynea/asapdiscovery-sars-retrospective/data/cmpd_date_dict/date_dict.json \
 -o /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs/20250217_combined_results_with_data.csv \
 --no-add-padding

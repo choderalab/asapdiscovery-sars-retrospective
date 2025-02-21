@@ -165,13 +165,13 @@ def main():
 
     # Add chemical similarity info
     print("Adding chemical similarity info")
-    num_atoms_in_mcss = pd.read_csv(args.data_path / "20240503_mcss_num_atoms.csv")
-    df = df.merge(
-        num_atoms_in_mcss, on=["Query_Ligand", "Reference_Ligand"], how="left"
+    combined_chemical_similarity_info = pd.read_csv(
+        args.data_path / "combined_data.csv"
     )
-    ecfp4_similarities = pd.read_csv(args.data_path / "20240503_all_tc_comparison.csv")
     df = df.merge(
-        ecfp4_similarities, on=["Query_Ligand", "Reference_Ligand"], how="left"
+        combined_chemical_similarity_info,
+        on=["Query_Ligand", "Reference_Ligand"],
+        how="left",
     )
 
     # write output
