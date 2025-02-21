@@ -97,15 +97,19 @@ class TanimotoComboSimilarity(MoleculeSimilarity):
     Type: str = Field("TanimotoCombo", description="Type of similarity")
     Tanimoto_Shape: confloat(ge=0, le=1) = Field(..., description="Shape Tanimoto")
     Tanimoto_Color: confloat(ge=0, le=1) = Field(..., description="Color Tanimoto")
+    Aligned: bool = False
 
     @classmethod
-    def from_tanimoto_results(cls, ref, query, results) -> "TanimotoComboSimilarity":
+    def from_tanimoto_results(
+        cls, ref, query, results, aligned: bool
+    ) -> "TanimotoComboSimilarity":
         """
         This uses the OpenEye results class to get the TanimotoCombo similarity.
         Here we divide the TanimotoCombo by 2 to get it in the same range as all the others.
         :param ref:
         :param query:
         :param results:
+        :param aligned:
         :return:
         """
         return cls(
@@ -114,6 +118,7 @@ class TanimotoComboSimilarity(MoleculeSimilarity):
             Tanimoto=results.GetTanimotoCombo() / 2,
             Tanimoto_Shape=results.GetShapeTanimoto(),
             Tanimoto_Color=results.GetColorTanimoto(),
+            Aligned=aligned,
         )
 
 

@@ -66,7 +66,7 @@ def calculate_one_to_many_tanimoto_oe(
             oeshape.OEROCSOverlay(res, refmol, fitmol)
             similarity_array.append(
                 TanimotoComboSimilarity.from_tanimoto_results(
-                    ref=ref_name, query=fit_names[i], results=res
+                    ref=ref_name, query=fit_names[i], results=res, aligned=True
                 )
             )
         return similarity_array
@@ -87,7 +87,7 @@ def calculate_one_to_many_tanimoto_oe(
             shapeFunc.Overlap(fitmol, res)
             similarity_array.append(
                 TanimotoComboSimilarity.from_tanimoto_results(
-                    ref=ref_name, query=fit_names[i], results=res
+                    ref=ref_name, query=fit_names[i], results=res, aligned=False
                 )
             )
         return similarity_array
@@ -103,13 +103,27 @@ def parallelize(ref: Ligand, queries: list[Ligand], logger):
     logger.info(f"Calculating MCS for {ref.compound_name}...")
     refmol = ref.to_oemol()
     query_mols = [query.to_oemol() for query in queries]
-    similarity_array = calculate_one_to_many_tanimoto_oe(
+    similarity_array_aligned = calculate_one_to_many_tanimoto_oe(
         refmol,
         ref.compound_name,
         query_mols,
         [query.compound_name for query in queries],
+        align=True,
     )
-    df = TanimotoComboSimilarity.construct_dataframe(similarity_array)
+    similarity_array_not_aligned = calculate_one_to_many_tanimoto_oe(
+        refmol,
+        ref.compound_name,
+        query_mols,
+        [query.compound_name for query in queries],
+        align=False,
+    )
+    df = pd.concat(
+        [
+            TanimotoComboSimilarity.construct_dataframe(similarity_array_aligned),
+            TanimotoComboSimilarity.construct_dataframe(similarity_array_not_aligned),
+        ],
+        ignore_index=True,
+    )
     return df
 
 
