@@ -164,7 +164,9 @@ def main():
         ]
         # make sure Pose_ID is an int
         og_df["Pose_ID"] = og_df["Pose_ID"].astype(int)
+        print(og_df.head())
         df["Pose_ID"] = df["Pose_ID"].astype(int)
+        print(df.head())
         df = pd.merge(
             df, og_df, on=["Reference_Structure", "Pose_ID", "Query_Ligand"], how="left"
         )
