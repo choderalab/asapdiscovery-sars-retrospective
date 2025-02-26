@@ -151,7 +151,6 @@ def main():
         og_df = og_df[
             [
                 "docking-structure-POSIT",
-                "docking-confidence-POSIT",
                 "pose_id",
                 "ligand_id",
                 "docking-score-POSIT",
@@ -159,7 +158,6 @@ def main():
         ]
         og_df.columns = [
             "Reference_Structure",
-            DockingResultCols.DOCKING_CONFIDENCE_POSIT.value,
             "Pose_ID",
             "Query_Ligand",
             "Docking_Score",

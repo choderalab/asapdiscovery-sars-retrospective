@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=cross_docking_analysis
 #SBATCH --output=logs/cross_docking_analysis_%A.out
-#SBATCH --error=logs/cross_docking_analysis_%A.out
+#SBATCH --error=logs/cross_docking_analysis_%A.err
 #SBATCH --cpus-per-task 32
 #SBATCH --partition=cpu
 #SBATCH --mem=128GB
