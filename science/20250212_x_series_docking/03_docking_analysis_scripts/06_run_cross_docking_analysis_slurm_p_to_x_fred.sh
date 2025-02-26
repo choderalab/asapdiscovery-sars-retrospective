@@ -15,7 +15,7 @@ date
 # network device info
 ulimit -c 0
 
-python3 05_run_cross_docking_analysis.py \
+python3 06_run_cross_docking_analysis.py \
 --input /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs/20250217_combined_results_with_data.csv \
 --output /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/analyzed_data \
 --date_dict_path /data1/choderaj/paynea/asapdiscovery-sars-retrospective/data/cmpd_date_dict/date_dict.json \
