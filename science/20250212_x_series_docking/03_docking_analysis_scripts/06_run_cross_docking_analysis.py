@@ -129,7 +129,9 @@ def main():
         import numpy as np
 
         n_per_split = np.arange(1, 21)
-        n_per_split = np.concatenate((n_per_split, np.arange(25, 206, 20)))
+        n_per_split = np.concatenate(
+            (n_per_split, np.arange(25, len(df.Reference_Structure.unique()), 20))
+        )
         settings = cd.Settings(
             date_dict_path=args.date_dict_path, n_per_split=n_per_split
         )
