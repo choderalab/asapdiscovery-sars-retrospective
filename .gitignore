@@ -171,4 +171,4 @@ cython_debug/
 *.stderr
 
 # Misc Data Folder
-data/
+#data/
