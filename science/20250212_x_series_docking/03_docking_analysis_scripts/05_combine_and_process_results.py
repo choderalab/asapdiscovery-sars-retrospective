@@ -178,7 +178,7 @@ def main():
     )
 
     print("Writing intermediate_output")
-    df.to_csv(args.output_file.stem / "_no_chemical_similarity.csv")
+    df.to_csv(args.output_file.name + "_no_chemical_similarity.csv")
 
     # Add chemical similarity info
     print("Adding chemical similarity info")
