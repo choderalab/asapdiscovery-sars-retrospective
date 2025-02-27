@@ -177,6 +177,9 @@ def main():
         lambda x: date_dict.get(x[:-3], None)
     )
 
+    print("Writing intermediate_output")
+    df.to_csv(args.output_file.with_suffix("_no_chemical_similarity.csv"))
+
     # Add chemical similarity info
     print("Adding chemical similarity info")
     combined_chemical_similarity_info = pd.read_csv(
