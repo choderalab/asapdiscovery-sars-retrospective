@@ -176,3 +176,7 @@ def main():
         logger.info("Writing evaluators to disk")
         for i, evaluator in enumerate(evaluators):
             evaluator.to_json_file(output_dir / f"evaluator_{i}.json")
+
+
+if __name__ == "__main__":
+    main()
