@@ -107,12 +107,16 @@ def main():
         if not args.input:
             raise ValueError("Must provide input file to use date split")
         logger.info("Loading date information")
-        date_dict_list = df.groupby(settings.reference_structure_column)[
-            [
-                settings.reference_structure_column,
-                settings.reference_structure_date_column,
+        date_dict_list = (
+            df.groupby(settings.reference_structure_column)[
+                [
+                    settings.reference_structure_column,
+                    settings.reference_structure_date_column,
+                ]
             ]
-        ].to_dict(orient="records")
+            .head(1)
+            .to_dict(orient="records")
+        )
 
         simplified_date_dict = {
             date_dict[settings.reference_structure_column]: date_dict[
