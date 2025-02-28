@@ -41,7 +41,7 @@ def get_args():
         help="Path to the output directory where the results will be stored",
         required=True,
     )
-    parser.add_argument("--update-n-per-split", type=bool, default=False)
+    parser.add_argument("--update-n-per-split", action="store_true")
     return parser.parse_args()
 
 
