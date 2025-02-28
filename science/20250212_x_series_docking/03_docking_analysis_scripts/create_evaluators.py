@@ -133,49 +133,49 @@ def main():
             ]
         )
 
-        logger.info("Adding scorers")
-        scorers = []
-        if settings.use_posit_scorer:
-            scorers.extend(
-                Scorer(
-                    name=settings.posit_name,
-                    variable=settings.posit_score_column_name,
-                    higher_is_better=True,
-                    number_to_return=1,
-                )
+    logger.info("Adding scorers")
+    scorers = []
+    if settings.use_posit_scorer:
+        scorers.append(
+            Scorer(
+                name=settings.posit_name,
+                variable=settings.posit_score_column_name,
+                higher_is_better=True,
+                number_to_return=1,
             )
-        if settings.use_rmsd_scorer:
-            scorers.extend(
-                Scorer(
-                    name=settings.rmsd_name,
-                    variable=settings.rmsd_column_name,
-                    higher_is_better=False,
-                    number_to_return=1,
-                )
-            )
-        rmsd_evaluator = BinaryEvaluation(
-            variable=settings.rmsd_column_name, cutoff=settings.rmsd_cutoff
         )
+    if settings.use_rmsd_scorer:
+        scorers.append(
+            Scorer(
+                name=settings.rmsd_name,
+                variable=settings.rmsd_column_name,
+                higher_is_better=False,
+                number_to_return=1,
+            )
+        )
+    rmsd_evaluator = BinaryEvaluation(
+        variable=settings.rmsd_column_name, cutoff=settings.rmsd_cutoff
+    )
 
-        logger.info("Creating evaluators")
-        evaluators = []
-        for pose_selector in pose_selectors:
-            for dataset_split in dataset_splits:
-                for scorer in scorers:
-                    evaluator = Evaluator(
-                        pose_selector=pose_selector,
-                        dataset_split=dataset_split,
-                        scorer=scorer,
-                        evaluator=rmsd_evaluator,
-                        groupby=[settings.query_ligand_column],
-                        n_bootstraps=settings.n_bootstraps,
-                    )
-                    evaluators.append(evaluator)
+    logger.info("Creating evaluators")
+    evaluators = []
+    for pose_selector in pose_selectors:
+        for dataset_split in dataset_splits:
+            for scorer in scorers:
+                evaluator = Evaluator(
+                    pose_selector=pose_selector,
+                    dataset_split=dataset_split,
+                    scorer=scorer,
+                    evaluator=rmsd_evaluator,
+                    groupby=[settings.query_ligand_column],
+                    n_bootstraps=settings.n_bootstraps,
+                )
+                evaluators.append(evaluator)
 
-        logger.info(f"Made {len(evaluators)} evaluators")
-        logger.info("Writing evaluators to disk")
-        for i, evaluator in enumerate(evaluators):
-            evaluator.to_json_file(output_dir / f"evaluator_{i}.json")
+    logger.info(f"Made {len(evaluators)} evaluators")
+    logger.info("Writing evaluators to disk")
+    for i, evaluator in enumerate(evaluators):
+        evaluator.to_json_file(output_dir / f"evaluator_{i}.json")
 
 
 if __name__ == "__main__":
