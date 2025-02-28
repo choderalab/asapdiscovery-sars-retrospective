@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --job-name=create_evaluators
+#SBATCH --output=logs/create_evaluators_%A.out
+#SBATCH --error=logs/create_evaluators_%A.err
+#SBATCH --cpus-per-task 1
+#SBATCH --partition=cpu
+#SBATCH --mem=128GB
+#SBATCH --time=4:00:00
+
+source ~/.bashrc
+conda activate harbor
+
+echo Start
+date
+# network device info
+ulimit -c 0
+
+python3 07_create_evaluators.sh \
+--input /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/rmsd_csvs/20250217_combined_results_with_data.csv \
+--output /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/analyzed_data \
+--update-n-per-split
+
+date
+echo Done
