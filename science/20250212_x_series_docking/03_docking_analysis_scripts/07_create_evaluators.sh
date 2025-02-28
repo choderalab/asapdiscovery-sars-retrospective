@@ -15,7 +15,7 @@ date
 # network device info
 ulimit -c 0
 
-python3 07_create_evaluators.sh \
+python3 create_evaluators.sh \
 --input /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/rmsd_csvs/20250217_combined_results_with_data.csv \
 --output /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/test_evaluator_creation \
 --update-n-per-split
