@@ -4,8 +4,8 @@
 #SBATCH --error=logs/create_evaluators_%A.err
 #SBATCH --cpus-per-task 1
 #SBATCH --partition=cpu
-#SBATCH --mem=128GB
-#SBATCH --time=4:00:00
+#SBATCH --mem=4GB
+#SBATCH --time=0:00:10
 
 source ~/.bashrc
 conda activate harbor
@@ -15,7 +15,7 @@ date
 # network device info
 ulimit -c 0
 
-python3 create_evaluators.sh \
+python3 create_evaluators.py \
 --input /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/rmsd_csvs/20250217_combined_results_with_data.csv \
 --output /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/test_evaluator_creation \
 --update-n-per-split
