@@ -33,8 +33,9 @@ def get_args():
     parser.add_argument(
         "--settings",
         type=Path,
+        nargs="+",
         required=False,
-        help="Path to the settings yaml file. Will be generated with defaults if not provided.",
+        help="Path to the settings yaml files. Will be generated with defaults if not provided.",
     )
     parser.add_argument(
         "--output",
@@ -66,135 +67,145 @@ def main():
         df = pd.read_csv(args.input, index_col=0)
 
     if args.settings:
-        logger.info(f"Reading settings from {args.settings}")
-        settings = Settings.from_yml_file(args.settings)
+        logger.info(f"Reading {len(args.settings)} settings files")
+        settings_list = [
+            (settings.stem, Settings.from_yml_file(settings))
+            for settings in args.settings
+        ]
     else:
         logger.info("No settings file provided, using defaults")
-        settings = Settings()
+        settings_list = ["default", Settings()]
 
-    if settings.n_per_split is None and not args.update_n_per_split:
-        raise ValueError(
-            "n_per_split must be set in settings or update_n_per_split must be True"
-        )
-
-    if args.update_n_per_split:
-        logger.info("Updating n_per_split")
-        n_per_split = np.arange(1, 21)
-        n_per_split = np.concatenate(
-            (n_per_split, np.arange(25, len(df.Reference_Structure.unique()), 20))
-        )
-        settings.n_per_split = n_per_split
-
-    logger.info("Writing settings to disk")
-    settings.to_yml_file(output_dir / "settings.yml")
-
-    logger.info("Creating pose selectors")
-    pose_selectors = [
-        PoseSelector(
-            name="Default", variable=settings.pose_id_column, number_to_return=n
-        )
-        for n in settings.n_poses
-    ]
-
-    logger.info("Setting up dataset splits")
-    dataset_splits = []
-    if settings.use_random_split:
-        dataset_splits.extend(
-            [
-                RandomSplit(
-                    variable=settings.reference_ligand_column,
-                    n_splits=1,
-                    n_per_split=n_per_split,
-                )
-                for n_per_split in settings.n_per_split
-            ]
-        )
-    if settings.use_date_split:
-        if not args.input:
-            raise ValueError("Must provide input file to use date split")
-        logger.info("Loading date information")
-        date_dict_list = (
-            df.groupby(settings.reference_structure_column)[
-                [
-                    settings.reference_structure_column,
-                    settings.reference_structure_date_column,
-                ]
-            ]
-            .head(1)
-            .to_dict(orient="records")
-        )
-
-        simplified_date_dict = {
-            date_dict[settings.reference_structure_column]: date_dict[
-                settings.reference_structure_date_column
-            ]
-            for date_dict in date_dict_list
-        }
-        dataset_splits.extend(
-            [
-                DateSplit(
-                    variable=settings.reference_structure_column,
-                    n_per_split=n_per_split,
-                    balanced=True,  # haven't implemented this otherwise
-                    date_dict=simplified_date_dict,
-                    randomize_by_n_days=settings.randomize_by_n_days,
-                )
-                for n_per_split in settings.n_per_split
-            ]
-        )
-    if settings.use_similarity_split:
-        dataset_splits.extend(
-            [
-                SimilaritySplit(
-                    threshold=threshold,
-                    variable=settings.similarity_column_name,
-                    groupby=settings.similarity_groupby,
-                    n_per_split=-1,
-                    higher_is_more_similar=True,
-                    include_similar=False,
-                )
-                for threshold in np.linspace(0, 1, 21)
-            ]
-        )
-
-    logger.info("Adding scorers")
-    scorers = []
-    if settings.use_posit_scorer:
-        scorers.append(
-            Scorer(
-                name=settings.posit_name,
-                variable=settings.posit_score_column_name,
-                higher_is_better=True,
-                number_to_return=1,
-            )
-        )
-    if settings.use_rmsd_scorer:
-        scorers.append(
-            Scorer(
-                name=settings.rmsd_name,
-                variable=settings.rmsd_column_name,
-                higher_is_better=False,
-                number_to_return=1,
-            )
-        )
-    rmsd_evaluator = BinaryEvaluation(
-        variable=settings.rmsd_column_name, cutoff=settings.rmsd_cutoff
-    )
-
-    logger.info("Creating evaluators")
     evaluators = []
-    for pose_selector in pose_selectors:
-        for dataset_split in dataset_splits:
-            for scorer in scorers:
-                evaluator = Evaluator(
-                    pose_selector=pose_selector,
-                    dataset_split=dataset_split,
-                    scorer=scorer,
-                    evaluator=rmsd_evaluator,
-                    groupby=[settings.query_ligand_column],
-                    n_bootstraps=settings.n_bootstraps,
+    for settings_name, settings in settings_list:
+        logger.info(f"Using settings: {settings_name}")
+        if settings.n_per_split is None and not args.update_n_per_split:
+            raise ValueError(
+                "n_per_split must be set in settings or update_n_per_split must be True"
+            )
+
+        if args.update_n_per_split:
+            logger.info("Updating n_per_split")
+            n_per_split = np.arange(1, 21)
+            n_per_split = np.concatenate(
+                (
+                    n_per_split,
+                    np.arange(
+                        25, len(df[settings.reference_structure_column].unique()), 20
+                    ),
                 )
-                evaluators.append(evaluator)
+            )
+            settings.n_per_split = n_per_split
+
+        logger.info("Writing settings to disk")
+        settings.to_yml_file(output_dir / f"{settings_name}.yml")
+
+        logger.info("Creating pose selectors")
+        pose_selectors = [
+            PoseSelector(
+                name="Default", variable=settings.pose_id_column, number_to_return=n
+            )
+            for n in settings.n_poses
+        ]
+
+        logger.info("Setting up dataset splits")
+        dataset_splits = []
+        if settings.use_random_split:
+            dataset_splits.extend(
+                [
+                    RandomSplit(
+                        variable=settings.reference_ligand_column,
+                        n_splits=1,
+                        n_per_split=n_per_split,
+                    )
+                    for n_per_split in settings.n_per_split
+                ]
+            )
+        if settings.use_date_split:
+            if not args.input:
+                raise ValueError("Must provide input file to use date split")
+            logger.info("Loading date information")
+            date_dict_list = (
+                df.groupby(settings.reference_structure_column)[
+                    [
+                        settings.reference_structure_column,
+                        settings.reference_structure_date_column,
+                    ]
+                ]
+                .head(1)
+                .to_dict(orient="records")
+            )
+
+            simplified_date_dict = {
+                date_dict[settings.reference_structure_column]: date_dict[
+                    settings.reference_structure_date_column
+                ]
+                for date_dict in date_dict_list
+            }
+            dataset_splits.extend(
+                [
+                    DateSplit(
+                        variable=settings.reference_structure_column,
+                        n_per_split=n_per_split,
+                        balanced=True,  # haven't implemented this otherwise
+                        date_dict=simplified_date_dict,
+                        randomize_by_n_days=settings.randomize_by_n_days,
+                    )
+                    for n_per_split in settings.n_per_split
+                ]
+            )
+        if settings.use_similarity_split:
+            dataset_splits.extend(
+                [
+                    SimilaritySplit(
+                        threshold=threshold,
+                        variable=settings.similarity_column_name,
+                        groupby=settings.similarity_groupby,
+                        n_per_split=-1,
+                        higher_is_more_similar=True,
+                        include_similar=False,
+                    )
+                    for threshold in np.linspace(0, 1, 21)
+                ]
+            )
+
+        logger.info("Adding scorers")
+        scorers = []
+        if settings.use_posit_scorer:
+            scorers.append(
+                Scorer(
+                    name=settings.posit_name,
+                    variable=settings.posit_score_column_name,
+                    higher_is_better=True,
+                    number_to_return=1,
+                )
+            )
+        if settings.use_rmsd_scorer:
+            scorers.append(
+                Scorer(
+                    name=settings.rmsd_name,
+                    variable=settings.rmsd_column_name,
+                    higher_is_better=False,
+                    number_to_return=1,
+                )
+            )
+        rmsd_evaluator = BinaryEvaluation(
+            variable=settings.rmsd_column_name, cutoff=settings.rmsd_cutoff
+        )
+
+        logger.info("Adding evaluators")
+        for pose_selector in pose_selectors:
+            for dataset_split in dataset_splits:
+                for scorer in scorers:
+                    evaluator = Evaluator(
+                        pose_selector=pose_selector,
+                        dataset_split=dataset_split,
+                        scorer=scorer,
+                        evaluator=rmsd_evaluator,
+                        groupby=[settings.query_ligand_column],
+                        n_bootstraps=settings.n_bootstraps,
+                    )
+                    evaluators.append(evaluator)
 
     logger.info(f"Made {len(evaluators)} evaluators")
     logger.info("Writing evaluators to disk")
