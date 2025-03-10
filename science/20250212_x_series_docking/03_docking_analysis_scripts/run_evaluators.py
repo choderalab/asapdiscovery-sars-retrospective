@@ -104,10 +104,11 @@ def main():
     logger.info("Reading input data")
     df = pd.read_csv(args.input, index_col=0)
 
-    logger.info("Reading evaluators")
-    evaluators = []
-    for evaluator_json in args.evaluator_json:
-        evaluators.extend(cd.Evaluator.from_json_file(evaluator_json))
+    logger.info(f"Reading in {len(args.evaluator_json)} evaluators")
+    evaluators = [
+        cd.Evaluator.from_json_file(evaluator_json)
+        for evaluator_json in args.evaluator_json
+    ]
 
     nprocs = min(mp.cpu_count(), len(evaluators), args.n_cpus)
     logger.info(f"CPUs: {mp.cpu_count()}")
