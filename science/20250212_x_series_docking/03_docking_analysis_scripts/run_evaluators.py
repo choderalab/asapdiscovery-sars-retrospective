@@ -93,8 +93,9 @@ def get_args():
 
 def main():
     args = get_args()
-    args.output.mkdir(exist_ok=True, parents=True)
     output_dir = args.output / args.job_id
+    output_dir.mkdir(exist_ok=True, parents=True)
+
     logger = FileLogger(
         logname="run_cross_docking_evaluators",
         path=output_dir,
