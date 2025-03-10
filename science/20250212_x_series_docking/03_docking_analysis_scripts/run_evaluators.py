@@ -85,7 +85,7 @@ def get_args():
         type=Path,
         required=True,
         nargs="+",
-        description="Path to the evaluator json file",
+        help="Path to the evaluator json file",
     )
     parser.add_argument("--job_id", type=str, required=True)
     return parser.parse_args()
