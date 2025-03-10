@@ -125,14 +125,8 @@ def main():
     evaluator_with_df = partial(cd.Results.calculate_result, df=df)
 
     with mp.Pool(nprocs) as p:
-        results = []
-        for result in p.starmap(
-            evaluator_with_df,
-            evaluators,
-        ):
-            results.append(result)
-            if len(results) % nprocs == 0:
-                logger.info(f"Completed {len(results)} evaluations")
+        result = p.map_async(evaluator_with_df, evaluators)
+        results = result.get()
 
     logger.info(f"Writing results to disk at {output_dir}")
     results_df = cd.Results.df_from_results(results)
