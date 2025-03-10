@@ -127,7 +127,7 @@ def main():
             evaluators,
         ):
             results.append(result)
-            if len(results) % 10 == 0:
+            if len(results) % nprocs == 0:
                 logger.info(f"Completed {len(results)} evaluations")
 
     logger.info(f"Writing results to disk at {output_dir}")

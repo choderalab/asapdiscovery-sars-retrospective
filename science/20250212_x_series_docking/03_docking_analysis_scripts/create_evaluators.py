@@ -74,7 +74,7 @@ def main():
         ]
     else:
         logger.info("No settings file provided, using defaults")
-        settings_list = ["default", Settings()]
+        settings_list = [("default", Settings())]
 
     evaluators = []
     for settings_name, settings in settings_list:
