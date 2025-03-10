@@ -4,7 +4,7 @@
 #SBATCH --error=logs/run_evaluators_%A_%a.err
 #SBATCH --cpus-per-task 16
 #SBATCH --partition=cpu
-#SBATCH --mem=4GB
+#SBATCH --mem=128GB
 #SBATCH --time=0:10:00
 #SBATCH --array=0-9
 
