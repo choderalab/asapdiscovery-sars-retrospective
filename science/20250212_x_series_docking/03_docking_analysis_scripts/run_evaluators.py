@@ -80,6 +80,7 @@ def get_args():
         help="Number of cpus to use for parallel processing",
         default=1,
     )
+    parser.add_argument("--job-id", type=str, required=True)
     parser.add_argument(
         "--evaluator-json",
         type=Path,
@@ -87,7 +88,6 @@ def get_args():
         nargs="+",
         help="Path to the evaluator json file",
     )
-    parser.add_argument("--job_id", type=str, required=True)
     return parser.parse_args()
 
 
