@@ -122,7 +122,7 @@ def main():
 
     with mp.Pool(nprocs) as p:
         results = []
-        for result in p.imap_unordered(
+        for result in p.starmap(
             evaluator_with_df,
             evaluators,
         ):
