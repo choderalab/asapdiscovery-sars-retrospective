@@ -9,6 +9,7 @@ from harbor.analysis.cross_docking import (
     PoseSelector,
     RandomSplit,
     DateSplit,
+    SimilaritySplit,
     Scorer,
     BinaryEvaluation,
     StructureChoice,
@@ -71,7 +72,7 @@ def main():
         logger.info("No settings file provided, using defaults")
         settings = Settings()
 
-    if settings.n_per_split is None:
+    if settings.n_per_split is None and not args.update_n_per_split:
         raise ValueError(
             "n_per_split must be set in settings or update_n_per_split must be True"
         )
@@ -139,6 +140,20 @@ def main():
                     randomize_by_n_days=settings.randomize_by_n_days,
                 )
                 for n_per_split in settings.n_per_split
+            ]
+        )
+    if settings.use_similarity_split:
+        dataset_splits.extend(
+            [
+                SimilaritySplit(
+                    threshold=threshold,
+                    variable=settings.similarity_column_name,
+                    groupby=settings.similarity_groupby,
+                    n_per_split=-1,
+                    higher_is_more_similar=True,
+                    include_similar=False,
+                )
+                for threshold in np.linspace(0, 1, 21)
             ]
         )
 
