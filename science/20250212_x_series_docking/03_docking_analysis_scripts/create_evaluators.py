@@ -71,6 +71,11 @@ def main():
         logger.info("No settings file provided, using defaults")
         settings = Settings()
 
+    if settings.n_per_split is None:
+        raise ValueError(
+            "n_per_split must be set in settings or update_n_per_split must be True"
+        )
+
     if args.update_n_per_split:
         logger.info("Updating n_per_split")
         n_per_split = np.arange(1, 21)

@@ -1,7 +1,6 @@
 date_dict_path: null
 n_bootstraps: 1000
-n_per_split:
-- 1
+n_per_split: null
 n_poses:
 - 1
 n_structures:
