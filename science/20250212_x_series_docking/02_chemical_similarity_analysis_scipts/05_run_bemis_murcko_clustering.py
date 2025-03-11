@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument(
         "--sdf-2d", type=Path, help="Path to the input 2D SDF file", nargs="+"
     )
-    parser.add_argument("--output_dir", type=Path, help="Path to the output directory")
+    parser.add_argument("--output-dir", type=Path, help="Path to the output directory")
     return parser.parse_args()
 
 
