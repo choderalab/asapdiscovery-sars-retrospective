@@ -10,6 +10,7 @@ from asapdiscovery.data.schema.complex import PreppedComplex
 from asapdiscovery.data.util.logging import FileLogger
 import json
 from pydantic import ValidationError
+import yaml
 
 
 def get_args():
@@ -218,8 +219,9 @@ def main():
     final_output_file = output_dir / f"{args.output_file_name}.csv"
     df.to_csv(final_output_file)
 
-    with open(final_output_file.with_suffix("_report.json"), "w") as f:
-        json.dump(report_dict, f, indent=4)
+    output_report = output_dir / f"{args.output_file_name}_report.yaml"
+    with open(output_report, "w") as f:
+        yaml.dump(report_dict, f)
 
 
 if __name__ == "__main__":
