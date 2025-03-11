@@ -182,7 +182,7 @@ def main():
     )
 
     logger.info("Writing intermediate_output")
-    df.to_csv(output_dir / args.output_file_name + "_no_chemical_similarity.csv")
+    df.to_csv(output_dir / f"{args.output_file_name}_no_chemical_similarity.csv")
 
     # Add chemical similarity info
     logger.info("Adding chemical similarity info")
