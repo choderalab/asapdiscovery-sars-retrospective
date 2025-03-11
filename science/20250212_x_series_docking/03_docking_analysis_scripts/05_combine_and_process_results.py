@@ -6,8 +6,8 @@ import pandas as pd
 import argparse
 from pathlib import Path
 import numpy as np
-from asapdiscovery.modeling.protein_prep import ProteinPrepper
 from asapdiscovery.data.schema.complex import PreppedComplex
+from asapdiscovery.data.util.logging import FileLogger
 import json
 from pydantic import ValidationError
 
@@ -21,7 +21,7 @@ def get_args():
         "--results-dir",
         type=Path,
         required=True,
-        help="Path to directory containing docking results",
+        help="Path to directory containing docking results, each file should be a csv and there shouldn't be any csv files you don't want included.",
     )
     parser.add_argument(
         "--protein-cache",
@@ -53,8 +53,9 @@ def get_args():
         "--add-padding", action=argparse.BooleanOptionalAction, default=True
     )
     parser.add_argument(
-        "-o", "--output-file", type=Path, required=True, help="Path to output file"
+        "-o", "--output-dir", type=Path, required=True, help="Path to output directory"
     )
+    parser.add_argument("--output-file-name", type=str, required=True)
     return parser.parse_args()
 
 
@@ -72,9 +73,15 @@ def load_cache(cache_source):
 
 def main():
     args = get_args()
+    output_dir = args.output_dir
+    output_dir.mkdir(exist_ok=True, parents=True)
+    logger = FileLogger(
+        logname="combine_and_process_results",
+        path=output_dir / "combine_and_process_results.log",
+    ).getLogger()
 
     # Load protein cache
-    print(f"Loading prepped protein cache")
+    logger.info("Loading prepped protein cache")
 
     complexes = load_cache(args.protein_cache)
     cmpd_to_frag_dict = {
@@ -82,24 +89,20 @@ def main():
     }
 
     if args.ligand_cache:
-        print("Loading prepped ligand cache")
+        logger.info("Loading prepped ligand cache")
         ligand_cache = load_cache(args.ligand_cache)
         cmpd_to_frag_dict.update(
             {c.ligand.compound_name: c.target.target_name for c in ligand_cache}
         )
     else:
-        print(f"Using protein as both protein and ligand cache")
+        logger.info(f"Using protein as both protein and ligand cache")
 
-    with open("cmpd_to_frag_dict.json", "w") as f:
+    with open(output_dir / "cmpd_to_frag_dict.json", "w") as f:
         json.dump(cmpd_to_frag_dict, f, indent=4)
 
     report_dict = {"err_msg": []}
-    print("Loading csvs")
-    dfs = [
-        pd.read_csv(csv)
-        for csv in args.results_dir.glob("*.csv")
-        if not args.output_file.name in csv.name
-    ]
+    logger.info("Loading csvs")
+    dfs = [pd.read_csv(csv) for csv in args.results_dir.glob("*.csv")]
     df = pd.concat(dfs)
     query_lig_set = {lig for lig in df["Query_Ligand"]}
     ref_lig_set = {lig for lig in df["Reference_Ligand"]}
@@ -107,7 +110,7 @@ def main():
     report_dict["never_used_as_ref"] = list(query_lig_set - ref_lig_set)
 
     if args.add_padding:
-        print("Padding the data with the missing pairs")
+        logger.info("Padding the data with the missing pairs")
         all_ligs = query_lig_set | ref_lig_set
         refs = df.Reference_Ligand
         queries = df.Query_Ligand
@@ -157,7 +160,7 @@ def main():
     df["Query_Structure"] = df.Query_Ligand.apply(lambda x: cmpd_to_frag_dict[x])
 
     # Add Date Information
-    print("Adding date information")
+    logger.info("Adding date information")
     with open(args.date_dict, "r") as f:
         date_dict = json.load(f)
     missing = [
@@ -178,13 +181,13 @@ def main():
         lambda x: date_dict.get(x[:-3], None)
     )
 
-    print("Writing intermediate_output")
+    logger.info("Writing intermediate_output")
     df.to_csv(
         args.output_file.parent / args.output_file.name + "_no_chemical_similarity.csv"
     )
 
     # Add chemical similarity info
-    print("Adding chemical similarity info")
+    logger.info("Adding chemical similarity info")
     combined_chemical_similarity_info = pd.read_csv(
         args.data_path / "combined_data.csv"
     )
@@ -195,7 +198,7 @@ def main():
     )
 
     if args.chemical_scaffold_data:
-        print("Adding chemical scaffold info")
+        logger.info("Adding chemical scaffold info")
         scaffold_info = pd.read_csv(args.chemical_scaffold_data)
         df = df.merge(
             scaffold_info,
@@ -213,10 +216,11 @@ def main():
         )
 
     # write output
-    print("Write output")
-    df.to_csv(args.output_file)
+    logger.info("Writing output")
+    final_output_file = output_dir / args.output_file_name
+    df.to_csv(final_output_file)
 
-    with open(args.output_file.with_suffix(".json"), "w") as f:
+    with open(final_output_file.with_suffix("_report.json"), "w") as f:
         json.dump(report_dict, f, indent=4)
 
 
