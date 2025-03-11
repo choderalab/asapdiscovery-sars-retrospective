@@ -120,6 +120,10 @@ def split_by_scaffold(ligands, scaffold_type: BaseBemisMurckoScaffold):
 def main():
     args = parse_args()
 
+    # create output directory
+    output_dir = args.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     ligands = []
     for sdf in args.sdf_2d:
         mff = MolFileFactory(filename=sdf)
@@ -149,7 +153,7 @@ def main():
 
         cluster_df = pd.DataFrame.from_records(cluster_labels)
         cluster_df.to_csv(
-            args.output_dir / f"{scaffold_type.name}_cluster_labels.csv", index=False
+            output_dir / f"{scaffold_type.name}_cluster_labels.csv", index=False
         )
 
 
