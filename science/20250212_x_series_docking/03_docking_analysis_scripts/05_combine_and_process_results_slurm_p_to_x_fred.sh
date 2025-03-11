@@ -15,5 +15,6 @@ python3 05_combine_and_process_results.py \
 --ligand-cache /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113 \
 --data-path /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_p_series_curated_cache_20250113/ligand_files_20250113/combined_p_to_x_similarities \
 --date-dict /data1/choderaj/paynea/asapdiscovery-sars-retrospective/data/cmpd_date_dict/date_dict.json \
+--chemical-scaffold-data /data1/choderaj/paynea/asap-datasets/mpro_fragalysis-04-01-24_scaffolds_20250311/generic_cluster_labels.csv \
 -o /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_fred/rmsd_csvs/20250217_combined_results_with_data.csv \
 --no-add-padding

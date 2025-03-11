@@ -48,6 +48,7 @@ def get_args():
         required=True,
         help="Path to date_dict.json file",
     )
+    parser.add_argument("--chemical-scaffold-data", type=Path, required=False)
     parser.add_argument(
         "--add-padding", action=argparse.BooleanOptionalAction, default=True
     )
@@ -192,6 +193,24 @@ def main():
         on=["Query_Ligand", "Reference_Ligand"],
         how="left",
     )
+
+    if args.chemical_scaffold_data:
+        print("Adding chemical scaffold info")
+        scaffold_info = pd.read_csv(args.chemical_scaffold_data)
+        df = df.merge(
+            scaffold_info,
+            left_on="Query_Ligand",
+            right_on="compound_name",
+            how="left",
+            prefix="query_",
+        )
+        df = df.merge(
+            scaffold_info,
+            left_on="Reference_Ligand",
+            right_on="compound_name",
+            how="left",
+            prefix="_reference",
+        )
 
     # write output
     print("Write output")
