@@ -203,14 +203,14 @@ def main():
             left_on="Query_Ligand",
             right_on="compound_name",
             how="left",
-            prefix="query_",
+            suffixes=(None, "_Query"),
         )
         df = df.merge(
             scaffold_info,
             left_on="Reference_Ligand",
             right_on="compound_name",
             how="left",
-            prefix="_reference",
+            suffixes=(None, "_Reference"),
         )
 
     # write output
