@@ -4,8 +4,8 @@
 #SBATCH --error=logs/run_evaluators_%A_%a.err
 #SBATCH --cpus-per-task 4
 #SBATCH --partition=cpu
-#SBATCH --mem=16GB
-#SBATCH --time=0:30:00
+#SBATCH --mem=128GB
+#SBATCH --time=2:00:00
 #SBATCH --array=0-9
 
 source ~/.bashrc

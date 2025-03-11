@@ -4,8 +4,8 @@
 #SBATCH --error=logs/create_evaluators_%A.err
 #SBATCH --cpus-per-task 1
 #SBATCH --partition=cpu
-#SBATCH --mem=4GB
-#SBATCH --time=0:00:10
+#SBATCH --mem=128GB
+#SBATCH --time=0:30:00
 
 source ~/.bashrc
 conda activate harbor
