@@ -215,7 +215,7 @@ def main():
 
     # write output
     logger.info("Writing output")
-    final_output_file = output_dir / args.output_file_name
+    final_output_file = output_dir / f"{args.output_file_name}.csv"
     df.to_csv(final_output_file)
 
     with open(final_output_file.with_suffix("_report.json"), "w") as f:
