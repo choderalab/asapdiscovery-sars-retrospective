@@ -53,7 +53,7 @@ def get_args():
         "--add-padding", action=argparse.BooleanOptionalAction, default=True
     )
     parser.add_argument(
-        "-o", "--output-dir", type=Path, required=True, help="Path to output directory"
+        "--output-dir", type=Path, required=True, help="Path to output directory"
     )
     parser.add_argument("--output-file-name", type=str, required=True)
     return parser.parse_args()
@@ -182,9 +182,7 @@ def main():
     )
 
     logger.info("Writing intermediate_output")
-    df.to_csv(
-        args.output_file.parent / args.output_file.name + "_no_chemical_similarity.csv"
-    )
+    df.to_csv(output_dir / args.output_file_name + "_no_chemical_similarity.csv")
 
     # Add chemical similarity info
     logger.info("Adding chemical similarity info")
