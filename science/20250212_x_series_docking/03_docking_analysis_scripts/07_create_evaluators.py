@@ -162,6 +162,7 @@ def main():
                         similarity_column=settings.similarity_column_name,
                         groupby=settings.similarity_groupby,
                         n_per_split=n_per_split,
+                        query_ligand_column=settings.query_ligand_column,
                         higher_is_more_similar=True,
                         include_similar=False,
                     )
