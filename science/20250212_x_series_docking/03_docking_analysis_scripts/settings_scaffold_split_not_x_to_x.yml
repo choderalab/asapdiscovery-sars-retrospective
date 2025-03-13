@@ -1,0 +1,28 @@
+date_dict_path: null
+n_bootstraps: 1000
+n_per_split: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+n_poses:
+- 1
+n_structures:
+- 1
+pose_id_column: Pose_ID
+posit_name: POSIT_Probability
+posit_score_column_name: docking-confidence-POSIT
+query_ligand_column: Query_Ligand
+randomize_by_n_days: 0
+reference_ligand_column: Reference_Ligand
+reference_structure_column: Reference_Structure
+reference_structure_date_column: Reference_Structure_Date
+rmsd_column_name: RMSD
+rmsd_cutoff: 2.0
+rmsd_name: RMSD
+use_date_split: false
+use_posit_scorer: true
+use_random_split: false
+use_rmsd_scorer: true
+use_similarity_split: false
+use_scaffold_split: true
+scaffold_split_option: 'not_x_to_x'
+query_scaffold_min_count: 5
+reference_scaffold_min_count: 5
+

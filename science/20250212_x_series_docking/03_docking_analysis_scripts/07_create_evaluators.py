@@ -12,6 +12,7 @@ from harbor.analysis.cross_docking import (
     SimilaritySplit,
     Scorer,
     BinaryEvaluation,
+    ScaffoldSplit,
     StructureChoice,
 )
 from harbor.analysis.utils import FileLogger
@@ -57,15 +58,6 @@ def main():
         logfile="create_evaluators.log",
     ).getLogger()
 
-    if args.update_n_per_split:
-        if not args.input:
-            raise ValueError("Must provide input file to update n_per_split")
-
-    logger.info("Reading input data")
-    if args.input:
-        logger.info(f"Reading from {args.input}")
-        df = pd.read_csv(args.input, index_col=0)
-
     if args.settings:
         logger.info(f"Reading {len(args.settings)} settings files")
         settings_list = [
@@ -75,6 +67,15 @@ def main():
     else:
         logger.info("No settings file provided, using defaults")
         settings_list = [("default", Settings())]
+
+    if args.update_n_per_split:
+        if not args.input:
+            raise ValueError("Must provide input file to update n_per_split")
+
+    logger.info("Reading input data")
+    if args.input:
+        logger.info(f"Reading from {args.input}")
+        df = pd.read_csv(args.input, index_col=0)
 
     evaluators = []
     for settings_name, settings in settings_list:
@@ -167,6 +168,46 @@ def main():
                         include_similar=False,
                     )
                     for threshold in settings.similarity_thresholds
+                    for n_per_split in settings.n_per_split
+                ]
+            )
+        if settings.use_scaffold_split:
+            from harbor.analysis.cross_docking import ScaffoldSplitOptions as sso
+
+            ref_subset = settings.reference_scaffold_id_subset
+            query_subset = settings.query_scaffold_id_subset
+
+            if settings.scaffold_split_option == sso.NOT_X_TO_X:
+                # Get cluster sizes by counting unique ligands per cluster
+                cluster_sizes = df.groupby(settings.reference_scaffold_id_column)[
+                    settings.reference_ligand_column
+                ].nunique()
+
+                # Filter for clusters with more than 5 members
+                ref_subset = cluster_sizes[
+                    cluster_sizes > settings.reference_scaffold_min_count
+                ].index.tolist()
+
+            elif settings.scaffold_split_option == sso.X_TO_NOT_X:
+                # Do the same thing but for the query
+                cluster_sizes = df.groupby(settings.query_scaffold_id_column)[
+                    settings.query_ligand_column
+                ].nunique()
+
+                query_subset = cluster_sizes[
+                    cluster_sizes > settings.query_scaffold_min_count
+                ].index.tolist()
+
+            dataset_splits.extend(
+                [
+                    ScaffoldSplit(
+                        query_scaffold_id_column=settings.query_scaffold_id_column,
+                        reference_scaffold_id_column=settings.reference_scaffold_id_column,
+                        split_option=settings.scaffold_split_option,
+                        reference_scaffold_id_subset=ref_subset,
+                        query_scaffold_id_subset=query_subset,
+                        n_per_split=n_per_split,
+                    )
                     for n_per_split in settings.n_per_split
                 ]
             )
