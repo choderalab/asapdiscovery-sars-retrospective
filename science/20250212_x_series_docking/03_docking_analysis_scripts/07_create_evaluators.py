@@ -114,7 +114,7 @@ def main():
             dataset_splits.extend(
                 [
                     RandomSplit(
-                        variable=settings.reference_ligand_column,
+                        reference_structure_column=settings.reference_ligand_column,
                         n_splits=1,
                         n_per_split=n_per_split,
                     )
@@ -145,7 +145,7 @@ def main():
             dataset_splits.extend(
                 [
                     DateSplit(
-                        variable=settings.reference_structure_column,
+                        reference_structure_column=settings.reference_structure_column,
                         n_per_split=n_per_split,
                         balanced=True,  # haven't implemented this otherwise
                         date_dict=simplified_date_dict,
@@ -159,13 +159,14 @@ def main():
                 [
                     SimilaritySplit(
                         threshold=threshold,
-                        variable=settings.similarity_column_name,
+                        similarity_column=settings.similarity_column_name,
                         groupby=settings.similarity_groupby,
-                        n_per_split=-1,
+                        n_per_split=n_per_split,
                         higher_is_more_similar=True,
                         include_similar=False,
                     )
-                    for threshold in np.linspace(0, 1, 21)
+                    for threshold in settings.similarity_thresholds
+                    for n_per_split in settings.n_per_split
                 ]
             )
 

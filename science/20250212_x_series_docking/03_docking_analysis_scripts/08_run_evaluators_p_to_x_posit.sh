@@ -14,13 +14,14 @@ conda activate harbor
 echo Start
 date
 
+data_dir='/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit'
 
 python3 08_run_evaluators.py \
---input /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/rmsd_csvs/20250217_combined_results_with_data.csv \
---output /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/test_run_evaluators \
+--input $data_dir/combined_results/20250311_combined_results \
+--output $data_dir/similarity_split \
 --n-cpus 4 \
 --job-id $SLURM_ARRAY_TASK_ID \
---evaluator-json /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/test_evaluator_creation/evaluator_*"${SLURM_ARRAY_TASK_ID}".json
+--evaluator-json $data_dir/similarity_split/evaluator_*"${SLURM_ARRAY_TASK_ID}".json
 
 date
 echo Done

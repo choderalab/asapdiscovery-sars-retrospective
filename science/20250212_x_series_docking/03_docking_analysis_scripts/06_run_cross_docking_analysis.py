@@ -170,7 +170,7 @@ def main():
     dataset_splits.extend(
         [
             cd.RandomSplit(
-                variable=settings.reference_ligand_column,
+                reference_structure_column=settings.reference_ligand_column,
                 n_splits=1,
                 n_per_split=n_per_split,
             )
@@ -180,7 +180,7 @@ def main():
     dataset_splits.extend(
         [
             cd.DateSplit(
-                variable=settings.reference_structure_column,
+                reference_structure_column=settings.reference_structure_column,
                 n_per_split=n_per_split,
                 balanced=True,
                 date_dict=simplified_date_dict,

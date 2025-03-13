@@ -15,13 +15,18 @@ date
 # network device info
 ulimit -c 0
 
+data_dir='/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit'
+
 python3 07_create_evaluators.py \
---input /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/rmsd_csvs/20250217_combined_results_with_data.csv \
---output /data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/test_evaluator_creation \
---settings \
-'settings_cross_docking_defaults.yml' \
-'settings_similarity_split.yml' \
+--input $data_dir/combined_results/20250311_combined_results \
+--output $data_dir/datesplit \
+--settings 'settings_cross_docking_defaults.yml' \
 --update-n-per-split
+
+python3 07_create_evaluators.py \
+--input $data_dir/combined_results/20250311_combined_results \
+--output $data_dir/similarity_split \
+--settings 'settings_similarity_split_tanimotocombo.yml'
 
 date
 echo Done
