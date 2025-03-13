@@ -174,8 +174,10 @@ def main():
         if settings.use_scaffold_split:
             from harbor.analysis.cross_docking import ScaffoldSplitOptions as sso
 
-            ref_subset = settings.reference_scaffold_id_subset
-            query_subset = settings.query_scaffold_id_subset
+            # subset can be a list, and we might want to make a list of subsets
+
+            ref_subset_list = [settings.reference_scaffold_id_subset]
+            query_subset_list = [settings.query_scaffold_id_subset]
 
             if settings.scaffold_split_option == sso.NOT_X_TO_X:
                 # Get cluster sizes by counting unique ligands per cluster
@@ -184,9 +186,12 @@ def main():
                 ].nunique()
 
                 # Filter for clusters with more than 5 members
-                ref_subset = cluster_sizes[
-                    cluster_sizes > settings.reference_scaffold_min_count
-                ].index.tolist()
+                ref_subset_list = [
+                    [scaffold]
+                    for scaffold in cluster_sizes[
+                        cluster_sizes > settings.reference_scaffold_min_count
+                    ].index.tolist()
+                ]
 
             elif settings.scaffold_split_option == sso.X_TO_NOT_X:
                 # Do the same thing but for the query
@@ -194,9 +199,12 @@ def main():
                     settings.query_ligand_column
                 ].nunique()
 
-                query_subset = cluster_sizes[
-                    cluster_sizes > settings.query_scaffold_min_count
-                ].index.tolist()
+                query_subset_list = [
+                    [scaffold]
+                    for scaffold in cluster_sizes[
+                        cluster_sizes > settings.query_scaffold_min_count
+                    ].index.tolist()
+                ]
 
             dataset_splits.extend(
                 [
@@ -209,6 +217,8 @@ def main():
                         n_per_split=n_per_split,
                     )
                     for n_per_split in settings.n_per_split
+                    for ref_subset in ref_subset_list
+                    for query_subset in query_subset_list
                 ]
             )
 
