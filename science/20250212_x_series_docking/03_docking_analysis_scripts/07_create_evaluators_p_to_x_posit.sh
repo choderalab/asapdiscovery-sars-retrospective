@@ -28,5 +28,11 @@ python3 07_create_evaluators.py \
 --output $data_dir/similarity_split \
 --settings 'settings_similarity_split_tanimotocombo.yml'
 
+python3 07_create_evaluators.py \
+--input $data_dir/combined_results/20250311_combined_results \
+--output $data_dir/scaffold_split \
+--settings 'settings_scaffold_split_not_x_to_x.yml' \
+'settings_scaffold_split_x_to_not_x.yml'
+
 date
 echo Done
