@@ -34,7 +34,6 @@ def get_args():
         help="Path to the output directory where the results will be stored",
         required=True,
     )
-    parser.add_argument("--update-n-per-split", action="store_true")
     return parser.parse_args()
 
 
@@ -58,10 +57,6 @@ def main():
         logger.info("No settings file provided, using defaults")
         settings_list = [("default", Settings())]
 
-    if args.update_n_per_split:
-        if not args.input:
-            raise ValueError("Must provide input file to update n_per_split")
-
     logger.info("Reading input data")
     if args.input:
         logger.info(f"Reading from {args.input}")
@@ -72,7 +67,7 @@ def main():
     logger.info("Creating evaluators")
     for name, settings in settings_list:
         logger.info(f"Creating evaluators for settings {name}")
-        evaluators = settings.create_evaluators(df, logger, args.update_n_per_split)
+        evaluators = settings.create_evaluators(df, logger)
         logger.info(f"Made {len(evaluators)} evaluators")
         logger.info(f"Saving settings to {output_dir / f'{name}.yaml'}")
         settings.to_yaml_file(output_dir / f"{name}.yaml")
