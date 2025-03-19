@@ -1,0 +1,86 @@
+"""
+Create combinations of calculations to run on a cross-docking dataset
+"""
+
+from argparse import ArgumentParser
+from harbor.analysis.cross_docking import (
+    Settings,
+)
+from harbor.analysis.utils import FileLogger
+from pathlib import Path
+import pandas as pd
+
+
+def get_args():
+    parser = ArgumentParser(
+        description="Create combinations of calculations to run on a cross-docking dataset"
+    )
+    parser.add_argument(
+        "--input",
+        type=Path,
+        required=False,
+        help="Path to the input CSV file containing the cross-docking data. ",
+    )
+    parser.add_argument(
+        "--settings",
+        type=Path,
+        nargs="+",
+        required=False,
+        help="Path to the settings yaml files. Will be generated with defaults if not provided.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="Path to the output directory where the results will be stored",
+        required=True,
+    )
+    parser.add_argument("--update-n-per-split", action="store_true")
+    return parser.parse_args()
+
+
+def main():
+    args = get_args()
+    args.output.mkdir(exist_ok=True, parents=True)
+    output_dir = args.output
+    logger = FileLogger(
+        logname="create_evaluators",
+        path=output_dir,
+        logfile="create_evaluators.log",
+    ).getLogger()
+
+    if args.settings:
+        logger.info(f"Reading {len(args.settings)} settings files")
+        settings_list = [
+            (settings.stem, Settings.from_yaml_file(settings))
+            for settings in args.settings
+        ]
+    else:
+        logger.info("No settings file provided, using defaults")
+        settings_list = [("default", Settings())]
+
+    if args.update_n_per_split:
+        if not args.input:
+            raise ValueError("Must provide input file to update n_per_split")
+
+    logger.info("Reading input data")
+    if args.input:
+        logger.info(f"Reading from {args.input}")
+        df = pd.read_csv(args.input, index_col=0)
+    else:
+        df = None
+
+    logger.info("Creating evaluators")
+    for name, settings in settings_list:
+        logger.info(f"Creating evaluators for settings {name}")
+        evaluators = settings.create_evaluators(df, logger, args.update_n_per_split)
+        logger.info(f"Made {len(evaluators)} evaluators")
+        logger.info(f"Saving settings to {output_dir / f'{name}.yaml'}")
+        settings.to_yaml_file(output_dir / f"{name}.yaml")
+
+        logger.info(f"Saving evaluators to {output_dir}")
+        for i, evaluator in enumerate(evaluators):
+            evaluator.to_json_file(output_dir / f"evaluator_{name}_{i}.json")
+
+
+if __name__ == "__main__":
+    main()

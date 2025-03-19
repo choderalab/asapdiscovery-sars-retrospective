@@ -49,7 +49,7 @@ similarity_range:
 - 1
 similarity_n_thresholds: 21
 use_scaffold_split: true
-scaffold_split_option: x_to_not_x
+scaffold_split_option: x_to_all
 query_scaffold_id_column: cluster_id
 reference_scaffold_id_column: cluster_id_Reference
 query_scaffold_id_subset: null
