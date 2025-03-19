@@ -18,7 +18,7 @@ def get_args():
     parser.add_argument(
         "--input",
         type=Path,
-        required=False,
+        required=True,
         help="Path to the input CSV file containing the cross-docking data. ",
     )
     parser.add_argument(
@@ -58,11 +58,8 @@ def main():
         settings_list = [("default", Settings())]
 
     logger.info("Reading input data")
-    if args.input:
-        logger.info(f"Reading from {args.input}")
-        df = pd.read_csv(args.input, index_col=0)
-    else:
-        df = None
+    logger.info(f"Reading from {args.input}")
+    df = pd.read_csv(args.input, index_col=0)
 
     logger.info("Creating evaluators")
     for name, settings in settings_list:
