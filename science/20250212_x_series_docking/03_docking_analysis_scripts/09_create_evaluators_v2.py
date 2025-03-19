@@ -76,6 +76,10 @@ def main():
         for i, evaluator in enumerate(evaluators):
             evaluator.to_json_file(output_dir / f"evaluator_{name}_{i}.json")
 
+        logger.info(f"Creating table summary for {name}")
+        df = settings.df_from_evaluators(evaluators)
+        df.to_csv(output_dir / f"summary_{name}.csv")
+
 
 if __name__ == "__main__":
     main()
