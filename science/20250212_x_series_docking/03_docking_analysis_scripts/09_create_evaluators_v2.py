@@ -74,7 +74,7 @@ def main():
             evaluator.to_json_file(output_dir / f"evaluator_{name}_{i}.json")
 
         logger.info(f"Creating table summary for {name}")
-        df = settings.df_from_evaluators(evaluators)
+        df = pd.DataFrame.from_records([ev.get_records() for ev in evaluators])
         df.to_csv(output_dir / f"summary_{name}.csv")
 
 
