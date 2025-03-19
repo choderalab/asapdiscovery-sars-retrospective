@@ -57,7 +57,6 @@ def main():
         logger.info("No settings file provided, using defaults")
         settings_list = [("default", Settings())]
 
-    logger.info("Reading input data")
     logger.info(f"Reading from {args.input}")
     df = pd.read_csv(args.input, index_col=0)
     logger.info(f"Read {len(df)} rows")
@@ -75,8 +74,10 @@ def main():
             evaluator.to_json_file(output_dir / f"evaluator_{name}_{i}.json")
 
         logger.info(f"Creating table summary for {name}")
-        df = pd.DataFrame.from_records([ev.get_records() for ev in evaluators])
-        df.to_csv(output_dir / f"summary_{name}.csv")
+        output_dataframe = pd.DataFrame.from_records(
+            [ev.get_records() for ev in evaluators]
+        )
+        output_dataframe.to_csv(output_dir / f"summary_{name}.csv")
 
 
 if __name__ == "__main__":
