@@ -55,8 +55,8 @@ query_scaffold_id_column: cluster_id
 reference_scaffold_id_column: cluster_id_Reference
 query_scaffold_id_subset: null
 reference_scaffold_id_subset: null
-query_scaffold_min_count: 5
-reference_scaffold_min_count: 1
+query_scaffold_min_count: 1
+reference_scaffold_min_count: 5
 combine_core_and_chemical_splits: true
 use_posit_scorer: true
 posit_score_column_name: docking-confidence-POSIT
