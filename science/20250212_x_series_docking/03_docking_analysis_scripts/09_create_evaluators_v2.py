@@ -60,6 +60,7 @@ def main():
     logger.info("Reading input data")
     logger.info(f"Reading from {args.input}")
     df = pd.read_csv(args.input, index_col=0)
+    logger.info(f"Read {len(df)} rows")
 
     logger.info("Creating evaluators")
     for name, settings in settings_list:
