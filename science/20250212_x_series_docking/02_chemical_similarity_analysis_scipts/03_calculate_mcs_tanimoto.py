@@ -33,6 +33,12 @@ def parse_args():
         required=False,
         help="Path to directory containing prepped query ligand sdf. If false, ref-ligand-sdf will be used.",
     )
+    parser.add_argument(
+        "--ncpus",
+        type=int,
+        default=1,
+        help="Number of CPUs to use for parallelization.",
+    )
     return parser.parse_args()
 
 
@@ -122,7 +128,9 @@ def main():
 
     logger.info("Calculating similarities...")
     # Parallelize the MCS calculation
-    with mp.Pool(mp.cpu_count()) as pool:
+    cpus = min(args.ncpus, mp.cpu_count())
+    logger.info(f"Using {cpus} CPUs for parallelization.")
+    with mp.Pool(cpus) as pool:
         results = pool.starmap(
             parallelize, [(ref, queries, logger) for ref in references]
         )
