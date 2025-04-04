@@ -5,7 +5,7 @@
 #SBATCH --partition=cpu
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=64GB
-#SBATCH --time=02:00:00
+#SBATCH --time=24:00:00
 source ~/.bashrc
 mamba activate asap2025e
 python3 03_calculate_mcs_tanimoto.py \
