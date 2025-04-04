@@ -21,7 +21,7 @@ python3 08_run_evaluators.py \
 --output $data_dir/scaffold_split \
 --n-cpus 32 \
 --job-id $SLURM_ARRAY_TASK_ID \
---evaluator-json $data_dir/scaffold_split/evaluator_"${SLURM_ARRAY_TASK_ID}".json
+--evaluator-json $data_dir/scaffold_split/evaluator_*"${SLURM_ARRAY_TASK_ID}".json
 
 
 date
