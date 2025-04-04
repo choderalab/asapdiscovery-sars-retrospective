@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=calculate_mcs_tanimoto
-#SBATCH --output=logs/calculate_mcs_tanimoto.out
-#SBATCH --error=logs/calculate_mcs_tanimoto.err
+#SBATCH --job-name=calculate_mcs_tanimoto_x_to_x
+#SBATCH --output=logs/calculate_mcs_tanimoto_x_to_x.out
+#SBATCH --error=logs/calculate_mcs_tanimoto_x_to_x.err
 #SBATCH --partition=cpu
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=64GB
