@@ -76,29 +76,32 @@ def one_to_many_mcs(refmol: oechem.OEMol, querymols: list[oechem.OEMol]):
     return mcs_num_atoms, total_num_atoms
 
 
-def parallelize(ref: Ligand, queries: list[Ligand], logger):
+def parallelize(ref: Ligand, query_ligands: list[Ligand], logger):
     """
     Calculate the MCS between a reference ligand and a list of query ligands.
     :param ref: Reference ligand
-    :param queries: List of query ligands
+    :param query_ligands: List of query ligands
     :return: Dataframe with MCS results
     """
     logger.info(f"Calculating MCS for {ref.compound_name}...")
     refmol = ref.to_oemol()
-    query_mols = [query.to_oemol() for query in queries]
+    query_mols = [query.to_oemol() for query in query_ligands]
     num_atoms_mcs_array, num_atoms_union_array = one_to_many_mcs(refmol, query_mols)
     tanimoto_array = num_atoms_mcs_array / num_atoms_union_array
     return MCSSimilarity.construct_dataframe(
         [
             MCSSimilarity(
                 Reference_Ligand=ref.compound_name,
-                Query_Ligand=query,
+                Query_Ligand=query.compound_name,
                 Tanimoto=tanimoto,
                 N_Atoms_in_MCS=mcs,
                 N_Atoms_in_Union=union,
             )
             for (query, tanimoto, mcs, union) in zip(
-                query_mols, tanimoto_array, num_atoms_mcs_array, num_atoms_union_array
+                query_ligands,
+                tanimoto_array,
+                num_atoms_mcs_array,
+                num_atoms_union_array,
             )
         ]
     )
