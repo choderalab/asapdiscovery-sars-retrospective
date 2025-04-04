@@ -4,7 +4,7 @@
 #SBATCH --error=logs/run_evaluators_scafold_date_split_%A_%a.err
 #SBATCH --cpus-per-task 32
 #SBATCH --partition=cpu
-#SBATCH --mem=16GB
+#SBATCH --mem=32GB
 #SBATCH --time=5:00:00
 #SBATCH --array=0-9
 
