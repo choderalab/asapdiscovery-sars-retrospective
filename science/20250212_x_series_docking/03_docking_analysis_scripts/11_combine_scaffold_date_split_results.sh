@@ -19,6 +19,8 @@ input_dir="./data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/scaffold_
 # Output file
 output_file="combined_results.csv"
 
+touch "$input_dir/$output_file"
+
 # Take header from first CSV file and write to output
 head -n 1 $(find "$input_dir/*/" -name "*.csv" | head -n 1) > "$output_file"
 
