@@ -15,7 +15,7 @@ date
 
 data_dir='/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/scaffold_split'
 
-python script.py -i $data_dir -o "$data_dir"/combined_results.csv -p "*/*.csv"
+python combine_date_split_results.py -i $data_dir -o "$data_dir"/combined_results.csv -p "*/*.csv"
 
 date
 echo Done
