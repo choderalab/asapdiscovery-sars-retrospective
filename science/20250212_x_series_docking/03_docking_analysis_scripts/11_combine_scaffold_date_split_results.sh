@@ -14,7 +14,7 @@ echo Start
 date
 
 # Directory containing CSV files
-input_dir="./data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/scaffold_split"
+input_dir="/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit/scaffold_split"
 
 # Output file
 output_file="combined_results.csv"
