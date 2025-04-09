@@ -16,6 +16,9 @@ date
 
 data_dir='/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit'
 
+# Total number of files to process
+TOTAL_FILES=28224
+
 # Number of files to process per job
 FILES_PER_JOB=10
 
