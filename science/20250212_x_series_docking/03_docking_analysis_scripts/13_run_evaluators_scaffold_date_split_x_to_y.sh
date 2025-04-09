@@ -31,22 +31,16 @@ if [ $END_FILE -gt $TOTAL_FILES ]; then
     END_FILE=$TOTAL_FILES
 fi
 
-# Collect the file names in a list
-evaluator_files=""
 for FILE_NUM in $(seq $START_FILE $END_FILE); do
   FORMATTED_NUM=$(printf "%0d" $FILE_NUM)
   FILE_NAME="$data_dir/scaffold_split_x_to_y/evaluator_settings_scaffold_split_x_to_y_${FORMATTED_NUM}.json"
-  evaluator_files="$evaluator_files $FILE_NAME"
-done
-
-echo "Processing evaluator files: $evaluator_files"
-
-python3 08_run_evaluators.py \
---input $data_dir/combined_results/20250311_combined_results \
---output $data_dir/scaffold_split_x_to_y \
---n-cpus 10 \
---job-id $SLURM_ARRAY_TASK_ID \
---evaluator-json $evaluator_files
+  echo "Processing $FILE_NAME"
+  python3 08_run_evaluators.py \
+  --input $data_dir/combined_results/20250311_combined_results \
+  --output $data_dir/scaffold_split_x_to_y \
+  --n-cpus 10 \
+  --job-id $SLURM_ARRAY_TASK_ID \
+  --evaluator-json $evaluator_files
 done
 
 date
