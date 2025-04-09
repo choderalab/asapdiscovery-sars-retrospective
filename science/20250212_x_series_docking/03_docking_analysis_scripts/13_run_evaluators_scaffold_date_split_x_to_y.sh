@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=run_evaluators_scafold_date_split_x_to_y
-#SBATCH --output=logs/run_evaluators_scafold_date_split_x_to_y_%A_%a.out
-#SBATCH --error=logs/run_evaluators_scafold_date_split_x_to_y_%A_%a.err
+#SBATCH --output=logs/run_evaluators_scafold_date_split_x_to_y_%a.out
+#SBATCH --error=logs/run_evaluators_scafold_date_split_x_to_y_%a.err
 #SBATCH --cpus-per-task 10
 #SBATCH --partition=cpu
 #SBATCH --mem=16GB
