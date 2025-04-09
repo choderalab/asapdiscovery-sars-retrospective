@@ -34,6 +34,11 @@ def get_args():
         help="Path to the output directory where the results will be stored",
         required=True,
     )
+    parser.add_argument(
+        "--save",
+        action="store_true",
+        help="Save the evaluators to JSON files",
+    )
     return parser.parse_args()
 
 
@@ -66,12 +71,14 @@ def main():
         logger.info(f"Creating evaluators for settings {name}")
         evaluators = settings.create_evaluators(df, logger)
         logger.info(f"Made {len(evaluators)} evaluators")
+
         logger.info(f"Saving settings to {output_dir / f'{name}.yaml'}")
         settings.to_yaml_file(output_dir / f"{name}.yaml")
 
-        logger.info(f"Saving evaluators to {output_dir}")
-        for i, evaluator in enumerate(evaluators):
-            evaluator.to_json_file(output_dir / f"evaluator_{name}_{i}.json")
+        if args.save:
+            logger.info(f"Saving evaluators to {output_dir}")
+            for i, evaluator in enumerate(evaluators):
+                evaluator.to_json_file(output_dir / f"evaluator_{name}_{i}.json")
 
         logger.info(f"Creating table summary for {name}")
         output_dataframe = pd.DataFrame.from_records(
