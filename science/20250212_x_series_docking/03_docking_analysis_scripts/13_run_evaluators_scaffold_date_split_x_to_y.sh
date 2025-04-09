@@ -33,7 +33,7 @@ echo "Processing files $START_FILE to $END_FILE (Job array ID: $SLURM_ARRAY_TASK
 # Loop through the files assigned to this job
 for FILE_NUM in $(seq $START_FILE $END_FILE); do
   FORMATTED_NUM=$(printf "%0d" $FILE_NUM)
-  FILE_NAME="$data_dir/scaffold_split/evaluator_settings_scaffold_split_x_to_y_${FORMATTED_NUM}.json"
+  FILE_NAME="$data_dir/scaffold_split_x_to_y/evaluator_settings_scaffold_split_x_to_y_${FORMATTED_NUM}.json"
   echo Running $FILE_NAME
   python3 08_run_evaluators.py \
   --input $data_dir/combined_results/20250311_combined_results \
