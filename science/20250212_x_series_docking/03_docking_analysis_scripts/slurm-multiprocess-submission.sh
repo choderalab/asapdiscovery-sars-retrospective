@@ -9,6 +9,9 @@
 # Load any required modules (uncomment and modify as needed)
 # module load python/3.8
 
+# load env
+mamba activate harbor
+
 # Create a directory for output files
 mkdir -p mp_test_results
 
