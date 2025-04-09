@@ -19,7 +19,7 @@ data_dir='/data1/choderaj/paynea/asap-datasets/20250212_p_to_x_posit'
 
 python3 09_create_evaluators_v2.py \
 --input $data_dir/combined_results/20250311_combined_results \
---output $data_dir/scaffold_split \
+--output $data_dir/scaffold_split_x_to_y \
 --settings 'settings_scaffold_split_x_to_y.yml' \
 --save
 
