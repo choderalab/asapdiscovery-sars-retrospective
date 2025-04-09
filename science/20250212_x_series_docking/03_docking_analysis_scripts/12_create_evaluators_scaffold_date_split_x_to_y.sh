@@ -21,6 +21,7 @@ python3 09_create_evaluators_v2.py \
 --input $data_dir/combined_results/20250311_combined_results \
 --output $data_dir/scaffold_split \
 --settings 'settings_scaffold_split_x_to_y.yml' \
+--save
 
 date
 echo Done
