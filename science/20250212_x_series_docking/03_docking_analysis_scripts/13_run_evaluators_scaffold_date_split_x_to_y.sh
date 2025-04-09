@@ -40,7 +40,7 @@ for FILE_NUM in $(seq $START_FILE $END_FILE); do
   --output $data_dir/scaffold_split_x_to_y \
   --n-cpus 10 \
   --job-id $SLURM_ARRAY_TASK_ID \
-  --evaluator-json $evaluator_files
+  --evaluator-json $FILE_NAME
 done
 
 date
