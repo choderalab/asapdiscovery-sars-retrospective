@@ -2,7 +2,7 @@
 #SBATCH --job-name=run_evaluators_scafold_date_split_x_to_y
 #SBATCH --output=logs/run_evaluators_scafold_date_split_x_to_y_%a.out
 #SBATCH --error=logs/run_evaluators_scafold_date_split_x_to_y_%a.err
-#SBATCH --cpus-per-task 10
+#SBATCH --cpus-per-task 0
 #SBATCH --partition=cpu
 #SBATCH --mem=16GB
 #SBATCH --time=0:10:00
@@ -38,7 +38,7 @@ for FILE_NUM in $(seq $START_FILE $END_FILE); do
   python3 08_run_evaluators.py \
   --input $data_dir/combined_results/20250311_combined_results \
   --output $data_dir/scaffold_split_x_to_y \
-  --n-cpus 10 \
+  --n-cpus 0 \
   --job-id $SLURM_ARRAY_TASK_ID \
   --evaluator-json $FILE_NAME
 done
