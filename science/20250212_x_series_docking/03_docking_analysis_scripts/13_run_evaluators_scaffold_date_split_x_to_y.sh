@@ -6,7 +6,7 @@
 #SBATCH --partition=cpu
 #SBATCH --mem=32GB
 #SBATCH --time=0:10:00
-#SBATCH --array=0-2 #822 #4
+#SBATCH --array=0-2822 #4
 
 source ~/.bashrc
 conda activate harbor
