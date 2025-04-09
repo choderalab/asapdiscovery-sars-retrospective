@@ -10,6 +10,7 @@
 # module load python/3.8
 
 # load env
+source ~/.bashrc
 mamba activate harbor
 
 # Create a directory for output files
