@@ -22,9 +22,9 @@ TOTAL_FILES=28224
 # Number of files to process per job
 FILES_PER_JOB=10
 
-# Calculate the starting and ending file numbers for this job
-START_FILE=$((SLURM_ARRAY_TASK_ID * FILES_PER_JOB + 1))
-END_FILE=$((START_FILE + FILES_PER_JOB - 1))
+# Calculate the starting and ending file numbers for this job, starting at 0
+START_FILE=$((SLURM_ARRAY_TASK_ID * FILES_PER_JOB))
+END_FILE=$((START_FILE + FILES_PER_JOB))
 
 # Make sure we don't exceed the total number of files
 if [ $END_FILE -gt $TOTAL_FILES ]; then
