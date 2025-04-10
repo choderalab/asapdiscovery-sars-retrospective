@@ -91,7 +91,10 @@ def main():
             mol.compound_name: get_fp(mol.to_oemol(), bit_size, radius)
             for mol in references
         }
-        query_fps = {mol.compound_name: get_fp(mol.to_oemol()) for mol in queries}
+        query_fps = {
+            mol.compound_name: get_fp(mol.to_oemol(), bit_size, radius)
+            for mol in queries
+        }
 
         logger.info("Calculating similarities...")
         similarities = [
