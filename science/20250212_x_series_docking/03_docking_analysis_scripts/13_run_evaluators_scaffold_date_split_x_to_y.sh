@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task 10
 #SBATCH --partition=cpu
 #SBATCH --mem=32GB
-#SBATCH --time=0:10:00
+#SBATCH --time=0:30:00
 #SBATCH --array=0-2822 #4
 
 source ~/.bashrc
