@@ -76,17 +76,6 @@ def main():
     logger.info(f"Loaded {len(references)} reference molecules.")
     logger.info(f"Loaded {len(queries)} query molecules.")
 
-    # Create all pairs and calculate similarities
-    logger.info("Calculating fingerprints...")
-    ref_fps = {mol.compound_name: get_fp(mol.to_oemol()) for mol in references}
-    query_fps = {mol.compound_name: get_fp(mol.to_oemol()) for mol in queries}
-
-    logger.info("Calculating similarities...")
-    pairs = [
-        (ref, query)
-        for ref, query in itertools.product(ref_fps.keys(), query_fps.keys())
-    ]
-
     # Create or load settings
     radii = [2, 3, 4, 5]
     bit_sizes = [1024, 2048]
@@ -96,6 +85,15 @@ def main():
             f"Calculating similarities for radius {radius} and bit size {bit_size}"
         )
 
+        # Create all pairs and calculate similarities
+        logger.info("Calculating fingerprints...")
+        ref_fps = {
+            mol.compound_name: get_fp(mol.to_oemol(), bit_size, radius)
+            for mol in references
+        }
+        query_fps = {mol.compound_name: get_fp(mol.to_oemol()) for mol in queries}
+
+        logger.info("Calculating similarities...")
         similarities = [
             ECFPSimilarity(
                 Reference_Ligand=ref,
@@ -104,7 +102,7 @@ def main():
                 radius=radius,
                 bitsize=bit_size,
             )
-            for ref, query in pairs
+            for ref, query in itertools.product(ref_fps.keys(), query_fps.keys())
         ]
         df = ECFPSimilarity.construct_dataframe(similarities)
         dfs.append(df)
