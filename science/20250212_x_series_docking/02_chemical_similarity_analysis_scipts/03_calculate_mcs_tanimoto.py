@@ -44,12 +44,11 @@ def parse_args():
 
 def one_to_many_mcs(refmol: oechem.OEMol, querymols: list[oechem.OEMol]):
     """
-    Get the number of atoms in the maximum common substructure between each pair of molecules.
-    :param mols:
-    :return:
+    Get the number of atoms in the maximum common substructure and union between each pair of molecules.
+    :param refmol: Reference molecule
+    :param querymols: List of query molecules to compare against
+    :return: Arrays of MCS atom counts and union atom counts
     """
-
-    # these are the defaaults for atom and bond expressions but just to be explicit I'm putting them here
     atomexpr = (
         oechem.OEExprOpts_Aromaticity
         | oechem.OEExprOpts_AtomicNumber
@@ -57,23 +56,23 @@ def one_to_many_mcs(refmol: oechem.OEMol, querymols: list[oechem.OEMol]):
     )
     bondexpr = oechem.OEExprOpts_Aromaticity | oechem.OEExprOpts_BondOrder
 
-    # Set up the search pattern and MCS objects
-    mcs_num_atoms = np.zeros((len(querymols)), dtype=int)
-    total_num_atoms = np.array([refmol.NumAtoms()] * len(querymols), dtype=int)
+    mcs_num_atoms = np.zeros(len(querymols), dtype=int)
+    union_num_atoms = np.zeros(len(querymols), dtype=int)
     pattern_query = oechem.OEQMol(refmol)
     pattern_query.BuildExpressions(atomexpr, bondexpr)
     mcss = oechem.OEMCSSearch(pattern_query)
     mcss.SetMCSFunc(oechem.OEMCSMaxAtomsCompleteCycles())
 
     for j, querymol in enumerate(querymols):
-        # MCS search
         try:
             mcs = next(iter(mcss.Match(querymol, True)))
             mcs_num_atoms[j] = mcs.NumAtoms()
-        except StopIteration:  # no match found
+        except StopIteration:
             mcs_num_atoms[j] = 0
-        total_num_atoms[j] += querymol.NumAtoms()
-    return mcs_num_atoms, total_num_atoms
+        # Union = Total atoms - Overlap
+        union_num_atoms[j] = refmol.NumAtoms() + querymol.NumAtoms() - mcs_num_atoms[j]
+
+    return mcs_num_atoms, union_num_atoms
 
 
 def parallelize(ref: Ligand, query_ligands: list[Ligand], logger):
