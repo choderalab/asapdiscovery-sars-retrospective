@@ -5,8 +5,8 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --partition=cpu
 #SBATCH --mem=32GB
-#SBATCH --time=0:30:00
-#SBATCH --array=0-432
+#SBATCH --time=2:00:00
+#SBATCH --array=0-431
 
 source ~/.bashrc
 conda activate harbor
