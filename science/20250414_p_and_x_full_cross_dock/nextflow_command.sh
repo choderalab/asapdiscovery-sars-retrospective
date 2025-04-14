@@ -1,2 +1,1 @@
-nextflow run main.nf -with-report -resume
-./mail_report.sh
+nextflow run prep_and_docking.nf -with-report -resume
