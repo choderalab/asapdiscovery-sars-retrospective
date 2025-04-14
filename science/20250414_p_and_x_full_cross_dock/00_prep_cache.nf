@@ -6,4 +6,5 @@ include {
 
 workflow {
     PREP_CACHE_FOR_DOCKING()
+    GENERATE_LIGAND_FILES()
 }
