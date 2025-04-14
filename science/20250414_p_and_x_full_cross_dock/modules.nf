@@ -34,9 +34,9 @@ process GENERATE_LIGAND_FILES {
 
     script:
     """
-    python3 "${params.script}"/combined_sdf_from_cache.py --input_cache "${params.fragalysisCache}"
-    python3 "${params.script}"/combined_sdf_from_cache.py --input_cache "${params.fragalysisCache}" --flatten
-    python3 "${params.script}"/split_sdf.py --sdf_fn ${params.3dligandFile} --out_dir ${params.split3dligandFiles} --chunk_size 1 --name_convention "integer"
-    python3 "${params.script}"/split_sdf.py --sdf_fn ${params.3dligandFile} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
+    python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${params.fragalysisCache}"
+    python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${params.fragalysisCache}" --flatten
+    python3 ${params.scripts}/split_sdf.py --sdf_fn ${params.3dligandFile} --out_dir ${params.split3dligandFiles} --chunk_size 1 --name_convention "integer"
+    python3 ${params.scripts}/split_sdf.py --sdf_fn ${params.3dligandFile} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
     """
 }
