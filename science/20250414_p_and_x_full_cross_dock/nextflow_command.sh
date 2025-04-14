@@ -1,1 +1,1 @@
-nextflow run prep_and_docking.nf -with-report -resume
+nextflow 00_fragalysis_prep.nf -with-report -resume
