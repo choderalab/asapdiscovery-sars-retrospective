@@ -107,7 +107,7 @@ def main():
                 )
             mol = mols_chunk[0]
             print(mol.GetTitle())
-            print({dp.GetTag(): dp.GetValue() for dp in mol.GetData()})
+            print({dp.GetTag(): dp.GetValue() for dp in oechem.OEGetSDDataPairs(mol)})
             save_openeye_sdfs(
                 mols_chunk,
                 os.path.join(args.out_dir, f"{mol.GetData('compound_name')}.sdf"),
