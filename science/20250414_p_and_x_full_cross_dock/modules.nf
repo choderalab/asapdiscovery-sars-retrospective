@@ -85,7 +85,7 @@ process CROSS_DOCK {
     clusterOptions '--partition "cpu" --time=00:30:00 --mem 16G'
 
     input:
-    tuple val(uuid), path(input_dir), path(prepped_dir), path(ligandFile2d)
+    tuple val(uuid), path(input_dir), path(prepped_dir)
 
     output:
     path("./"), emit: docked

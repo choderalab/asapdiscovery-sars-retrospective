@@ -9,7 +9,7 @@ workflow {
         .fromPath("${params.curatedFragalysis}/aligned/Mpro-*", type: 'dir')
         .map { dir ->
             def id = dir.name.toString().find(/Mpro-([a-zA-Z0-9_]+)/) { match, code -> code }
-            log.info "Input structure found: ${dir.name}, ID: ${id}"
+//             log.info "Input structure found: ${dir.name}, ID: ${id}"
             return tuple(id, dir)
         }
 
@@ -31,7 +31,7 @@ workflow {
     paired_structures = input_structures
         .join(prepped_structures, failOnMismatch: false)
         .map { id, input_dir, prepped_dir ->
-            log.info "Paired: ${id} - Input: ${input_dir.name}, Prepped: ${prepped_dir.name}"
+//             log.info "Paired: ${id} - Input: ${input_dir.name}, Prepped: ${prepped_dir.name}"
             return tuple(id, input_dir, prepped_dir)
         }
 
