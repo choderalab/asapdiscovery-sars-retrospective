@@ -8,19 +8,19 @@ workflow {
     input_structures = Channel
         .fromPath("${params.curatedFragalysis}/Mpro-*", type: 'dir')
         .map { dir ->
-            def id = dir.name.toString().find(/Mpro-([A-Z0-9_]+)/) { match, code -> code }
+            def id = dir.name.toString().find(/Mpro-([a-zA-Z0-9_]+)/) { match, code -> code }
             log.info "Input structure found: ${dir.name}, ID: ${id}"
             return tuple(id, dir)
         }
 
     // Count input structures
-    input_structures.count().view { count -> "Total input structures found: $count" }
+//     input_structures.count().view { count -> "Total input structures found: $count" }
 
     prepped_structures = Channel
         .fromPath("${params.dataPath}/${params.fixedFragalysisCache}/Mpro-*-*", type: 'dir')
         .map { dir ->
-            def id = dir.name.toString().find(/Mpro-([A-Z0-9_]+)-/) { match, code -> code }
-            log.info "Prepped structure found: ${dir.name}, ID: ${id}"
+            def id = dir.name.toString().find(/Mpro-([a-zA-Z0-9_]+)-/) { match, code -> code }
+//             log.info "Prepped structure found: ${dir.name}, ID: ${id}"
             return tuple(id, dir)
         }
 
