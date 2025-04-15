@@ -5,14 +5,14 @@ include {
 workflow {
     // Create channels from directories
     input_structures = Channel
-        .fromPath("${params.inputStructureDir}/Mpro-*", type: 'dir')
+        .fromPath("${params.curatedFragalysis}/Mpro-*", type: 'dir')
         .map { dir ->
             def id = dir.name.toString().find(/Mpro-([A-Z0-9_]+)/) { match, code -> code }
             return tuple(id, dir)
         }
 
     prepped_structures = Channel
-        .fromPath("${params.preppedStructureDir}/Mpro-*-*", type: 'dir')
+        .fromPath("${params.dataPath}/${params.fixedFragalysisCache}/Mpro-*-*", type: 'dir')
         .map { dir ->
             def id = dir.name.toString().find(/Mpro-([A-Z0-9_]+)-/) { match, code -> code }
             return tuple(id, dir)
