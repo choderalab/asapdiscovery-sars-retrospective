@@ -92,7 +92,7 @@ process CROSS_DOCK {
     val selector
 
     output:
-    path("./"), emit: docked
+    path("*_docked"), emit: docked
 
     script:
     """
@@ -108,7 +108,7 @@ process CROSS_DOCK {
     --structure-dir ${input_dir} \
     --ligands "${ligandFile2d}" \
     --cache-dir "${prepped_dir}" \
-    --output-dir "${structure_name}_${compound_name}" \
+    --output-dir "${structure_name}_${compound_name}_docked" \
     --overwrite \
     --no-save-to-cache \
     --use-only-cache \
