@@ -106,11 +106,11 @@ def main():
                     "When using name convention, only one molecule can be in the chunk"
                 )
             mol = mols_chunk[0]
-            print(mol.GetTitle())
-            print({dp.GetTag(): dp.GetValue() for dp in oechem.OEGetSDDataPairs(mol)})
             save_openeye_sdfs(
                 mols_chunk,
-                os.path.join(args.out_dir, f"{mol.GetData('compound_name')}.sdf"),
+                os.path.join(
+                    args.out_dir, f"{oechem.OEGetSDData(mol, 'compound_name')}.sdf"
+                ),
             )
 
     if remainder:
