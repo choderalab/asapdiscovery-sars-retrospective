@@ -21,7 +21,7 @@ process PREP_FRAGALYSIS {
     """
 }
 process PREP_CACHE_FOR_DOCKING {
-    publishDir "${params.fixedFragalysisCache}", mode: 'copy', overwrite: true
+    publishDir "${params.fragalysisCache}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "prep-cache-for-docking"
     label 'local'
@@ -43,14 +43,17 @@ process GENERATE_COMBINED_LIGAND_FILES {
     tag "generate-ligand-files"
     label 'local'
 
+    input:
+    path cache_dir
+
     output:
     path "${params.ligandFile3d}", emit: ligandFile3d
     path "${params.ligandFile2d}", emit: ligandFile2d
 
     script:
     """
-    python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${params.fixedFragalysisCache}"
-    python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${params.fixedFragalysisCache}" --flatten
+    python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${cache_dir}"
+    python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${cache_dir}" --flatten
     """
 }
 process GENERATE_SPLIT_LIGAND_FILES {
