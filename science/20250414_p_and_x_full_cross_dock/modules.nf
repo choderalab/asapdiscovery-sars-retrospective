@@ -33,7 +33,7 @@ process PREP_CACHE_FOR_DOCKING {
     path cache_dir
 
     output:
-    path "${params.fixedFragalysisCache}", emit: fixed_cache
+    path "*_fixed", emit: fixed_cache
 
     script:
     """
