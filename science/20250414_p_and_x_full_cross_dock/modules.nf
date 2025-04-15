@@ -26,9 +26,15 @@ process PREP_CACHE_FOR_DOCKING {
     tag "prep-cache-for-docking"
     label 'local'
 
+    input:
+    path cache_dir from Channel.fromPath("${params.fragalysisCache}", type: 'dir')
+
+    output:
+    path cache_dir, emit: fixed_cache
+
     script:
     """
-    python3 "${params.scripts}"/prep_cache_for_docking.py --input_cache "${params.fragalysisCache}"
+    python3 "${params.scripts}"/prep_cache_for_docking.py --input_cache "${cache_dir}"
     """
 }
 process GENERATE_COMBINED_LIGAND_FILES {
