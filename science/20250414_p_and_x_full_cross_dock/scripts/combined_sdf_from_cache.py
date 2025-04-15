@@ -23,7 +23,9 @@ def get_args():
         help="If true, will flatten the molecules before saving them. "
         "This is useful if the molecules have 3D coordinates but you want to save them as 2D",
     )
-    parser.add_argument("-o", "--output_dir", type=Path, default="./", help="Path to output path")
+    parser.add_argument(
+        "-o", "--output_dir", type=Path, default="./", help="Path to output path"
+    )
     return parser.parse_args()
 
 
@@ -49,7 +51,6 @@ def main():
             for complex in complexes
         ]
     else:
-        ligands = [complex.ligand for complex in complexes]
         ligands = []
         for complex in complexes:
             lig = complex.ligand
