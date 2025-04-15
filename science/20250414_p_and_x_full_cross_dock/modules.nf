@@ -57,7 +57,8 @@ process GENERATE_SPLIT_LIGAND_FILES {
     tag "generate-ligand-files"
 
     input:
-    tuple path(ligandFile3d), path(ligandFile2d)
+    path(ligandFile3d)
+    path(ligandFile2d)
 
     output:
     path "${params.split3dligandFiles}", emit: split3dligandFiles
