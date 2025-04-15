@@ -101,14 +101,16 @@ def main():
         if args.name_convention == "integer":
             save_openeye_sdfs(mols_chunk, os.path.join(args.out_dir, f"{i+1}.sdf"))
         elif args.name_convention == "name":
-            print(
-                f"Saving {len(mols_chunk)} molecules to {mols_chunk[0].GetData('compound_name')}.sdf"
-            )
+            if len(mols_chunk) > 1:
+                raise ValueError(
+                    "When using name convention, only one molecule can be in the chunk"
+                )
+            mol = mols_chunk[0]
+            print(mol.GetTitle())
+            print({dp.GetTag(): dp.GetValue() for dp in mol.GetData()})
             save_openeye_sdfs(
                 mols_chunk,
-                os.path.join(
-                    args.out_dir, f"{mols_chunk[0].GetData('compound_name')}.sdf"
-                ),
+                os.path.join(args.out_dir, f"{mol.GetData('compound_name')}.sdf"),
             )
 
     if remainder:
