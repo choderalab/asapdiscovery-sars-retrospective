@@ -103,7 +103,9 @@ def main():
         elif args.name_convention == "name":
             save_openeye_sdfs(
                 mols_chunk,
-                os.path.join(args.out_dir, f"{mols_chunk[0].GetTitle()}.sdf"),
+                os.path.join(
+                    args.out_dir, f"{mols_chunk[0].GetData('compound_name')}.sdf"
+                ),
             )
 
     if remainder:
