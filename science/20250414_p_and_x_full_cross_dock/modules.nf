@@ -86,8 +86,7 @@ process CROSS_DOCK {
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
 
     input:
-    tuple val(structure_name), path(input_dir), path(prepped_dir)
-    tuple val(compound_name), path(ligandFile2d)
+    tuple val(structure_name), path(input_dir), path(prepped_dir), val(compound_name), path(ligandFile2d)
     val posit_method
     val selector
 

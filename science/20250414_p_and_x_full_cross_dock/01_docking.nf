@@ -55,7 +55,12 @@ workflow {
 
     log.info "Taking ${params.take ?: 'all'} ligand files"
 
+    // create cross docking combinations
+    combinations = paired_structures
+        .take(params.take)
+        .combine(ligand_files.take(params.take))
+
     // Call your process with the paired directories (handle null take parameter)
-    CROSS_DOCK_FRED(paired_structures.take(params.take), ligand_files.take(params.take), "FRED", "PairwiseSelector")
-    CROSS_DOCK_POSIT(paired_structures.take(params.take), ligand_files.take(params.take), "ALL", "PairwiseSelector")
+    CROSS_DOCK_FRED(combinations, "FRED", "PairwiseSelector")
+    CROSS_DOCK_POSIT(combinations, "ALL", "PairwiseSelector")
 }
