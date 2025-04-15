@@ -57,6 +57,12 @@ def main():
     logger.info(f"Copy created successfully at '{output_cache}'")
 
     # Now work on the copy instead of the original
+    # Remove protein_prep.json and protein-prep.log from the copied cache as it confuses the cache loader
+    for pattern in ["protein_prep.json", "protein-prep.log"]:
+        for file_path in output_cache.glob(pattern):
+            logger.info(f"Removing {file_path}")
+            file_path.unlink()
+
     # fix ligand in P0097
     prepped_directories = list(output_cache.glob("*P0097*"))
     logger.info(
