@@ -89,7 +89,7 @@ process CROSS_DOCK {
     tuple val(structure_name), path(input_dir), path(prepped_dir)
     tuple val(compound_name), path(ligandFile2d)
     val posit_method
-    val selector = "PairwiseSelector"
+    val selector
 
     output:
     path("./"), emit: docked

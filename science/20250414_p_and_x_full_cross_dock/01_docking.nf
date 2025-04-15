@@ -55,6 +55,6 @@ workflow {
     log.info "Taking ${params.take ?: 'all'} ligand files"
 
     // Call your process with the paired directories (handle null take parameter)
-    CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take), "FRED")
-    CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take), "POSIT")
+    CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take), "FRED", "PairwiseSelector")
+    CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take), "POSIT", "PairwiseSelector")
 }
