@@ -21,7 +21,7 @@ process PREP_FRAGALYSIS {
     """
 }
 process PREP_CACHE_FOR_DOCKING {
-    publishDir "${params.fragalysisCache}", mode: 'copy', overwrite: true
+    publishDir "${params.fixedFragalysisCache}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "prep-cache-for-docking"
     label 'local'
