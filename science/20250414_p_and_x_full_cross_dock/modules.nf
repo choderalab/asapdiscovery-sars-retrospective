@@ -79,3 +79,39 @@ process GENERATE_SPLIT_LIGAND_FILES {
     python3 ${params.scripts}/split_sdf.py --sdf_fn ${ligandFile2d} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
     """
 }
+process CROSS_DOCK {
+    conda "${params.asap}"
+    tag "cross-dock ${uuid}"
+    clusterOptions '--partition "cpu" --time=00:30:00 --mem 16G'
+
+    input:
+    tuple val(uuid), path(input_dir), path(prepped_dir), path(ligandFile2d)
+
+    output:
+    path("./"), emit: docked
+
+    script:
+    """
+    asap-cli docking cross-docking \
+    --target SARS-CoV-2-Mpro \
+    --use-omega \
+    --omega-dense \
+    --allow-retries \
+    --allow-final-clash \
+    --relax-mode clash \
+    --posit-method FRED \
+    --structure-selector PairwiseSelector \
+    --fragalysis-dir ${input_dir} \
+    --ligands "${params.ligandFile2d}" \
+    --cache-dir "${prepped_dir}" \
+    --output-dir "${uuid}_docked" \
+    --overwrite \
+    --no-save-to-cache \
+    --use-only-cache \
+    --num-poses 50 \
+    --use-dask \
+    --dask-type local \
+    --dask-n-workers 1
+    """
+
+}
