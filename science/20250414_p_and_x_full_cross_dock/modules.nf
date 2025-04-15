@@ -24,6 +24,7 @@ process PREP_CACHE_FOR_DOCKING {
     publishDir "${params.fragalysisCache}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "prep-cache-for-docking"
+    label 'local'
 
     output:
     path "./", emit: fragalysisCache
@@ -37,6 +38,7 @@ process GENERATE_COMBINED_LIGAND_FILES {
     publishDir "${params.ligandFiles}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "generate-ligand-files"
+    label 'local'
 
     input:
     path fragalysisCache
@@ -55,6 +57,7 @@ process GENERATE_SPLIT_LIGAND_FILES {
     publishDir "${params.ligandFiles}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "generate-ligand-files"
+    label 'local'
 
     input:
     path(ligandFile3d)
