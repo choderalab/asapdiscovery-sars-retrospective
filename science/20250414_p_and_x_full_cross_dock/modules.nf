@@ -80,6 +80,7 @@ process GENERATE_SPLIT_LIGAND_FILES {
     """
 }
 process CROSS_DOCK {
+    publishDir "${params.ligandFiles}", mode: 'link', overwrite: true
     conda "${params.asap}"
     tag "cross-dock ${uuid}"
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
@@ -102,7 +103,7 @@ process CROSS_DOCK {
     --relax-mode clash \
     --posit-method FRED \
     --structure-selector PairwiseSelector \
-    --fragalysis-dir ${input_dir} \
+    --structure-dir ${input_dir} \
     --ligands "${ligandFile2d}" \
     --cache-dir "${prepped_dir}" \
     --output-dir "${uuid}_docked" \
