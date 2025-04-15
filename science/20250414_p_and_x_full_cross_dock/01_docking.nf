@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 include {
-    CROSS_DOCK
+    CROSS_DOCK as CROSS_DOCK_FRED
+    CROSS_DOCK as CROSS_DOCK_POSIT
 } from "./modules.nf"
 
 workflow {
@@ -55,6 +56,6 @@ workflow {
     log.info "Taking ${params.take ?: 'all'} ligand files"
 
     // Call your process with the paired directories (handle null take parameter)
-    CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take), "FRED", "PairwiseSelector")
-    CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take), "POSIT", "PairwiseSelector")
+    CROSS_DOCK_FRED(paired_structures.take(params.take), ligand_files.take(params.take), "FRED", "PairwiseSelector")
+    CROSS_DOCK_POSIT(paired_structures.take(params.take), ligand_files.take(params.take), "POSIT", "PairwiseSelector")
 }
