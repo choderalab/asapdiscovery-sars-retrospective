@@ -80,7 +80,7 @@ process GENERATE_SPLIT_LIGAND_FILES {
     """
 }
 process CROSS_DOCK {
-    publishDir "${params.dockedFiles}", mode: 'link', overwrite: true
+    publishDir "${params.dockedFiles}/${posit_method}", mode: 'link', overwrite: true
     conda "${params.asap}"
     tag "cross-dock ${structure_name} ${compound_name}"
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
