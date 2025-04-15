@@ -106,7 +106,7 @@ process CROSS_DOCK {
     --structure-dir ${input_dir} \
     --ligands "${ligandFile2d}" \
     --cache-dir "${prepped_dir}" \
-    --output-dir "${uuid}_${compound_name}" \
+    --output-dir "${structure_name}_${compound_name}" \
     --overwrite \
     --no-save-to-cache \
     --use-only-cache \
