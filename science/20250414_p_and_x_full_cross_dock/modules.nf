@@ -25,15 +25,12 @@ process PREP_CACHE_FOR_DOCKING {
     conda "${params.asap}"
     tag "prep-cache-for-docking"
 
-    input:
-    path fragalysisCache
-
     output:
     path "./", emit: fragalysisCache
 
     script:
     """
-    python3 "${params.scripts}"/prep_cache_for_docking.py --input_cache "${fragalysisCache}"
+    python3 "${params.scripts}"/prep_cache_for_docking.py --input_cache "${params.fragalysisCache}"
     """
 }
 process GENERATE_COMBINED_LIGAND_FILES {
