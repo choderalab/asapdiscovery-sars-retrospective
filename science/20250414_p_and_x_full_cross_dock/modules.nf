@@ -86,6 +86,7 @@ process CROSS_DOCK {
 
     input:
     tuple val(uuid), path(input_dir), path(prepped_dir)
+    path(ligandFile2d)
 
     output:
     path("./"), emit: docked
@@ -102,7 +103,7 @@ process CROSS_DOCK {
     --posit-method FRED \
     --structure-selector PairwiseSelector \
     --fragalysis-dir ${input_dir} \
-    --ligands "${params.ligandFile2d}" \
+    --ligands "${ligandFile2d}" \
     --cache-dir "${prepped_dir}" \
     --output-dir "${uuid}_docked" \
     --overwrite \
