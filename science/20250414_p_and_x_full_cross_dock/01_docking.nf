@@ -42,13 +42,18 @@ workflow {
     log.info "Taking ${params.take ?: 'all'} paired structures"
 
     // load in ligand file
-    ligand_file = Channel
-        .fromPath("${params.ligandFiles}/${params.ligandFile2d}", type: 'file')
+    ligand_files = Channel
+        .fromPath("${params.ligandFiles}/${params.split_2d}/*.sdf", type: 'file')
+        .map { file ->
+            def id = dir.name.toString().find(/Mpro-([a-zA-Z0-9_]+)-/) { match, code -> code }
+            log.info "Prepped structure found: ${file.name}, ID: ${id}"
+            return tuple(id, file)
+        }
 
     // Call your process with the paired directories (handle null take parameter)
     if (params.take) {
-        CROSS_DOCK(paired_structures.take(params.take), ligand_file)
+        CROSS_DOCK(paired_structures.take(params.take), ligand_files.take(params.take))
     } else {
-        CROSS_DOCK(paired_structures, ligand_file)
+        CROSS_DOCK(paired_structures, ligand_files)
     }
 }

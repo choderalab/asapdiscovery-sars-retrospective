@@ -75,19 +75,19 @@ process GENERATE_SPLIT_LIGAND_FILES {
 
     script:
     """
-    python3 ${params.scripts}/split_sdf.py --sdf_fn ${ligandFile3d} --out_dir ${params.split3dligandFiles} --chunk_size 1 --name_convention "integer"
-    python3 ${params.scripts}/split_sdf.py --sdf_fn ${ligandFile2d} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
+    python3 ${params.scripts}/split_sdf.py --sdf_fn ${ligandFile3d} --out_dir ${params.split3dligandFiles} --chunk_size 1 --name_convention "name"
+    python3 ${params.scripts}/split_sdf.py --sdf_fn ${ligandFile2d} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "name"
     """
 }
 process CROSS_DOCK {
-    publishDir "${params.ligandFiles}", mode: 'link', overwrite: true
+    publishDir "${params.dockedFiles}", mode: 'link', overwrite: true
     conda "${params.asap}"
     tag "cross-dock ${uuid}"
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
 
     input:
-    tuple val(uuid), path(input_dir), path(prepped_dir)
-    path(ligandFile2d)
+    tuple val(structure_name), path(input_dir), path(prepped_dir)
+    tuple val(compound_name), path(ligandFile2d)
 
     output:
     path("./"), emit: docked
@@ -106,7 +106,7 @@ process CROSS_DOCK {
     --structure-dir ${input_dir} \
     --ligands "${ligandFile2d}" \
     --cache-dir "${prepped_dir}" \
-    --output-dir "${uuid}_docked" \
+    --output-dir "${uuid}_${compound_name}" \
     --overwrite \
     --no-save-to-cache \
     --use-only-cache \
