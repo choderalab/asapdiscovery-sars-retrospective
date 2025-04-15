@@ -113,6 +113,5 @@ process CROSS_DOCK {
     --no-save-to-cache \
     --use-only-cache \
     --num-poses "${params.numPoses}" \
-    --no-use-dask \
     """
 }
