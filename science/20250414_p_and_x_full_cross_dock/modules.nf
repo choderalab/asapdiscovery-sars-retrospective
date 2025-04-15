@@ -88,6 +88,8 @@ process CROSS_DOCK {
     input:
     tuple val(structure_name), path(input_dir), path(prepped_dir)
     tuple val(compound_name), path(ligandFile2d)
+    val posit_method
+    val selector = "PairwiseSelector"
 
     output:
     path("./"), emit: docked
@@ -101,8 +103,8 @@ process CROSS_DOCK {
     --allow-retries \
     --allow-final-clash \
     --relax-mode clash \
-    --posit-method FRED \
-    --structure-selector PairwiseSelector \
+    --posit-method "${posit_method}" \
+    --structure-selector "${selector}" \
     --structure-dir ${input_dir} \
     --ligands "${ligandFile2d}" \
     --cache-dir "${prepped_dir}" \
@@ -110,10 +112,7 @@ process CROSS_DOCK {
     --overwrite \
     --no-save-to-cache \
     --use-only-cache \
-    --num-poses 50 \
-    --use-dask \
-    --dask-type local \
-    --dask-n-workers 1
+    --num-poses "${params.numPoses}" \
+    --no-use-dask \
     """
-
 }
