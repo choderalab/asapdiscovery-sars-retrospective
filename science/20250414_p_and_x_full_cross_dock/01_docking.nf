@@ -45,7 +45,7 @@ workflow {
     ligand_files = Channel
         .fromPath("${params.ligandFiles}/${params.split2dligandFiles}/*.sdf", type: 'file')
         .map { file ->
-            def id = file.name.toString().find(/([a-zA-Z0-9_]+)-/) { match, code -> code }
+            def id = file.name.toString().find(/([a-zA-Z0-9_-]+)-/) { match, code -> code }
 //             log.info "Prepped ligand found: ${file.name}, ID: ${id}"
             return tuple(id, file)
         }
