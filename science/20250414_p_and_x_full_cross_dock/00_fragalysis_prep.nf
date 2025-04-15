@@ -4,5 +4,6 @@ include {
 } from "./modules.nf"
 
 workflow {
-    PREP_FRAGALYSIS()
+    frag_ch = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
+    PREP_FRAGALYSIS(frag_ch)
 }

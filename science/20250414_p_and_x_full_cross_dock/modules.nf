@@ -4,6 +4,9 @@ process PREP_FRAGALYSIS {
     tag "prep-fragalysis"
     clusterOptions '-c 32 --mem=4G --time=04:00:00'
 
+    input:
+    path curatedFragalysis
+
     output:
     path("./"), emit: fragalysisCache
 
@@ -11,7 +14,7 @@ process PREP_FRAGALYSIS {
     """
     asap-cli protein-prep \
       --target SARS-CoV-2-Mpro \
-      --fragalysis-dir "${params.curatedFragalysis}" \
+      --fragalysis-dir "${curatedFragalysis}" \
       --loop-db ${params.loopDB} \
       --ref-chain A \
       --active-site-chain A \
