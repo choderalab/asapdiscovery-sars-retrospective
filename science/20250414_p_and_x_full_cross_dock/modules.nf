@@ -24,7 +24,7 @@ process PREP_CACHE_FOR_DOCKING {
 
     script:
     """
-    python3 "${params.script}"/prep_cache_for_docking.py --input_cache "${params.fragalysisCache}" 
+    python3 "${params.scripts}"/prep_cache_for_docking.py --input_cache "${params.fragalysisCache}"
     """
 }
 process GENERATE_LIGAND_FILES {
@@ -36,7 +36,7 @@ process GENERATE_LIGAND_FILES {
     """
     python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${params.fragalysisCache}"
     python3 ${params.scripts}/combined_sdf_from_cache.py --input_cache "${params.fragalysisCache}" --flatten
-    python3 ${params.scripts}/split_sdf.py --sdf_fn ${params.3dligandFile} --out_dir ${params.split3dligandFiles} --chunk_size 1 --name_convention "integer"
-    python3 ${params.scripts}/split_sdf.py --sdf_fn ${params.3dligandFile} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
+    python3 ${params.scripts}/split_sdf.py --sdf_fn ${params.ligandFile3d} --out_dir ${params.split3dligandFiles} --chunk_size 1 --name_convention "integer"
+    python3 ${params.scripts}/split_sdf.py --sdf_fn ${params.ligandFile2d} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
     """
 }
