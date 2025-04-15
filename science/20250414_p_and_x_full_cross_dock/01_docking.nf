@@ -45,10 +45,14 @@ workflow {
     ligand_files = Channel
         .fromPath("${params.ligandFiles}/${params.split2dligandFiles}/*.sdf", type: 'file')
         .map { file ->
-            def id = file.name.toString().find(/Mpro-([a-zA-Z0-9_]+)-/) { match, code -> code }
-            log.info "Prepped structure found: ${file.name}, ID: ${id}"
+            def id = file.name.toString().find(/([a-zA-Z0-9_]+)-/) { match, code -> code }
+//             log.info "Prepped ligand found: ${file.name}, ID: ${id}"
             return tuple(id, file)
         }
+    // Count ligand_files
+    ligand_files.count().view { count -> "Total ligand files found: $count" }
+
+    log.info "Taking ${params.take ?: 'all'} ligand files"
 
     // Call your process with the paired directories (handle null take parameter)
     if (params.take) {
