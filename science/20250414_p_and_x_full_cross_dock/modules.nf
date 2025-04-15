@@ -82,7 +82,7 @@ process GENERATE_SPLIT_LIGAND_FILES {
 process CROSS_DOCK {
     conda "${params.asap}"
     tag "cross-dock ${uuid}"
-    clusterOptions '--partition "cpu" --time=00:30:00 --mem 16G'
+    clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
 
     input:
     tuple val(uuid), path(input_dir), path(prepped_dir)

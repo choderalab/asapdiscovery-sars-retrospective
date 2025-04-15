@@ -41,10 +41,14 @@ workflow {
     // Check take parameter
     log.info "Taking ${params.take ?: 'all'} paired structures"
 
+    // load in ligand file
+    ligand_file = Channel
+        .fromPath("${params.ligandFiles}/${params.ligandFile2d}", type: 'file')
+
     // Call your process with the paired directories (handle null take parameter)
     if (params.take) {
-        CROSS_DOCK(paired_structures.take(params.take))
+        CROSS_DOCK(paired_structures.take(params.take), ligand_file)
     } else {
-        CROSS_DOCK(paired_structures)
+        CROSS_DOCK(paired_structures, ligand_file)
     }
 }
