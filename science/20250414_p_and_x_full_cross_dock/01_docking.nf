@@ -46,7 +46,7 @@ workflow {
         .fromPath("${params.ligandFiles}/${params.split2dligandFiles}/*.sdf", type: 'file')
         .map { file ->
             def id = file.name.toString().find(/([a-zA-Z0-9_-]+)\.sdf/) { match, code -> code }
-            log.info "Prepped ligand found: ${file.name}, ID: ${id}"
+//             log.info "Prepped ligand found: ${file.name}, ID: ${id}"
             return tuple(id, file)
         }
     // Count ligand_files
