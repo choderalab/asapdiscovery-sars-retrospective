@@ -1,8 +1,8 @@
 process PREP_FRAGALYSIS {
-    publishDir "${params.fragalysisCache}", mode: 'copy', overwrite: true
+    publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.fragalysisCache}"}
     conda "${params.asap}"
     tag "prep-fragalysis"
-    clusterOptions '-c 32 --mem=128G --time=24:00:00'
+    clusterOptions '-c 32 --mem=4G--time=04:00:00'
 
     output:
     path("./"), emit: fragalysisCache
