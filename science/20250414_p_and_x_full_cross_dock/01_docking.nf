@@ -43,7 +43,7 @@ workflow {
 
     // load in ligand file
     ligand_files = Channel
-        .fromPath("${params.ligandFiles}/${params.split_2d}/*.sdf", type: 'file')
+        .fromPath("${params.ligandFiles}/${params.split2dligandFiles}/*.sdf", type: 'file')
         .map { file ->
             def id = dir.name.toString().find(/Mpro-([a-zA-Z0-9_]+)-/) { match, code -> code }
             log.info "Prepped structure found: ${file.name}, ID: ${id}"
