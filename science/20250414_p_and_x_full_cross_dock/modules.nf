@@ -8,7 +8,7 @@ process PREP_FRAGALYSIS {
     path curatedFragalysis
 
     output:
-    path("./"), emit: fragalysisCache
+    path("output"), emit: fragalysisCache
 
     script:
     """
