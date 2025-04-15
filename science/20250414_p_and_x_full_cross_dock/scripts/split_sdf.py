@@ -101,6 +101,9 @@ def main():
         if args.name_convention == "integer":
             save_openeye_sdfs(mols_chunk, os.path.join(args.out_dir, f"{i+1}.sdf"))
         elif args.name_convention == "name":
+            print(
+                f"Saving {len(mols_chunk)} molecules to {mols_chunk[0].GetData('compound_name')}.sdf"
+            )
             save_openeye_sdfs(
                 mols_chunk,
                 os.path.join(
