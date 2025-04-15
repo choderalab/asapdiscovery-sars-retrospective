@@ -6,7 +6,8 @@ include {
 } from "./modules.nf"
 
 workflow {
-    PREP_CACHE_FOR_DOCKING()
+    cache_ch = Channel.fromPath("${params.fragalysisCache}", type: 'dir')
+    PREP_CACHE_FOR_DOCKING(cache_ch)
     GENERATE_COMBINED_LIGAND_FILES()
     GENERATE_SPLIT_LIGAND_FILES(GENERATE_COMBINED_LIGAND_FILES.out.ligandFile3d, GENERATE_COMBINED_LIGAND_FILES.out.ligandFile2d)
 }

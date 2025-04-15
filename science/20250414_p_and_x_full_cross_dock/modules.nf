@@ -27,7 +27,7 @@ process PREP_CACHE_FOR_DOCKING {
     label 'local'
 
     input:
-    path cache_dir from Channel.fromPath("${params.fragalysisCache}", type: 'dir')
+    path cache_dir
 
     output:
     path cache_dir, emit: fixed_cache
