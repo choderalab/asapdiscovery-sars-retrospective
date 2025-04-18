@@ -84,6 +84,14 @@ process CROSS_DOCK {
     conda "${params.asap}"
     tag "cross-dock ${structure_name} ${compound_name}"
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
+    errorStrategy 'retry'
+    maxRetries 3
+
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
 
     input:
     tuple val(structure_name), path(input_dir), path(prepped_dir), val(compound_name), path(ligandFile2d)
