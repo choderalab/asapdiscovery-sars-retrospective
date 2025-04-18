@@ -86,6 +86,7 @@ process CROSS_DOCK {
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
     errorStrategy 'retry'
     maxRetries 3
+    queueSize
 
     // Dynamic memory allocation
     memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
