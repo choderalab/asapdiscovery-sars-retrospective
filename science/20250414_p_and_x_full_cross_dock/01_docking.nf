@@ -60,7 +60,8 @@ workflow {
         .take(params.take)
         .combine(ligand_files.take(params.take))
 
-    log.info "Total combinations: ${combinations.size()}"
+    // Count combinations
+    combinations.count().view { count -> "Total combinations: $count" }
 
     // Call your process with the paired directories (handle null take parameter)
     CROSS_DOCK_FRED(combinations, "FRED", "PairwiseSelector")
