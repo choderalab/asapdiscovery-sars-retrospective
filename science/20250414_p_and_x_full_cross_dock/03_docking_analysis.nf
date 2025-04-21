@@ -1,23 +1,23 @@
 #!/usr/bin/env nextflow
 include {
-    CALCULATE_RMSDs
+    CALCULATE_RMSD
     COMBINE_AND_PROCESS_RESULTS
 } from "./modules.nf"
 
 workflow {
-    docking_methods = Channel.from('ALL', 'FRED')
-
-    // Define the list of values you want to iterate through
+    // Define the list of methods
     def methods = ["ALL", "FRED"]
 
-    // Create a channel from the list
+    // Create a channel for the methods
     Channel
         .fromList(methods)
-        .map { method ->
-            // For each method, create a tuple of (method, dir)
-            def results_dir = file("${params.dockedFiles}/${method}/*docked", type: 'dir')
-            def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
-            return tuple(method, id, results_dir)
+        .flatMap { method ->
+            // Use fromPath to get all matching directories
+            Channel.fromPath("${params.dockedFiles}/${method}/*docked", type: 'dir')
+                .map { results_dir ->
+                    def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
+                    return tuple(method, id, results_dir)
+                }
         }
         .set { docked_dirs }
 
@@ -30,13 +30,11 @@ workflow {
         .set { input_pairs }
 
     // Run CALCULATE_RMSD_ARRAY for each pair
-    CALCULATE_RMSDs(input_pairs)
+    CALCULATE_RMSD(input_pairs)
 
     // combine the results into a single value
     input_csvs = CALCULATE_RMSDs.out.rmsd_csv.collect()
 
-
-    // load files from channels
     fixed_frag_cache = Channel
         .fromPath("${params.dataPath}/${params.fixedFragalysisCache}/*", type: 'dir')
     chemical_similarity_data = Channel

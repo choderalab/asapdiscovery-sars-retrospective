@@ -311,9 +311,9 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
     python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir
     """
 }
-process CALCULATE_RMSDs {
+process CALCULATE_RMSD {
     conda "${params.asap}"
-    tag "calculate-rmsd-array"
+    tag "calculate-rmsds ${uuid}"
 
     input:
     tuple val(method), val(uuid), path(docked_dir), path(ligand_file_3d)
