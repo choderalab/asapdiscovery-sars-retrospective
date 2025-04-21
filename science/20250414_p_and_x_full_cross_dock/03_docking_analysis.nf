@@ -2,9 +2,6 @@
 include {
     CALCULATE_RMSD_ARRAY
     COMBINE_AND_PROCESS_RESULTS
-//     CREATE_EVALUATORS
-//     RUN_EVALUATORS
-//     COMBINE_EVALUATOR_RESULTS
 } from "./modules.nf"
 
 workflow {
@@ -15,5 +12,11 @@ workflow {
     ligand_file_3d = Channel
         .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
 
-    CALCULATE_RMSD_ARRAY(docked_dirs,ligand_file_3d)
-    }
+    // Combine each docked directory with the ligand file
+    docked_dirs
+        .combine(ligand_file_3d)
+        .set { input_pairs }
+
+    // Run CALCULATE_RMSD_ARRAY for each pair
+    CALCULATE_RMSD_ARRAY(input_pairs)
+}
