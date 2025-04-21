@@ -319,7 +319,7 @@ process CALCULATE_RMSD {
     tuple val(method), val(uuid), path(docked_dir), path(ligand_file_3d)
 
     output:
-    path("${uuid}_rmsd_results.csv"), emit: rmsd_csv
+    path("*.csv"), emit: rmsd_csv
 
     script:
     """
