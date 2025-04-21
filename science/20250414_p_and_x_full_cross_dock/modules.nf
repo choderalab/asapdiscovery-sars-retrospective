@@ -121,6 +121,48 @@ process CROSS_DOCK {
     --num-poses "${params.numPoses}" \
     """
 }
+process CROSS_DOCK_BY_STRUCTURE {
+    publishDir "${params.dockedFiles}/${posit_method}", mode: 'link', overwrite: true
+    conda "${params.asap}"
+    tag "cross-dock ${structure_name}"
+    clusterOptions '--partition "cpushort" --time=00:30:00 --mem 16G'
+    errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
+
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
+
+    input:
+    tuple val(structure_name), path(input_dir), path(prepped_dir), path(ligand_file_2d)
+    val posit_method
+    val selector
+
+    output:
+    path("*_docked"), emit: docked
+
+    script:
+    """
+    asap-cli docking cross-docking \
+    --target SARS-CoV-2-Mpro \
+    --use-omega \
+    --omega-dense \
+    --allow-retries \
+    --allow-final-clash \
+    --relax-mode clash \
+    --posit-method "${posit_method}" \
+    --structure-selector "${selector}" \
+    --structure-dir ${input_dir} \
+    --ligands "${ligand_file_2d}" \
+    --cache-dir "${prepped_dir}" \
+    --output-dir "${structure_name}_docked" \
+    --overwrite \
+    --no-save-to-cache \
+    --use-only-cache \
+    --num-poses "${params.numPoses}" \
+    """
+}
 
 process GENERATE_DATE_DICTIONARY {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true

@@ -2,6 +2,8 @@
 include {
     CROSS_DOCK as CROSS_DOCK_FRED
     CROSS_DOCK as CROSS_DOCK_POSIT
+    CROSS_DOCK_BY_STRUCTURE as CROSS_DOCK_BY_STRUCTURE_FRED
+    CROSS_DOCK_BY_STRUCTURE as CROSS_DOCK_BY_STRUCTURE_POSIT
 } from "./modules.nf"
 
 workflow {
@@ -43,27 +45,33 @@ workflow {
     log.info "Taking ${params.take ?: 'all'} paired structures"
 
     // load in ligand file
-    ligand_files = Channel
-        .fromPath("${params.ligandFiles}/${params.split2dligandFiles}/*.sdf", type: 'file')
-        .map { file ->
-            def id = file.name.toString().find(/([a-zA-Z0-9_-]+)\.sdf/) { match, code -> code }
-//             log.info "Prepped ligand found: ${file.name}, ID: ${id}"
-            return tuple(id, file)
-        }
-    // Count ligand_files
-    ligand_files.count().view { count -> "Total ligand files found: $count" }
+//     ligand_files = Channel
+//         .fromPath("${params.ligandFiles}/${params.split2dligandFiles}/*.sdf", type: 'file')
+//         .map { file ->
+//             def id = file.name.toString().find(/([a-zA-Z0-9_-]+)\.sdf/) { match, code -> code }
+// //             log.info "Prepped ligand found: ${file.name}, ID: ${id}"
+//             return tuple(id, file)
+//         }
+//     // Count ligand_files
+//     ligand_files.count().view { count -> "Total ligand files found: $count" }
+//
+//     log.info "Taking ${params.take ?: 'all'} ligand files"
+    // load in ligandfile2d
+    ligandfile2d = Channel.fromPath("${params.ligandFiles}/${params.ligandFile2d}", type: 'file')
 
-    log.info "Taking ${params.take ?: 'all'} ligand files"
-
-    // create cross docking combinations
+    create cross docking combinations
     combinations = paired_structures
         .take(params.take)
-        .combine(ligand_files.take(params.take))
-
-    // Count combinations
+        .combine(ligandfile2d)
+//
+//     // Count combinations
     combinations.count().view { count -> "Total combinations: $count" }
 
     // Call your process with the paired directories (handle null take parameter)
-    CROSS_DOCK_FRED(combinations, "FRED", "PairwiseSelector")
-    CROSS_DOCK_POSIT(combinations, "ALL", "PairwiseSelector")
+//     CROSS_DOCK_FRED(combinations, "FRED", "PairwiseSelector")
+//     CROSS_DOCK_POSIT(combinations, "ALL", "PairwiseSelector")
+    // Call your process with the paired directories (handle null take parameter)
+    CROSS_DOCK_BY_STRUCTURE_FRED(combinations, "FRED", "PairwiseSelector")
+    CROSS_DOCK_BY_STRUCTURE_POSIT(combinations, "ALL", "PairwiseSelector")
+
 }
