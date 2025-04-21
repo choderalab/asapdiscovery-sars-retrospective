@@ -180,9 +180,7 @@ process CROSS_DOCK_BY_LIGAND {
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
 
     input:
-    path(input_dir)
-    path(prepped_dir)
-    tuple val(compound_name), path(ligandFile2d)
+    tuple path(input_dir), path(prepped_dir), val(compound_name), path(ligandFile2d)
     val posit_method
     val selector
 
