@@ -30,7 +30,7 @@ workflow {
     chemical_scaffold_data = Channel
         .fromPath("${params.dataPath}/cmpd_scaffold_dict/chemical_scaffold_data.json", type: 'file')
     COMBINE_AND_PROCESS_RESULTS(
-        input_pairs,
+        CALCULATE_RMSD_ARRAY.out.rmsd_array,
         fixed_frag_cache,
         chemical_similarity_data,
         date_dict,
