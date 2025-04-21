@@ -7,7 +7,7 @@ include {
 workflow {
     // load in input structure dir
     input_dir = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
-    cache_dir = Channel.fromPath("${params.fragalysisCache}", type: 'dir')
+    cache_dir = Channel.fromPath("${params.dataPath}/${params.fixedFragalysisCache}", type: 'dir')
 
     // Create a channel for each ligand file and flatten it
     ligand_files = Channel
