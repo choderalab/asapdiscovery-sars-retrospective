@@ -21,7 +21,7 @@ workflow {
     CALCULATE_RMSDs(input_pairs)
 
     // combine the results into a single value
-    input_csvs = CALCULATE_RMSD_ARRAY.out.rmsd_csv.collect()
+    input_csvs = CALCULATE_RMSDs.out.rmsd_csv.collect()
 
 
     // load files from channels
