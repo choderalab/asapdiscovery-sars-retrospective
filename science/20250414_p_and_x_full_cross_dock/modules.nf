@@ -348,7 +348,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     script:
     """
     python3 "${params.scripts}"/combine_and_process_results.py \
-    --input-csvs "${dockedLigandRMSDs.join(' ')}" \
+    --input-csvs ${dockedLigandRMSDs.join(' ')} \
     --protein-cache "${fixedFragalysisCache}" \
     --ligand-cache "${fixedFragalysisCache}" \
     --data-path "${chemicalSimilarityData}" \
