@@ -19,7 +19,7 @@ workflow {
 //         }
     // load in input structure dir
     input_dir = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
-    cache_dir = Channel.fromPath("${params.fragalysisCache}", type: 'dir')
+    cache_dir = Channel.fromPath("${params.dataPath}/${params.fixedFragalysisCache}", type: 'dir')
 //
 //     // Count input structures
 //     input_structures.count().view { count -> "Total input structures found: $count" }
@@ -80,6 +80,7 @@ workflow {
 //     CROSS_DOCK_BY_STRUCTURE_FRED(combinations, "FRED", "PairwiseSelector")
 //     CROSS_DOCK_BY_STRUCTURE_POSIT(combinations, "ALL", "PairwiseSelector")
     // Call process with ligand_files
+
     CROSS_DOCK_BY_LIGAND_FRED(input_dir, cache_dir, ligand_files, "FRED", "PairwiseSelector")
     CROSS_DOCK_BY_LIGAND_POSIT(input_dir, cache_dir, ligand_files, "ALL", "PairwiseSelector")
 
