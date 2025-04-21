@@ -71,7 +71,7 @@ workflow {
 //         .combine(ligandfile2d)
 //
 //     // Count combinations
-    combinations.count().view { count -> "Total combinations: $count" }
+//     combinations.count().view { count -> "Total combinations: $count" }
 
     // Call your process with the paired directories (handle null take parameter)
 //     CROSS_DOCK_FRED(combinations, "FRED", "PairwiseSelector")
