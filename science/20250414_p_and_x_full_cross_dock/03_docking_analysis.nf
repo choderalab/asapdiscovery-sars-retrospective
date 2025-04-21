@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 include {
-    CALCULATE_RMSD_ARRAY
+    CALCULATE_RMSDs
     COMBINE_AND_PROCESS_RESULTS
 } from "./modules.nf"
 
@@ -18,7 +18,7 @@ workflow {
         .set { input_pairs }
 
     // Run CALCULATE_RMSD_ARRAY for each pair
-    CALCULATE_RMSD_ARRAY(input_pairs)
+    CALCULATE_RMSDs(input_pairs)
 
     // combine the results into a single value
     input_csvs = CALCULATE_RMSD_ARRAY.out.rmsd_csv.collect()
