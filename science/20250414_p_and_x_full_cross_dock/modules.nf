@@ -125,7 +125,7 @@ process CROSS_DOCK_BY_STRUCTURE {
     publishDir "${params.dockedFiles}/${posit_method}", mode: 'link', overwrite: true
     conda "${params.asap}"
     tag "cross-dock ${structure_name}"
-    clusterOptions '--partition "cpu" --time=24:00:00 --mem=256GB --cpus-per-task=32'
+    clusterOptions '--partition "cpu" --time=04:00:00 --mem=256GB --cpus-per-task=32'
     errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     // Dynamic memory allocation
@@ -265,4 +265,53 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
     """
     python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir
     """
+}
+process CALCULATE_RMSD_ARRAY {
+    publishDir "${params.dockedLigandRMSDs}", mode: 'copy', overwrite: true
+    conda "${params.asap}"
+    tag "calculate-rmsd-array"
+
+    input:
+    path(docked_dir)
+    path(ligand_file_3d)
+
+    output:
+    path("rmsd_results.csv"), emit: rmsd_array
+
+    script:
+    """
+    python "${params.scripts}/calculate_rmsd_from_docking_results.py
+    -d "${docked_dir}" \
+    -l  "${ligand_file_3d}" \
+    """
+}
+process COMBINE_AND_PROCESS_RESULTS {
+    publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.combinedDockingResults}"}
+    conda "${params.asap}"
+    tag "combine-and-process-results"
+
+    input:
+    path(dockedLigandRMSDs)
+    path(fixedFragalysisCache)
+    path(chemicalSimilarityData)
+    path(structure_to_date_dict)
+    path(chemical_scaffold_data)
+
+    output:
+    path("combined_results"), emit: combined_results
+
+    script:
+    """
+    python3 05_combine_and_process_results.py \
+    -r "${dockedLigandRMSDs}" \
+    --protein-cache "${fixedFragalysisCache}" \
+    --ligand-cache "${fixedFragalysisCache}" \
+    --data-path "${chemicalSimilarityData}" \
+    --date-dict "${structure_to_date_dict}" \
+    --chemical-scaffold-data "${chemical_scaffold_data}" \
+    --output-dir combined_results \
+    --output-file-name combined_results.csv \
+    --add-padding
+    """
+
 }
