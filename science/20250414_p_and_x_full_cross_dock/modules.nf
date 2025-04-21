@@ -312,7 +312,6 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
     """
 }
 process CALCULATE_RMSD_ARRAY {
-    publishDir "${params.dockedLigandRMSDs}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "calculate-rmsd-array"
 
@@ -347,7 +346,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     script:
     """
     python3 "${params.scripts}"/combine_and_process_results.py \
-    --input-csvs "${dockedLigandRMSDs}" \
+    --input-csvs "${dockedLigandRMSDs.join(' ')}" \
     --protein-cache "${fixedFragalysisCache}" \
     --ligand-cache "${fixedFragalysisCache}" \
     --data-path "${chemicalSimilarityData}" \
