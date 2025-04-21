@@ -30,13 +30,13 @@ workflow {
 
     // Run FRED and POSIT docking in parallel for each combination
     CROSS_DOCK_BY_LIGAND_FRED(
-        docking_combinations.map{ it[0..3] },
+        docking_combinations,
         "FRED",
         "PairwiseSelector"
     )
 
     CROSS_DOCK_BY_LIGAND_POSIT(
-        docking_combinations.map{ it[0..3] },
+        docking_combinations,
         "ALL",
         "PairwiseSelector"
     )
