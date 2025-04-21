@@ -18,11 +18,12 @@ def get_args():
         description="Combine results csvs and generate input csv for full cross docking evaluation"
     )
     parser.add_argument(
-        "-r",
-        "--results-dir",
+        "-i",
+        "--input-csvs",
         type=Path,
         required=True,
-        help="Path to directory containing docking results, each file should be a csv and there shouldn't be any csv files you don't want included.",
+        nargs="+",  # This allows multiple arguments
+        help="One or more CSV files containing docking results",
     )
     parser.add_argument(
         "--protein-cache",
@@ -103,7 +104,7 @@ def main():
 
     report_dict = {"err_msg": []}
     logger.info("Loading csvs")
-    dfs = [pd.read_csv(csv) for csv in args.results_dir.glob("*.csv")]
+    dfs = [pd.read_csv(csv) for csv in args.input_csvs]
     df = pd.concat(dfs)
     query_lig_set = {lig for lig in df["Query_Ligand"]}
     ref_lig_set = {lig for lig in df["Reference_Ligand"]}

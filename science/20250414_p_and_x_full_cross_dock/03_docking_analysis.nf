@@ -19,4 +19,21 @@ workflow {
 
     // Run CALCULATE_RMSD_ARRAY for each pair
     CALCULATE_RMSD_ARRAY(input_pairs)
+
+    // load files from channels
+    fixed_frag_cache = Channel
+        .fromPath("${params.dataPath}/${params.fixedFragalysisCache}/*", type: 'dir')
+    chemical_similarity_data = Channel
+        .fromPath("${params.chemicalSimilarityData}", type: 'dir')
+    date_dict = Channel
+        .fromPath("${params.dataPath}/cmpd_date_dict/date_dict.json", type: 'file')
+    chemical_scaffold_data = Channel
+        .fromPath("${params.dataPath}/cmpd_scaffold_dict/chemical_scaffold_data.json", type: 'file')
+    COMBINE_AND_PROCESS_RESULTS(
+        input_pairs,
+        fixed_frag_cache,
+        chemical_similarity_data,
+        date_dict,
+        chemical_scaffold_data
+    )
 }
