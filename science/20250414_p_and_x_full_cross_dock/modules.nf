@@ -125,7 +125,7 @@ process CROSS_DOCK_BY_STRUCTURE {
     publishDir "${params.dockedFiles}/${posit_method}", mode: 'link', overwrite: true
     conda "${params.asap}"
     tag "cross-dock ${structure_name}"
-    clusterOptions '--partition "cpushort" --time=00:30:00 --mem 16G'
+    clusterOptions '--partition "cpushort" --time=24:00:00 --mem 256GB --cpus-per-task=32'
     errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     // Dynamic memory allocation
@@ -161,6 +161,9 @@ process CROSS_DOCK_BY_STRUCTURE {
     --no-save-to-cache \
     --use-only-cache \
     --num-poses "${params.numPoses}" \
+    --use-dask \
+    --dask-type local \
+    --dask-n-workers 32
     """
 }
 
