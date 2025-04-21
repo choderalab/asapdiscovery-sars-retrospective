@@ -157,7 +157,7 @@ process CALCULATE_MCS_TANIMOTO {
     publishDir "${params.chemicalSimilarityData}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "calculate-mcs-tanimoto"
-    clusterOptions '--partition "cpu" --time=06:00:00 --mem=64GB --cpus-per-task=32'
+    clusterOptions '--partition "cpu" --time=24:00:00 --mem=64GB --cpus-per-task=32'
 
     input:
     path(ligand_file_3d)
