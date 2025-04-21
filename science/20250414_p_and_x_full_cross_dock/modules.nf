@@ -317,7 +317,7 @@ process CALCULATE_RMSD_ARRAY {
     tag "calculate-rmsd-array"
 
     input:
-    tuple path(docked_dir) path(ligand_file_3d)
+    tuple path(docked_dir), path(ligand_file_3d)
 
     output:
     path("rmsd_results.csv"), emit: rmsd_array
