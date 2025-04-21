@@ -5,13 +5,21 @@ include {
 } from "./modules.nf"
 
 workflow {
-    // Create channels from directories for docked directories and ligand_file_3d
-    docked_dirs = Channel
-        .fromPath("${params.dockedFiles}/*/*docked", type: 'dir')
-        .map { file ->
-            def id = file.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
-            return tuple(id, file)
+    docking_methods = Channel.from('ALL', 'FRED')
+
+    // Define the list of values you want to iterate through
+    def methods = ["ALL", "FRED"]
+
+    // Create a channel from the list
+    Channel
+        .fromList(methods)
+        .map { method ->
+            // For each method, create a tuple of (method, dir)
+            def results_dir = file("${params.dockedFiles}/${method}/*docked", type: 'dir')
+            def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
+            return tuple(method, id, results_dir)
         }
+        .set { docked_dirs }
 
     ligand_file_3d = Channel
         .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
