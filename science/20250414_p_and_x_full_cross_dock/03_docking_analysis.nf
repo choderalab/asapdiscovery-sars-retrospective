@@ -10,7 +10,7 @@ include {
 workflow {
     // Create channels from directories for docked directories and ligand_file_3d
     docked_dirs = Channel
-        .fromPath("${params.dockedFiles}/*/Mpro*", type: 'dir')
+        .fromPath("${params.dockedFiles}/*/*docked", type: 'dir')
 
     ligand_file_3d = Channel
         .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
