@@ -8,31 +8,34 @@ workflow {
     // Define the list of methods
     def methods = ["ALL", "FRED"]
 
-    // Create a channel for the methods
-    Channel
-        .fromList(methods)
-        .flatMap { method ->
-            // Use fromPath to get all matching directories
-            Channel.fromPath("${params.dockedFiles}/${method}/*docked", type: 'dir')
-                .map { results_dir ->
-                    def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
-                    return tuple(method, id, results_dir)
-                }
+    // Create separate channels for each method
+    all_docked_dirs = Channel
+        .fromPath("${params.dockedFiles}/ALL/*docked", type: 'dir')
+        .map { results_dir ->
+            def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
+            return tuple("ALL", id, results_dir)
         }
-        .set { docked_dirs }
+
+    fred_docked_dirs = Channel
+        .fromPath("${params.dockedFiles}/FRED/*docked", type: 'dir')
+        .map { results_dir ->
+            def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
+            return tuple("FRED", id, results_dir)
+        }
+
+    // Mix both channels
+    docked_dirs = all_docked_dirs.mix(fred_docked_dirs)
 
     ligand_file_3d = Channel
         .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
 
     // Combine each docked directory with the ligand file
-    docked_dirs
-        .combine(ligand_file_3d)
-        .set { input_pairs }
+    input_pairs = docked_dirs.combine(ligand_file_3d)
 
-    // Run CALCULATE_RMSD_ARRAY for each pair
+    // Run CALCULATE_RMSD for each pair
     CALCULATE_RMSD(input_pairs)
 
-    // combine the results into a single value
+    // Collect the results into a single value
     input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
 
     fixed_frag_cache = Channel
@@ -43,6 +46,7 @@ workflow {
         .fromPath("${params.dataPath}/cmpd_date_dict/date_dict.json", type: 'file')
     chemical_scaffold_data = Channel
         .fromPath("${params.dataPath}/cmpd_scaffold_dict/chemical_scaffold_data.json", type: 'file')
+
     COMBINE_AND_PROCESS_RESULTS(
         input_csvs,
         fixed_frag_cache,
