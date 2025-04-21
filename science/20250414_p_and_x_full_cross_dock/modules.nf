@@ -327,7 +327,7 @@ process CALCULATE_RMSD_ARRAY {
 
     script:
     """
-    python "${params.scripts}/calculate_rmsd_from_docking_results.py
+    python "${params.scripts}"/calculate_rmsd_from_docking_results.py
     -d "${docked_dir}" \
     -l  "${ligand_file_3d}" \
     """
