@@ -59,7 +59,7 @@ workflow {
     // load in ligandfile2d
     ligandfile2d = Channel.fromPath("${params.ligandFiles}/${params.ligandFile2d}", type: 'file')
 
-    create cross docking combinations
+    // create cross docking combinations
     combinations = paired_structures
         .take(params.take)
         .combine(ligandfile2d)
