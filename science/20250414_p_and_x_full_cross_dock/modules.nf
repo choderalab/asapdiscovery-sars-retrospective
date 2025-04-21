@@ -316,16 +316,17 @@ process CALCULATE_RMSDs {
     tag "calculate-rmsd-array"
 
     input:
-    tuple path(docked_dir), path(ligand_file_3d)
+    tuple val(uuid), path(docked_dir), path(ligand_file_3d)
 
     output:
-    path("rmsd_results.csv"), emit: rmsd_csv
+    path("${uuid}_rmsd_results.csv"), emit: rmsd_csv
 
     script:
     """
     python3 "${params.scripts}"/calculate_rmsd_from_docking_results.py \
     -d "${docked_dir}" \
-    -l  "${ligand_file_3d}" \
+    -l "${ligand_file_3d}" \
+    -o "${uuid}_rmsd_results.csv"
     """
 }
 process COMBINE_AND_PROCESS_RESULTS {

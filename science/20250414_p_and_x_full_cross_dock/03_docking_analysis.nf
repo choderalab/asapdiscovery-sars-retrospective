@@ -8,6 +8,10 @@ workflow {
     // Create channels from directories for docked directories and ligand_file_3d
     docked_dirs = Channel
         .fromPath("${params.dockedFiles}/*/*docked", type: 'dir')
+        .map { file ->
+            def id = file.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
+            return tuple(id, file)
+        }
 
     ligand_file_3d = Channel
         .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
