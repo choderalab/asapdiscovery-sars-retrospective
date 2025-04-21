@@ -314,6 +314,7 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
 process CALCULATE_RMSD {
     conda "${params.asap}"
     tag "calculate-rmsds ${uuid}"
+    label 'cpushort'
 
     input:
     tuple val(method), val(uuid), path(docked_dir), path(ligand_file_3d)

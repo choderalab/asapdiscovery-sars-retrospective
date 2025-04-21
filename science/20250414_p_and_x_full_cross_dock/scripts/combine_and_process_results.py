@@ -20,7 +20,6 @@ def get_args():
     parser.add_argument(
         "-i",
         "--input-csvs",
-        type=Path,
         required=True,
         nargs="+",  # This allows multiple arguments
         help="One or more CSV files containing docking results",
