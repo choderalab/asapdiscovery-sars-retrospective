@@ -39,7 +39,7 @@ workflow {
     input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
 
     fixed_frag_cache = Channel
-        .fromPath("${params.dataPath}/${params.fixedFragalysisCache}/*", type: 'dir')
+        .fromPath("${params.dataPath}/${params.fixedFragalysisCache}", type: 'dir')
     chemical_similarity_data = Channel
         .fromPath("${params.chemicalSimilarityData}", type: 'dir')
     date_dict = Channel

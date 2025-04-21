@@ -34,4 +34,7 @@ workflow {
 
     // Pass collected CSV files to combine process
     COMBINE_CHEMICAL_SIMILARITY_DATA(all_csv_files)
+
+    // Generate date dictionary
+    GENERATE_DATE_DICTIONARY()
 }
