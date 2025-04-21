@@ -33,7 +33,7 @@ workflow {
     CALCULATE_RMSD(input_pairs)
 
     // combine the results into a single value
-    input_csvs = CALCULATE_RMSDs.out.rmsd_csv.collect()
+    input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
 
     fixed_frag_cache = Channel
         .fromPath("${params.dataPath}/${params.fixedFragalysisCache}/*", type: 'dir')
