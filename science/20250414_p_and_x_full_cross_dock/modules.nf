@@ -166,6 +166,53 @@ process CROSS_DOCK_BY_STRUCTURE {
     --dask-n-workers 32
     """
 }
+process CROSS_DOCK_BY_LIGAND {
+    publishDir "${params.dockedFiles}/${posit_method}", mode: 'link', overwrite: true
+    conda "${params.asap}"
+    tag "cross-dock ${compound_name}"
+    clusterOptions '--partition "cpu" --time=04:00:00 --mem=256GB --cpus-per-task=32'
+    errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
+
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
+
+    input:
+    path(input_dir)
+    path(prepped_dir)
+    tuple val(compound_name), path(ligandFile2d)
+    val posit_method
+    val selector
+
+    output:
+    path("*_docked"), emit: docked
+
+    script:
+    """
+    asap-cli docking cross-docking \
+    --target SARS-CoV-2-Mpro \
+    --use-omega \
+    --omega-dense \
+    --allow-retries \
+    --allow-final-clash \
+    --relax-mode clash \
+    --posit-method "${posit_method}" \
+    --structure-selector "${selector}" \
+    --fragalysis-dir ${input_dir} \
+    --ligands "${ligandFile2d}" \
+    --cache-dir "${prepped_dir}" \
+    --output-dir "${compound_name}_docked" \
+    --overwrite \
+    --no-save-to-cache \
+    --use-only-cache \
+    --num-poses "${params.numPoses}" \
+    --use-dask \
+    --dask-type local \
+    --dask-n-workers 32
+    """
+}
 
 process GENERATE_DATE_DICTIONARY {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true
