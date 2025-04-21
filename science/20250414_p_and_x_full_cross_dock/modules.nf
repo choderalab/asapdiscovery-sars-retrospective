@@ -84,8 +84,7 @@ process CROSS_DOCK {
     conda "${params.asap}"
     tag "cross-dock ${structure_name} ${compound_name}"
     clusterOptions '--partition "cpushort" --time=00:10:00 --mem 4G'
-    errorStrategy ignore
-    queueSize 1000
+    errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     // Dynamic memory allocation
     memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
