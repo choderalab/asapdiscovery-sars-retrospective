@@ -39,13 +39,13 @@ workflow {
     input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
 
     fixed_frag_cache = Channel
-        .fromPath("${params.dataPath}/${params.fixedFragalysisCache}", type: 'dir')
+        .fromPath("${params.fixedFragalysisCachePath}", type: 'dir')
     chemical_similarity_data = Channel
-        .fromPath("${params.chemicalSimilarityData}", type: 'dir')
+        .fromPath("${params.combinedChemicalSimilarityPath}", type: 'dir')
     date_dict = Channel
-        .fromPath("${params.dataPath}/cmpd_date_dict/date_dict.json", type: 'file')
+        .fromPath("${params.dateDictPath}", type: 'file')
     chemical_scaffold_data = Channel
-        .fromPath("${params.dataPath}/bemis_murcko_clustering/generic_cluster_labels.csv", type: 'file')
+        .fromPath("${params.genericScaffoldPath}", type: 'file')
 
     COMBINE_AND_PROCESS_RESULTS(
         input_csvs,

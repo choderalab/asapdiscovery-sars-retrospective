@@ -38,10 +38,10 @@ def get_args():
     )
     parser.add_argument(
         "-d",
-        "--data-path",
+        "--combined-chemical-similarity-csv",
         type=Path,
         required=True,
-        help="Path to directory containing additional data",
+        help="Path to csv file containing combined chemical similarity data",
     )
     parser.add_argument(
         "--date-dict",
@@ -188,7 +188,7 @@ def main():
     # Add chemical similarity info
     logger.info("Adding chemical similarity info")
     combined_chemical_similarity_info = pd.read_csv(
-        args.data_path / "combined_chemical_similarity_data.csv"
+        args.combined_chemical_similarity_csv
     )
     df = df.merge(
         combined_chemical_similarity_info,

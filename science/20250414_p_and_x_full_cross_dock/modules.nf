@@ -302,11 +302,11 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
     path(ligand_file_2d)
 
     output:
-    path "bemis_murcko_clustering", emit: bemis_murcko_clustering
+    path "${params.scaffoldDataName}", emit: bemis_murcko_clustering
 
     script:
     """
-    python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir bemis_murcko_clustering
+    python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir "${params.scaffoldDataName}
     """
 }
 process CALCULATE_RMSD {
