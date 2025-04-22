@@ -348,7 +348,8 @@ process COMBINE_AND_PROCESS_RESULTS {
     val(method)
 
     output:
-    path("*.csv"), emit: combined_results
+    path("*_combined_results.csv"), emit: combined_results_with_similarity
+    path("*_combined_results_no_chemical_similarity.csv"), emit: combined_results_no_similarity
     path("*.yaml"), emit: combined_results_report
 
     script:
@@ -362,6 +363,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     --chemical-scaffold-data "${chemical_scaffold_data}" \
     --output-dir "./" \
     --output-file-name "${method}"_combined_results \
+    --method-id "${method}" \
     --add-padding
     """
 }
@@ -376,6 +378,8 @@ process CREATE_EVALUATORS {
 
     output:
     path("*.json"), emit: evaluator_json
+
+    script:
     """
     python3 "${params.scripts}"/create_evaluators.py \
     --input "${docking_results}" \
@@ -400,10 +404,26 @@ process RUN_EVALUATORS {
 
     output:
     path("*.csv"), emit: evaluator_results
+
+    script:
     """
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
     --output "${name}" \
     --evaluator "${evaluator_json}" \
+    """
+}
+process COMBINE_EVALUATIONS {
+    conda ${params.harbor}
+    tag "combine-evaluations ${name}"
+
+    input:
+    tuple val(name), path(evaluator_results)
+
+    script:
+    """
+    python combine_date_split_results.py \
+    -c ${evaluator_results.join(' ')} \
+    -o "${name}_combined_results.csv \
     """
 }

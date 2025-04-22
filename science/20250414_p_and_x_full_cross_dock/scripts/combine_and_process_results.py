@@ -57,6 +57,7 @@ def get_args():
         "--output-dir", type=Path, required=True, help="Path to output directory"
     )
     parser.add_argument("--output-file-name", type=str, required=True)
+    parser.add_argument("--method-id", type=str, required=False)
     return parser.parse_args()
 
 
@@ -181,6 +182,11 @@ def main():
     df["Query_Structure_Date"] = df.Query_Structure.apply(
         lambda x: date_dict.get(x[:-3], None)
     )
+
+    # Add Method ID
+    if args.method_id:
+        logger.info("Adding method ID")
+        df["Method_ID"] = args.method_id
 
     logger.info("Writing intermediate_output")
     df.to_csv(output_dir / f"{args.output_file_name}_no_chemical_similarity.csv")

@@ -53,9 +53,26 @@ workflow PROCESS_FRED {
 workflow PROCESS_ALL {
     COMBINE_DOCKING_RESULTS('ALL')
 }
+
+include {
+    CREATE_EVALUATORS
+    RUN_EVALUATORS
+    COMBINE_EVALUATIONS
+} from "./modules.nf"
+workflow DATASETSPLIT_ANALYSIS {
+    take:
+
+    // load docking results
+    CREATE_EVALUATORS()
+}
+
 workflow {
     PROCESS_FRED()
     PROCESS_ALL()
+}
+
+
+workflow {
 }
 
 // workflow {
