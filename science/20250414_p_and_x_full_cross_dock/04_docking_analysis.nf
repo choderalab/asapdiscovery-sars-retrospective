@@ -20,6 +20,10 @@ workflow {
         return tuple(id, file, name_ch, all_no_sim_ch)
     }
 
+    // view first eval_inputs_ch
+    eval_inputs_ch.view { tuple -> "Eval inputs: $tuple" }
+
+
 
     RUN_EVALUATORS(eval_inputs_ch)
 
