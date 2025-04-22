@@ -421,7 +421,8 @@ process COMBINE_EVALUATIONS {
     tag "combine-evaluations ${name}"
 
     input:
-    tuple val(name), path(evaluator_results)
+    tuple val(name)
+    path(evaluator_results)
 
     script:
     """
