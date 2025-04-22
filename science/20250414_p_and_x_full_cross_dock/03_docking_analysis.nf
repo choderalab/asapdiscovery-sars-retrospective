@@ -112,7 +112,7 @@ workflow DATASETSPLIT_ANALYSIS {
 
     COMBINE_EVALUATIONS(
         Channel.value("datesplit"),
-        RUN_EVALUATORS.out.evaluator_results
+        RUN_EVALUATORS.out.evaluator_results.collect()
     )
 }
 
