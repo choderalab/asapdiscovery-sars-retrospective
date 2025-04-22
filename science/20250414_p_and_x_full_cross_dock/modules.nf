@@ -403,7 +403,7 @@ process RUN_EVALUATORS {
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
 
     input:
-    tuple val(name), path(docking_results), path(evaluator_json)
+    tuple path(evaluator_json), val(name), path(docking_results)
 
     output:
     path("*.csv"), emit: evaluator_results
@@ -421,8 +421,7 @@ process COMBINE_EVALUATIONS {
     tag "combine-evaluations ${name}"
 
     input:
-    tuple val(name)
-    path(evaluator_results)
+    tuple val(name), path(evaluator_results)
 
     script:
     """
