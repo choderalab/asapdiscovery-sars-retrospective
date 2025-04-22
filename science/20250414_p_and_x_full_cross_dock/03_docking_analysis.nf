@@ -68,7 +68,7 @@ include {
 workflow DATASETSPLIT_ANALYSIS {
 
     // load docking results
-    CREATE_EVALUATORS("datesplit", )
+    CREATE_EVALUATORS("datesplit", PROCESS_ALL.out.combined_results_no_similarity)
 }
 
 workflow RUN_ANALYSIS {
