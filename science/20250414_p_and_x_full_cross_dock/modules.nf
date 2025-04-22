@@ -357,7 +357,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     --ligand-cache "${fixedFragalysisCache}" \
     --data-path "${chemicalSimilarityData}" \
     --date-dict "${structure_to_date_dict}" \
-    --chemical-scaffold-data "${chemical_scaffold_data}" \
+    --combined-chemical-similarity-csv "${chemical_scaffold_data}" \
     --output-dir combined_results \
     --output-file-name combined_results.csv \
     --add-padding
