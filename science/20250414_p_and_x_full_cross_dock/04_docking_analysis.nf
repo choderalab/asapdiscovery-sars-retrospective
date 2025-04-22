@@ -14,8 +14,12 @@ workflow {
 
     CREATE_EVALUATORS(name_ch, all_no_sim_ch, settings_file)
 
-    // Make sure to properly combine channels for the next process
-    eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
+    // map the number at the end of the file name as an id
+    eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json.map { file ->
+        def id = file.name.toString().find(/([0-9]+)\_.json/) { match, code -> code }
+        return tuple(id, file)
+    }
+
 
     RUN_EVALUATORS(eval_inputs_ch, name_ch, all_no_sim_ch)
 

@@ -403,7 +403,7 @@ process RUN_EVALUATORS {
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
 
     input:
-    path(evaluator_json)
+    tuple val(id), path(evaluator_json)
     val(name)
     path(docking_results)
 
@@ -416,6 +416,7 @@ process RUN_EVALUATORS {
     --input "${docking_results}" \
     --output "${name}" \
     --evaluator "${evaluator_json}" \
+    --job-id "${id}"
     """
 }
 process COMBINE_EVALUATIONS {
