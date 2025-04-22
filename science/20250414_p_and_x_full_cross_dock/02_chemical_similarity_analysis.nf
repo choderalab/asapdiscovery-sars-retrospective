@@ -37,4 +37,7 @@ workflow {
 
     // Generate date dictionary
     GENERATE_DATE_DICTIONARY()
+
+    // Run scaffolding
+    RUN_BEMIS_MURCKO_CLUSTERING(ligand_file_2d)
 }

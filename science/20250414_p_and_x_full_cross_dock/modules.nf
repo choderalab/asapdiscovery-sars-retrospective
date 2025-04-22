@@ -332,7 +332,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.combinedDockingResults}"}
     conda "${params.asap}"
     tag "combine-and-process-results"
-    errorStrategy 'retry'
+    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
     maxRetries 3
     // Dynamic memory allocation
     memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
