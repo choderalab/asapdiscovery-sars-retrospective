@@ -332,6 +332,12 @@ process COMBINE_AND_PROCESS_RESULTS {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.combinedDockingResults}"}
     conda "${params.asap}"
     tag "combine-and-process-results"
+    errorStrategy 'retry'
+    maxRetries 3
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
 
     input:
     path(dockedLigandRMSDs)
