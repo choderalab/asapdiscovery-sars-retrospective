@@ -329,9 +329,9 @@ process CALCULATE_RMSD {
     """
 }
 process COMBINE_AND_PROCESS_RESULTS {
-    publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.combinedDockingResults}"}
+    publishDir "${params.combinedDockingResults}", mode: 'copy', overwrite: true
     conda "${params.asap}"
-    tag "combine-and-process-results"
+    tag "combine-and-process-results ${method}"
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
     maxRetries 3
     // Dynamic memory allocation
@@ -345,9 +345,11 @@ process COMBINE_AND_PROCESS_RESULTS {
     path(chemicalSimilarityData)
     path(structure_to_date_dict)
     path(chemical_scaffold_data)
+    val(method)
 
     output:
-    path("combined_results"), emit: combined_results
+    path("*.csv"), emit: combined_results
+    path("*.yaml"), emit: combined_results_report
 
     script:
     """
@@ -358,8 +360,8 @@ process COMBINE_AND_PROCESS_RESULTS {
     --combined-chemical-similarity-csv "${chemicalSimilarityData}" \
     --date-dict "${structure_to_date_dict}" \
     --chemical-scaffold-data "${chemical_scaffold_data}" \
-    --output-dir combined_results \
-    --output-file-name combined_results.csv \
+    --output-dir "./" \
+    --output-file-name "${method}"_combined_results \
     --add-padding
     """
 }
