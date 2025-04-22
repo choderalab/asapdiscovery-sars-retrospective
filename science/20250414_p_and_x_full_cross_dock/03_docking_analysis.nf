@@ -13,7 +13,7 @@ workflow COMBINE_DOCKING_RESULTS {
         .fromPath("${params.dockedFiles}/${method}/*docked", type: 'dir')
         .map { results_dir ->
             def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
-            return tuple(${method}, id, results_dir)
+            return tuple(method, id, results_dir)
         }
     ligand_file_3d = Channel
         .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
