@@ -21,7 +21,9 @@ workflow {
     }
 
     // view first eval_inputs_ch
-    eval_inputs_ch.view { tuple -> "Eval inputs: $tuple" }
+    eval_inputs_ch
+        .first()
+        .view{tuple -> "First eval_inputs_ch: $tuple"}
 
 
 
