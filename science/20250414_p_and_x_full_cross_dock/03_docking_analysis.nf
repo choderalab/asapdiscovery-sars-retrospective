@@ -53,7 +53,7 @@ workflow COMBINE_DOCKING_RESULTS {
     )
 
     emit:
-    combined_results = COMBINE_AND_PROCESS_RESULTS.out.combined_results
+    combined_results = COMBINE_AND_PROCESS_RESULTS.out.combined_results_with_similarity
     combined_results_no_similarity = COMBINE_AND_PROCESS_RESULTS.out.combined_results_no_similarity
 }
 
