@@ -379,7 +379,7 @@ process CREATE_EVALUATORS {
     path(settings_file)
 
     output:
-    path("*.json"), emit: evaluator_json
+    path("*/*.json"), emit: evaluator_json
 
     script:
     def settings = settings_file.name != 'NO_FILE' ? "--settings $settings_file" : ''
