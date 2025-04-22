@@ -306,7 +306,7 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
 
     script:
     """
-    python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir "${params.scaffoldDataName}
+    python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir "${params.scaffoldDataName}"
     """
 }
 process CALCULATE_RMSD {
@@ -372,6 +372,7 @@ process CREATE_EVALUATORS {
     tag "create-evaluators ${name}"
     memory { 32.GB }
     time { 2.m }
+    label 'cpushort'
 
     input:
     val(name)
@@ -426,8 +427,8 @@ process COMBINE_EVALUATIONS {
 
     script:
     """
-    python combine_date_split_results.py \
+    python "${params.scripts}/combine_date_split_results.py" \
     -c ${evaluator_results.join(' ')} \
-    -o "${name}_combined_results.csv \
+    -o "${name}_combined_results.csv"
     """
 }
