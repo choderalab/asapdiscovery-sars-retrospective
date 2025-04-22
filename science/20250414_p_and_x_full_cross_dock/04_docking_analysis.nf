@@ -18,7 +18,7 @@ workflow {
     eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
         .flatten()
         .map { file ->
-        def id = file.name.toString().find(/([0-9]+)) { match, code -> code }
+        def id = file.name.toString().find(/([0-9]+)/) { match, code -> code }
         return tuple(id, file, name_ch, all_no_sim_ch)
     }
 
