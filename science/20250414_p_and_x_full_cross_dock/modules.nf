@@ -362,5 +362,46 @@ process COMBINE_AND_PROCESS_RESULTS {
     --output-file-name combined_results.csv \
     --add-padding
     """
+}
+process CREATE_EVALUATORS {
+    conda ${params.harbor}
+    tag "create-evaluators ${name}"
+    memory { 32.GB }
+    time { 2.m }
 
+    input:
+    tuple val(name), path(settings_file), path(docking_results)
+
+    output:
+    path("*.json"), emit: evaluator_json
+    """
+    python3 "${params.scripts}"/create_evaluators.py \
+    --input "${docking_results}" \
+    --settings "${settings_file}" \
+    --output "${name}" \
+    --save
+    """
+}
+process RUN_EVALUATORS {
+    conda ${params.harbor}
+    tag "run-evaluators ${name}"
+
+    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
+    maxRetries 3
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 16.GB : 16.GB }
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
+
+    input:
+    tuple val(name), path(docking_results), path(evaluator_json)
+
+    output:
+    path("*.csv"), emit: evaluator_results
+    """
+    python3 "${params.scripts}"/run_evaluators.py \
+    --input "${docking_results}" \
+    --output "${name}" \
+    --evaluator "${evaluator_json}" \
+    """
 }
