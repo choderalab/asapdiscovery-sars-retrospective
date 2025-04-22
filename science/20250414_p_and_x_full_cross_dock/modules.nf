@@ -368,7 +368,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     """
 }
 process CREATE_EVALUATORS {
-    conda ${params.harbor}
+    conda "${params.harbor}"
     tag "create-evaluators ${name}"
     memory { 32.GB }
     time { 2.m }
