@@ -19,8 +19,11 @@ workflow {
         .flatten()
         .map { file ->
         def id = file.name.toString().find(/([0-9]+)/) { match, code -> code }
-        return tuple(id, file, name_ch, all_no_sim_ch)
+        return tuple(id, file)
     }
+    eval_inputs_ch
+        .combine(name_ch)
+        .combine(all_no_sim_ch)
 
     // view first eval_inputs_ch
     eval_inputs_ch
