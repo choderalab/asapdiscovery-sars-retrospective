@@ -125,5 +125,5 @@ workflow {
     // PROCESS_RESULTS will populate the shared channels
     // Then RUN_ANALYSIS will use those channels
     PROCESS_RESULTS()
-    RUN_ANALYSIS()
+    | RUN_ANALYSIS
 }
