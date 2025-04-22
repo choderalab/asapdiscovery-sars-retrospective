@@ -11,16 +11,16 @@ Channel.empty().set { ALL_no_sim_ch }
 Channel.empty().set { FRED_no_sim_ch }
 
 workflow SETUP_CHANNELS {
-    Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results.csv")
+    Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results.csv", checkIfExists: true)
         .tap { ALL_chem_sim_ch }
 
-    Channel.fromPath("${params.combinedDockingResultsPath}/FRED_combined_results.csv")
+    Channel.fromPath("${params.combinedDockingResultsPath}/FRED_combined_results.csv", checkIfExists: true)
         .tap { FRED_chem_sim_ch }
 
-    Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv")
+    Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv", checkIfExists: true)
         .tap { ALL_no_sim_ch }
 
-    Channel.fromPath("${params.combinedDockingResultsPath}/FRED_combined_results_no_chemical_similarity.csv")
+    Channel.fromPath("${params.combinedDockingResultsPath}/FRED_combined_results_no_chemical_similarity.csv", checkIfExists: true)
         .tap { FRED_no_sim_ch }
 }
 
