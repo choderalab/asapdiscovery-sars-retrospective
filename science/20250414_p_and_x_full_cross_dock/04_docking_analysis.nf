@@ -61,6 +61,10 @@ workflow {
     // First run the setup to populate the channels
     SETUP_CHANNELS()
 
+    ALL_chem_sim_ch.view{
+        "All with chemical similarity: ${it}"
+    }
+
     // Then run the analysis with the populated channel
     DATASETSPLIT_ANALYSIS(ALL_no_sim_ch)
 }
