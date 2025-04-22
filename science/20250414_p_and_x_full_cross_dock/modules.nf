@@ -329,7 +329,7 @@ process CALCULATE_RMSD {
     """
 }
 process COMBINE_AND_PROCESS_RESULTS {
-    publishDir "${params.combinedDockingResults}", mode: 'copy', overwrite: true
+    publishDir "${params.combinedDockingResultsPath}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "combine-and-process-results ${method}"
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
