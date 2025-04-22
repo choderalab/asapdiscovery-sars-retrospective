@@ -374,7 +374,7 @@ process CREATE_EVALUATORS {
     time { 2.m }
 
     input:
-    tuple val(name)
+    val(name)
     path(docking_results)
     path(settings_file)
 
