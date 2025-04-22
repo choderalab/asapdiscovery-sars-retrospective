@@ -403,7 +403,9 @@ process RUN_EVALUATORS {
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
 
     input:
-    tuple path(evaluator_json), val(name), path(docking_results)
+    tuple path(evaluator_json)
+    val(name)
+    path(docking_results)
 
     output:
     path("*.csv"), emit: evaluator_results

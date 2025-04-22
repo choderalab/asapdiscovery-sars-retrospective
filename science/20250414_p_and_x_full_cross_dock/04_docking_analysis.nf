@@ -7,8 +7,8 @@ include {
 
 workflow {
     // Load files directly where needed instead of using shared channels
-    all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv")
-    settings_file = Channel.fromPath("${params.configFiles}/settings_cross_docking_defaults.yml")
+    all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv").collect()
+    settings_file = Channel.fromPath("${params.configFiles}/settings_cross_docking_defaults.yml").collect()
 
     name_ch = Channel.value("datesplit")
 
@@ -16,13 +16,8 @@ workflow {
 
     // Make sure to properly combine channels for the next process
     eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
-        .combine(name_ch)
-        .combine(all_no_sim_ch)
-        .map { json, name, data_file ->
-            return [json, name, data_file]
-        }
 
-    RUN_EVALUATORS(eval_inputs_ch)
+    RUN_EVALUATORS(eval_inputs_ch, name_ch, all_no_sim_ch)
 
     COMBINE_EVALUATIONS(
         name_ch,
