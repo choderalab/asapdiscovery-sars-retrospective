@@ -6,7 +6,9 @@ include {
 
 // Define shared channels for passing data between workflows
 Channel.empty().set { combined_results_FRED }
+Channel.empty().set { combined_results_no_similarity_FRED }
 Channel.empty().set { combined_results_ALL }
+Channel.empty().set { combined_results_no_similarity_ALL }
 
 workflow COMBINE_DOCKING_RESULTS {
     take:
