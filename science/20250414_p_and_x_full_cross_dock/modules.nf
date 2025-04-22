@@ -355,9 +355,9 @@ process COMBINE_AND_PROCESS_RESULTS {
     --input-csvs ${dockedLigandRMSDs.join(' ')} \
     --protein-cache "${fixedFragalysisCache}" \
     --ligand-cache "${fixedFragalysisCache}" \
-    --data-path "${chemicalSimilarityData}" \
+    --combined-chemical-similarity-csv "${chemicalSimilarityData}" \
     --date-dict "${structure_to_date_dict}" \
-    --combined-chemical-similarity-csv "${chemical_scaffold_data}" \
+    --chemical-scaffold-data "${chemical_scaffold_data}" \
     --output-dir combined_results \
     --output-file-name combined_results.csv \
     --add-padding
