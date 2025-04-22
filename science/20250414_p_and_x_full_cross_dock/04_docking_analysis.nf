@@ -24,6 +24,7 @@ workflow {
     eval_inputs_ch
         .combine(name_ch)
         .combine(all_no_sim_ch)
+        .set { eval_inputs_ch }
 
     // view first eval_inputs_ch
     eval_inputs_ch
