@@ -45,7 +45,7 @@ workflow {
     date_dict = Channel
         .fromPath("${params.dataPath}/cmpd_date_dict/date_dict.json", type: 'file')
     chemical_scaffold_data = Channel
-        .fromPath("${params.dataPath}/cmpd_scaffold_dict/chemical_scaffold_data.json", type: 'file')
+        .fromPath("${params.dataPath}/bemis_murcko_clustering/generic_cluster_labels.csv", type: 'file')
 
     COMBINE_AND_PROCESS_RESULTS(
         input_csvs,
