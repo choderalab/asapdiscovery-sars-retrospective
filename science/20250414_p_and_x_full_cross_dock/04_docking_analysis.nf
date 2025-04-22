@@ -7,19 +7,19 @@ include {
 
 workflow {
     // Load files directly where needed instead of using shared channels
-    all_no_sim = "${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv"
-    settings_file = "${params.configFiles}/settings_cross_docking_defaults.yml"
+    all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv", type: 'file')
+    settings_file = Channel.fromPath("${params.configFiles}/settings_cross_docking_defaults.yml", type: 'file')
 
-    name_ch = "datesplit"
+    name_ch = Channel.value("datesplit")
 
-    CREATE_EVALUATORS(name_ch, all_no_sim, settings_file)
+    CREATE_EVALUATORS(name_ch, all_no_sim_ch, settings_file)
 
     // map the number at the end of the file name as an id
     eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
         .flatten()
         .map { file ->
-        def id = file.name.toString().find(/([0-9]+)\_.json/) { match, code -> code }
-        return tuple(id, file, name_ch, all_no_sim)
+        def id = file.name.toString().find(/([0-9]+)) { match, code -> code }
+        return tuple(id, file, name_ch, all_no_sim_ch)
     }
 
     // view first eval_inputs_ch
