@@ -374,16 +374,19 @@ process CREATE_EVALUATORS {
     time { 2.m }
 
     input:
-    tuple val(name), path(settings_file), path(docking_results)
+    tuple val(name)
+    path(docking_results)
+    path(settings_file)
 
     output:
     path("*.json"), emit: evaluator_json
 
     script:
+    def settings = settings_file.name != 'NO_FILE' ? "--settings $settings_file" : ''
     """
     python3 "${params.scripts}"/create_evaluators.py \
     --input "${docking_results}" \
-    --settings "${settings_file}" \
+    $settings \
     --output "${name}" \
     --save
     """
