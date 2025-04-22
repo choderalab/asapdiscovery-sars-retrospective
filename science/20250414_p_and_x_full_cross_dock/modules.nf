@@ -394,7 +394,6 @@ process CREATE_EVALUATORS {
 process RUN_EVALUATORS {
     conda "${params.harbor}"
     tag "run-evaluators ${name}"
-
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
     maxRetries 3
     // Dynamic memory allocation
