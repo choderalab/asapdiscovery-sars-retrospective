@@ -65,13 +65,25 @@ include {
     RUN_EVALUATORS
     COMBINE_EVALUATIONS
 } from "./modules.nf"
-workflow DATASETSPLIT_ANALYSIS {
 
-    // load docking results
+workflow DATASETSPLIT_ANALYSIS {
     CREATE_EVALUATORS("datesplit", PROCESS_ALL.out.combined_results_no_similarity)
+
+    eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
+    .combine("datesplit")
+    .combine(PROCESS_ALL.out.combined_results_no_similarity)
+    .map { json, val, path ->
+    // Reorder if needed
+    return [val, path, json]
+    }
+    RUN_EVALUATORS(eval_inputs_ch)
+    COMBINE_EVALUATIONS(
+        "datesplit", RUN_EVALUATORS.out.evaluator_results
+    )
 }
 
 workflow RUN_ANALYSIS {
+    DATASETSPLIT_ANALYSIS()
 }
 workflow {
     PROCESS_RESULTS()
