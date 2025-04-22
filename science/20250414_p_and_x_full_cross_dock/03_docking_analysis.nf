@@ -4,6 +4,10 @@ include {
     COMBINE_AND_PROCESS_RESULTS
 } from "./modules.nf"
 
+// Define shared channels for passing data between workflows
+Channel.empty().set { combined_results_FRED }
+Channel.empty().set { combined_results_ALL }
+
 workflow COMBINE_DOCKING_RESULTS {
     take:
     method
@@ -36,25 +40,41 @@ workflow COMBINE_DOCKING_RESULTS {
     chemical_scaffold_data = Channel
         .fromPath("${params.genericScaffoldPath}", type: 'file')
 
+    // Convert method to a channel
+    method_ch = Channel.value(method)
+
     COMBINE_AND_PROCESS_RESULTS(
         input_csvs,
         fixed_frag_cache,
         chemical_similarity_data,
         date_dict,
         chemical_scaffold_data,
-        method,
+        method_ch
     )
+
+    emit:
+    combined_results = COMBINE_AND_PROCESS_RESULTS.out.combined_results
+    combined_results_no_similarity = COMBINE_AND_PROCESS_RESULTS.out.combined_results_no_similarity
 }
+
 // Create named entry points for each dataset
 workflow PROCESS_FRED {
     COMBINE_DOCKING_RESULTS('FRED')
+
+    // Publish to shared channel
+    COMBINE_DOCKING_RESULTS.out.combined_results.tap { combined_results_FRED }
+    COMBINE_DOCKING_RESULTS.out.combined_results_no_similarity.tap { combined_results_no_similarity_FRED }
 }
 
 workflow PROCESS_ALL {
     COMBINE_DOCKING_RESULTS('ALL')
+
+    // Publish to shared channel
+    COMBINE_DOCKING_RESULTS.out.combined_results.tap { combined_results_ALL }
+    COMBINE_DOCKING_RESULTS.out.combined_results_no_similarity.tap { combined_results_no_similarity_ALL }
 }
 
-workflow PROCESS_RESULTS{
+workflow PROCESS_RESULTS {
     PROCESS_FRED()
     PROCESS_ALL()
 }
@@ -67,26 +87,37 @@ include {
 } from "./modules.nf"
 
 workflow DATASETSPLIT_ANALYSIS {
-    CREATE_EVALUATORS("datesplit", PROCESS_ALL.out.combined_results_no_similarity)
+    // Use the shared channel
+    CREATE_EVALUATORS("datesplit", combined_results_no_similarity_ALL)
 
+    // Create a channel with "datesplit" value for combination
+    datesplit_ch = Channel.value("datesplit")
+
+    // Combine channels in the correct order for the process
     eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
-    .combine("datesplit")
-    .combine(PROCESS_ALL.out.combined_results_no_similarity)
-    .map { json, val, path ->
-    // Reorder if needed
-    return [val, path, json]
-    }
+        .combine(datesplit_ch)
+        .combine(combined_results_no_similarity_ALL)
+        .map { json, split_type, results_path ->
+            // Reorder to match process input requirements
+            return [split_type, results_path, json]
+        }
+
     RUN_EVALUATORS(eval_inputs_ch)
+
     COMBINE_EVALUATIONS(
-        "datesplit", RUN_EVALUATORS.out.evaluator_results
+        Channel.value("datesplit"),
+        RUN_EVALUATORS.out.evaluator_results
     )
 }
 
 workflow RUN_ANALYSIS {
     DATASETSPLIT_ANALYSIS()
 }
+
 workflow {
+    // Run both workflows in sequence
+    // PROCESS_RESULTS will populate the shared channels
+    // Then RUN_ANALYSIS will use those channels
     PROCESS_RESULTS()
-    | PROCESS_ALL.out.combined_results_no_similarity
-    | RUN_ANALYSIS
+    RUN_ANALYSIS()
 }
