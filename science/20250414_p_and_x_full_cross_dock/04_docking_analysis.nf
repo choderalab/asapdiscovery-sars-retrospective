@@ -23,6 +23,7 @@ workflow SETUP_CHANNELS {
 
     Channel.fromPath("${params.combinedDockingResultsPath}/FRED_combined_results_no_chemical_similarity.csv")
         .tap { FRED_no_sim_ch }
+}
 
 // Define analysis workflow
 include {
