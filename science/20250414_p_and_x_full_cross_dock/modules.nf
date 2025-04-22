@@ -392,7 +392,7 @@ process CREATE_EVALUATORS {
     """
 }
 process RUN_EVALUATORS {
-    conda ${params.harbor}
+    conda "${params.harbor}"
     tag "run-evaluators ${name}"
 
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
@@ -417,7 +417,7 @@ process RUN_EVALUATORS {
     """
 }
 process COMBINE_EVALUATIONS {
-    conda ${params.harbor}
+    conda "${params.harbor}"
     tag "combine-evaluations ${name}"
 
     input:
