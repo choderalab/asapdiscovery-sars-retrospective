@@ -7,8 +7,8 @@ include {
 
 workflow {
     // Load files directly where needed instead of using shared channels
-    all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv")
-    settings_file = Channel.fromPath("${params.configFiles}/settings_cross_docking_defaults.yml")
+    all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv").first()
+    settings_file = Channel.fromPath("${params.configFiles}/settings_cross_docking_defaults.yml").first()
 
     name_ch = Channel.value("datesplit")
 
