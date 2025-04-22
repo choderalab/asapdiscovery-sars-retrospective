@@ -89,8 +89,12 @@ include {
 } from "./modules.nf"
 
 workflow DATASETSPLIT_ANALYSIS {
+    // Load Settings
+    settings_file = Channel
+        .fromPath("${params.configFiles}/settings_cross_docking_defaults.yml", type: 'file')
+
     // Use the shared channel
-    CREATE_EVALUATORS("datesplit", combined_results_no_similarity_ALL)
+    CREATE_EVALUATORS("datesplit", combined_results_no_similarity_ALL, settings_file)
 
     // Create a channel with "datesplit" value for combination
     datesplit_ch = Channel.value("datesplit")
