@@ -19,7 +19,7 @@ workflow {
         .combine(name_ch)
         .combine(all_no_sim_ch)
         .map { json, name, data_file ->
-            return [name, data_file, json]  // Adjust order as needed for your process
+            return [json, name, data_file]
         }
 
     RUN_EVALUATORS(eval_inputs_ch)
