@@ -188,7 +188,7 @@ def main():
     # Add chemical similarity info
     logger.info("Adding chemical similarity info")
     combined_chemical_similarity_info = pd.read_csv(
-        args.data_path / "combined_data.csv"
+        args.data_path / "combined_chemical_similarity_data.csv"
     )
     df = df.merge(
         combined_chemical_similarity_info,
