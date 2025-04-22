@@ -306,7 +306,7 @@ process RUN_BEMIS_MURCKO_CLUSTERING {
 
     script:
     """
-    python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir
+    python "${params.scripts}"/run_bemis_murcko_clustering.py --sdf-2d ${ligand_file_2d} --output-dir bemis_murcko_clustering
     """
 }
 process CALCULATE_RMSD {
