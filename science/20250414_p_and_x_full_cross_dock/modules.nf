@@ -290,9 +290,7 @@ process COMBINE_CHEMICAL_SIMILARITY_DATA {
 
     script:
     """
-    python3 "${params.scripts}/combine_chemical_similarity_data.py" \
-        --input-files ${csv_files.join(' ')} \
-
+    python3 "${params.scripts}/combine_chemical_similarity_data.py" ${csv_files.join(' ')}
     """
 }
 process RUN_BEMIS_MURCKO_CLUSTERING {
