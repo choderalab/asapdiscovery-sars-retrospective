@@ -69,13 +69,9 @@ def main():
         for evaluator_json in args.evaluator_json
     ]
 
-    import os
-
-    ncores = int(os.environ["SLURM_CPUS_PER_TASK"])
-    nprocs = min(mp.cpu_count(), len(evaluators), args.n_cpus, ncores)
+    nprocs = min(mp.cpu_count(), len(evaluators), args.n_cpus)
     logger.info(f"CPUs: {mp.cpu_count()}")
     logger.info(f"N Processes: {len(evaluators)}")
-    logger.info(f"SLURM_CPUS_PER_TASK: {ncores}")
     logger.info(f"N Cores: {args.n_cpus}")
     logger.info(f"Running {len(evaluators)} evaluations across {nprocs} cpus")
 
