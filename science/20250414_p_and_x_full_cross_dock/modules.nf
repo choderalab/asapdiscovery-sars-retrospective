@@ -403,7 +403,7 @@ process RUN_EVALUATORS {
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
 
     input:
-    tuple val(id), path(evaluator_json), val(name), path(docking_results)
+    tuple path(evaluator_jsons), val(name), path(docking_results)
 
     output:
     path("*.csv"), emit: evaluator_results
@@ -412,8 +412,7 @@ process RUN_EVALUATORS {
     """
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
-    --evaluator "${evaluator_json}" \
-    --job-id "${id}"
+    --evaluator ${evaluator_json.join(' ')} \
     """
 }
 process COMBINE_EVALUATIONS {
