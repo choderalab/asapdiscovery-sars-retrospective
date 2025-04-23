@@ -26,13 +26,6 @@ workflow {
         .combine(all_no_sim_ch)
         .set { eval_inputs_ch }
 
-    // view first eval_inputs_ch
-    eval_inputs_ch
-        .first()
-        .view{tuple -> "First eval_inputs_ch: $tuple"}
-
-
-
     RUN_EVALUATORS(eval_inputs_ch)
 
     COMBINE_EVALUATIONS(
