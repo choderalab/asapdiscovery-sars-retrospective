@@ -10,14 +10,14 @@ workflow RUN_DOCKING_ANALYSIS {
     config_tuple  // A tuple containing (name, results_file, settings_file)
 
     main:
-    def name_ch = config_tuple.map { it[0] }
-    def results_ch = config_tuple.map { it[1] }.map { file(it, checkIfExists: true) }
-    def settings_ch = config_tuple.map { it[2] }.map { file(it, checkIfExists: true) }
+    name = config_tuple[0]
+    docking_results = config_tuple[1]
+    settings = config_tuple[2]
 
 //     config_tuple.view()
 
 
-    CREATE_EVALUATORS(name_ch, results_ch, settings_ch)
+    CREATE_EVALUATORS(name_ch, docking_results, settings)
 
     CREATE_EVALUATORS.out.evaluator_json
         .flatten()
@@ -26,10 +26,10 @@ workflow RUN_DOCKING_ANALYSIS {
 
 //     eval_inputs_ch.first().view()
 
-    RUN_EVALUATORS(name_ch, results_ch, eval_inputs_ch)
+    RUN_EVALUATORS(name, docking_results, eval_inputs_ch)
 
     COMBINE_EVALUATIONS(
-        name_ch,
+        name,
         RUN_EVALUATORS.out.evaluator_results.collect()
     )
 
