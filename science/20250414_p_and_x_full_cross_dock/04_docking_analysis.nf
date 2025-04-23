@@ -49,15 +49,15 @@ def analyses = [
         settings: params.multipose_settings
     ],
     not_x_to_x_posit: [
-        results: params.all_no_sim,
+        results: params.all_sim,
         settings: params.settings_scaffold_split_not_x_to_x
     ],
     x_to_not_x_posit: [
-        results: params.all_no_sim,
+        results: params.all_sim,
         settings: params.settings_scaffold_split_x_to_not_x
     ],
     x_to_y_posit: [
-        results: params.all_no_sim,
+        results: params.all_sim,
         settings: params.settings_scaffold_split_x_to_y
     ]
 ]
