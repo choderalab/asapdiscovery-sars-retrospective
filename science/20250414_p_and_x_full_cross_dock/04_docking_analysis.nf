@@ -5,8 +5,6 @@ include {
     COMBINE_EVALUATIONS
 } from "./modules.nf"
 
-params.K = 1
-
 workflow {
     // Load files directly where needed instead of using shared channels
     all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv", type: 'file')
