@@ -7,16 +7,16 @@ include {
 
 workflow RUN_DOCKING_ANALYSIS {
     take:
-    config_tuple  // A tuple containing (id, name, results_file, settings_file)
+    config_tuple  // A tuple containing (name, results_file, settings_file)
 
     main:
-    def name_ch = Channel.value(config_tuple[0])
-    def results_ch = Channel.fromPath(config_tuple[1], checkIfExists: true)
-    def settings_ch = Channel.fromPath(config_tuple[2], checkIfExists: true)
+    def name_ch = Channel.value(config_tuple.map { it[0] }
+    def results_ch = config_tuple.map { it[1] }.map { file(it, checkIfExists: true) }
+    def settings_ch = config_tuple.map { it[2] }.map { file(it, checkIfExists: true) }
+
 
     CREATE_EVALUATORS(name_ch, results_ch, settings_ch)
 
-    // map the number at the end of the file name as an id
     CREATE_EVALUATORS.out.evaluator_json
         .flatten()
         .buffer(size: params.K)
@@ -55,7 +55,7 @@ workflow {
     params.settings_similarity_split_mcs = "${params.configFiles}/settings_similarity_split_mcs.yml"
 
     Channel
-        .from([
+        .fromList([
             // [id, name, results_file_path, settings_file_path]
             ["datesplit_posit", params.all_no_sim, params.datesplit_settings],
             ["datesplit_fred", params.fred_no_sim, params.datesplit_settings],
