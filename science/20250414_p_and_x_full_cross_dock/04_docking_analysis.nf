@@ -10,9 +10,9 @@ workflow RUN_DOCKING_ANALYSIS {
     config_tuple  // A tuple containing (id, name, results_file, settings_file)
 
     main:
-    def name_ch = Channel.value(config_tuple[1])
-    def results_ch = Channel.fromPath(config_tuple[2], checkIfExists: true)
-    def settings_ch = Channel.fromPath(config_tuple[3], checkIfExists: true)
+    def name_ch = Channel.value(config_tuple[0])
+    def results_ch = Channel.fromPath(config_tuple[1], checkIfExists: true)
+    def settings_ch = Channel.fromPath(config_tuple[2], checkIfExists: true)
 
     CREATE_EVALUATORS(name_ch, results_ch, settings_ch)
 
