@@ -19,9 +19,6 @@ workflow {
         .flatten()
         .buffer(size: params.K)
         .set { eval_inputs_ch }
-//         .map { file ->
-//         def id = file.name.toString().find(/([0-9]+)/) { match, code -> code }
-//         return tuple(id, file)
 
     eval_inputs_ch
         .combine(name_ch)

@@ -423,12 +423,12 @@ process COMBINE_EVALUATIONS {
 
     input:
     val(name)
-    path(evaluator_results)
+    path("evaluator_results_*") from evaluator_results
 
     script:
     """
     python "${params.scripts}/combine_date_split_results.py" \
-    -c ${evaluator_results.join(' ')} \
+    -c evaluator_results_* \
     -o "${name}_combined_results.csv"
     """
 }
