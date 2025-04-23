@@ -395,12 +395,13 @@ process CREATE_EVALUATORS {
 process RUN_EVALUATORS {
     conda "${params.harbor}"
     tag "run-evaluators ${name}"
-//     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
     maxRetries 3
     // Dynamic memory allocation
     memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 16.GB : 16.GB }
     // Dynamic time allocation
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
+    // set n cpus to request
+    cpus params.K
 
     input:
     tuple path(evaluator_jsons), val(name), path(docking_results)
@@ -413,7 +414,7 @@ process RUN_EVALUATORS {
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
     --evaluator ${evaluator_jsons.join(' ')} \
-    --ncpus ${params.K}
+    --n-cpus ${params.K}
     """
 }
 process COMBINE_EVALUATIONS {
