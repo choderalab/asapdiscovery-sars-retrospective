@@ -62,9 +62,9 @@ def analyses = [
     ]
 ]
 
-// Create workflows dynamically
-analyses.each { name, config ->
-    workflow {
+// Main workflow to run all analyses in parallel
+workflow {
+    def analysis_results = analyses.collect { name, config ->
         RUN_DOCKING_ANALYSIS(name, config.results, config.settings)
     }
 }
