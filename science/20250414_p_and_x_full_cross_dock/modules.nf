@@ -424,7 +424,7 @@ process COMBINE_EVALUATIONS {
 
     input:
     val(name)
-    path("evaluator_results_*") from evaluator_results
+    path("evaluator_results_*")
 
     output:
     path("${name}_combined_results.csv"), emit: combined_results
