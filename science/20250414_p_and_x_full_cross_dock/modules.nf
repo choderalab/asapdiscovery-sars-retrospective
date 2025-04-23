@@ -436,7 +436,7 @@ process COMBINE_EVALUATIONS {
     script:
     """
     python "${params.scripts}/combine_evaluation_results.py" \
-    -c evaluator_results_* \
-    -o "${name}_combined_results.csv"
+    evaluator_results_* \
+    "${name}_combined_results.csv"
     """
 }
