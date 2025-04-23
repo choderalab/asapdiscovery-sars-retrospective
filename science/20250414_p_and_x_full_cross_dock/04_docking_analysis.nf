@@ -64,7 +64,13 @@ def analyses = [
 
 // Main workflow to run all analyses in parallel
 workflow {
-    def analysis_results = analyses.collect { name, config ->
-        RUN_DOCKING_ANALYSIS(name, config.results, config.settings)
+    // convert dict of analyses to a list of tuples
+    analyses.collect { name, config ->
+        tuple(name, config.results, config.settings)
     }
+    .flatten()
+    .set { analyses_ch }
+
+    RUN_DOCKING_ANALYSIS(analyses_ch)
+
 }
