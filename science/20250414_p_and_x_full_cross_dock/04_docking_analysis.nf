@@ -29,48 +29,31 @@ workflow RUN_DOCKING_ANALYSIS {
     emit:
     results = COMBINE_EVALUATIONS.out
 }
-
-// Define analysis configurations
-def analyses = [
-    datesplit_posit: [
-        results: params.all_no_sim,
-        settings: params.datesplit_settings
-    ],
-    datesplit_fred: [
-        results: params.fred_no_sim,
-        settings: params.datesplit_settings
-    ],
-    multipose_posit: [
-        results: params.all_no_sim,
-        settings: params.multipose_settings
-    ],
-    multipose_fred: [
-        results: params.fred_no_sim,
-        settings: params.multipose_settings
-    ],
-    not_x_to_x_posit: [
-        results: params.all_sim,
-        settings: params.settings_scaffold_split_not_x_to_x
-    ],
-    x_to_not_x_posit: [
-        results: params.all_sim,
-        settings: params.settings_scaffold_split_x_to_not_x
-    ],
-    x_to_y_posit: [
-        results: params.all_sim,
-        settings: params.settings_scaffold_split_x_to_y
-    ]
-]
+workflow DATESPLIT_POSIT {
+    RUN_DOCKING_ANALYSIS('datesplit_posit', params.all_no_sim, params.datesplit_settings)
+}
+workflow DATESPLIT_FRED {
+    RUN_DOCKING_ANALYSIS('datesplit_fred', params.fred_no_sim, params.datesplit_settings)
+}
+workflow MULTIPOSE_POSIT {
+    RUN_DOCKING_ANALYSIS('multipose_posit', params.all_no_sim, params.multipose_settings)
+}
+workflow MULTIPOSE_FRED {
+    RUN_DOCKING_ANALYSIS('multipose_fred', params.fred_no_sim, params.multipose_settings)
+}
+workflow NOT_X_TO_X_POSIT {
+    RUN_DOCKING_ANALYSIS('not_x_to_x_posit', params.all_sim, params.settings_scaffold_split_not_x_to_x)
+}
+workflow X_TO_NOT_X_POSIT {
+    RUN_DOCKING_ANALYSIS('x_to_not_x_posit', params.all_sim, params.settings_scaffold_split_x_to_not_x)
+}
+workflow X_TO_Y_POSIT {
+    RUN_DOCKING_ANALYSIS('x_to_y_posit', params.all_sim, params.settings_scaffold_split_x_to_y)
+}
 
 // Main workflow to run all analyses in parallel
 workflow {
-    // convert dict of analyses to a list of tuples
-    analyses.collect { name, config ->
-        tuple(name, config.results, config.settings)
-    }
-    .flatten()
-    .set { analyses_ch }
-
-    RUN_DOCKING_ANALYSIS(analyses_ch)
+    DATESPLIT_POSIT()
+    X_TO_Y_POSIT()
 
 }
