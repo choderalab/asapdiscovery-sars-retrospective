@@ -5,12 +5,12 @@ import click
 
 
 @click.command()
-@click.option(
+@click.argument(
     "input-csvs",
     nargs=-1,
     type=click.Path(exists=True),
 )
-@click.argument("output-file", type=click.Path(), help="Output CSV file path")
+@click.argument("output-file", type=click.Path())
 def combine_csv_files(input_csvs, output_file):
     """Combine multiple INPUT_CSVS into a single OUTPUT_FILE."""
     csv_files = list(input_csvs)
