@@ -54,6 +54,9 @@ def plot_filled_in_error_bars(
 
     raw_df = pd.read_csv(data_csv)
 
+    # need to sort for the values to make sense since we're plotting the lines manually
+    raw_df = raw_df.sort_values(by=[x_var, color_var, style_var])
+
     # First create the main plot to get the color mapping
     fig = sns.lineplot(
         data=raw_df,
