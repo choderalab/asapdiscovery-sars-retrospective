@@ -422,6 +422,7 @@ process RUN_EVALUATORS {
     """
 }
 process COMBINE_EVALUATIONS {
+    publishDir "${params.evaluationResults}", mode: 'copy', overwrite: true
     conda "${params.harbor}"
     tag "combine-evaluations ${name}"
 
