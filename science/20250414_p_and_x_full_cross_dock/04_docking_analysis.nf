@@ -54,6 +54,9 @@ workflow X_TO_Y_POSIT {
 // Main workflow to run all analyses in parallel
 workflow {
     DATESPLIT_POSIT()
+    DATESPLIT_FRED()
+    NOT_X_TO_X_POSIT()
+    X_TO_NOT_X_POSIT()
     X_TO_Y_POSIT()
 
 }
