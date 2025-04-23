@@ -2,6 +2,7 @@ from matplotlib.ticker import ScalarFormatter
 import matplotlib.pyplot as plt
 import seaborn as sns
 import click
+import pandas as pd
 
 # Global configuration
 X_VAR = "N_Per_Split"
@@ -30,7 +31,7 @@ def cli():
 
 
 @cli.command("plot-filled-in-error-bars")
-@click.option("--raw-df", required=True, help="Input data file")
+@click.argument("data-csv")
 @click.option("--x-var", default=X_VAR, help="X variable")
 @click.option("--y-var", default=Y_VAR, help="Y variable")
 @click.option("--color-var", default=COLOR_VAR, help="Color variable")
@@ -39,7 +40,7 @@ def cli():
 @click.option("--ci-upper", default=CI_UPPER, help="Upper confidence interval column")
 @click.option("--fig-name", required=True, help="Output figure name")
 def plot_filled_in_error_bars(
-    raw_df,
+    data_csv,
     x_var,
     y_var,
     color_var,
@@ -48,7 +49,10 @@ def plot_filled_in_error_bars(
     ci_upper,
     fig_name,
 ):
+    """Plot filled-in error bars with seaborn for the given DATA_CSV"""
     plt.figure(figsize=FIG_SIZE)
+
+    raw_df = pd.read_csv(data_csv)
 
     # First create the main plot to get the color mapping
     fig = sns.lineplot(

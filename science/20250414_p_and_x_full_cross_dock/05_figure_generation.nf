@@ -12,7 +12,7 @@ process DATESPLIT_POSIT {
     """
     python ${params.scripts}/plotting.py \
         plot-filled-in-error-bars \
-        --raw-df ${params.datesplitPositResults} \
+        ${params.datesplitPositResults} \
         --fig-name datesplit_posit
     """
 }
