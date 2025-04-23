@@ -31,7 +31,7 @@ def get_args():
         "--output",
         type=Path,
         help="Path to the output directory where the results will be stored",
-        required=True,
+        default="./",
     )
     parser.add_argument(
         "--n-cpus",
@@ -39,7 +39,6 @@ def get_args():
         help="Number of cpus to use for parallel processing",
         default=1,
     )
-    parser.add_argument("--job-id", type=str, required=True)
     parser.add_argument(
         "--evaluator-json",
         type=Path,
@@ -52,7 +51,7 @@ def get_args():
 
 def main():
     args = get_args()
-    output_dir = args.output / args.job_id
+    output_dir = args.output
     output_dir.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(

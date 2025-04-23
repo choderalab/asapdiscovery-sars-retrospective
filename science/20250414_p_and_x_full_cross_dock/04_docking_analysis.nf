@@ -5,6 +5,8 @@ include {
     COMBINE_EVALUATIONS
 } from "./modules.nf"
 
+params.K = 1
+
 workflow {
     // Load files directly where needed instead of using shared channels
     all_no_sim_ch = Channel.fromPath("${params.combinedDockingResultsPath}/ALL_combined_results_no_chemical_similarity.csv", type: 'file')
@@ -15,12 +17,15 @@ workflow {
     CREATE_EVALUATORS(name_ch, all_no_sim_ch, settings_file)
 
     // map the number at the end of the file name as an id
-    eval_inputs_ch = CREATE_EVALUATORS.out.evaluator_json
+    CREATE_EVALUATORS.out.evaluator_json
         .flatten()
-        .map { file ->
-        def id = file.name.toString().find(/([0-9]+)/) { match, code -> code }
-        return tuple(id, file)
+        .buffer(size: params.K)
+        .set { eval_inputs_ch }
     }
+//         .map { file ->
+//         def id = file.name.toString().find(/([0-9]+)/) { match, code -> code }
+//         return tuple(id, file)
+
     eval_inputs_ch
         .combine(name_ch)
         .combine(all_no_sim_ch)

@@ -412,7 +412,6 @@ process RUN_EVALUATORS {
     """
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
-    --output "${name}" \
     --evaluator "${evaluator_json}" \
     --job-id "${id}"
     """
