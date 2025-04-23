@@ -10,7 +10,7 @@ workflow RUN_DOCKING_ANALYSIS {
     config_tuple  // A tuple containing (name, results_file, settings_file)
 
     main:
-    def name_ch = Channel.value(config_tuple.map { it[0] }
+    def name_ch = config_tuple.map { it[0] }
     def results_ch = config_tuple.map { it[1] }.map { file(it, checkIfExists: true) }
     def settings_ch = config_tuple.map { it[2] }.map { file(it, checkIfExists: true) }
 
