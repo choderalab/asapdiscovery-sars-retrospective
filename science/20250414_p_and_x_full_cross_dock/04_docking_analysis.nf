@@ -10,9 +10,7 @@ workflow RUN_DOCKING_ANALYSIS {
     config_tuple  // A tuple containing (name, results_file, settings_file)
 
     main:
-    name = config_tuple[0]
-    docking_results = config_tuple[1]
-    settings = config_tuple[2]
+    def (name, docking_results, settings) = config_tuple
 
 //     config_tuple.view()
 
