@@ -41,7 +41,7 @@ n_poses:
 use_random_split: true
 update_n_per_split: false
 n_per_split:
-- -1
+- 600 # Number of reference structures to use in each split
 use_date_split: true
 reference_structure_date_column: Reference_Structure_Date
 randomize_by_n_days: 1
