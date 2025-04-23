@@ -14,6 +14,8 @@ workflow RUN_DOCKING_ANALYSIS {
     def results_ch = config_tuple.map { it[1] }.map { file(it, checkIfExists: true) }
     def settings_ch = config_tuple.map { it[2] }.map { file(it, checkIfExists: true) }
 
+    config_tuple.view()
+
 
     CREATE_EVALUATORS(name_ch, results_ch, settings_ch)
 
