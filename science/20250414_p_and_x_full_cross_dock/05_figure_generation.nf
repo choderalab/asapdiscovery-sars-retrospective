@@ -2,6 +2,7 @@
 
 process DATESPLIT_POSIT {
     publishDir "${params.figuresPath}", mode: 'copy', overwrite: true
+    conda "${params.harbor}"
 
     output:
     file("*.png")
