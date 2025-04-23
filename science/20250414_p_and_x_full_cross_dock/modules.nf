@@ -425,6 +425,9 @@ process COMBINE_EVALUATIONS {
     val(name)
     path("evaluator_results_*") from evaluator_results
 
+    output:
+    path("${name}_combined_results.csv"), emit: combined_results
+
     script:
     """
     python "${params.scripts}/combine_date_split_results.py" \
