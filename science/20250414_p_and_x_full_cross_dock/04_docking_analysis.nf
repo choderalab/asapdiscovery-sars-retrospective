@@ -55,7 +55,7 @@ def analyses = [
     x_to_not_x_posit: [
         results: params.all_no_sim,
         settings: params.settings_scaffold_split_x_to_not_x
-    ]
+    ],
     x_to_y_posit: [
         results: params.all_no_sim,
         settings: params.settings_scaffold_split_x_to_y
