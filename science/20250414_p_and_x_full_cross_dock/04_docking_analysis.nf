@@ -29,6 +29,8 @@ workflow RUN_DOCKING_ANALYSIS {
         .combine(results_ch)
         .set { eval_inputs_ch }
 
+    eval_inputs_ch.first().view()
+
     RUN_EVALUATORS(eval_inputs_ch)
 
     COMBINE_EVALUATIONS(
