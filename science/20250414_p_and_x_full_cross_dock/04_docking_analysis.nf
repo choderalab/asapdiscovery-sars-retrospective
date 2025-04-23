@@ -55,5 +55,5 @@ workflow DATESPLIT_POSIT {
 }
 
 workflow {
-    DATESPLIT_POSIT
+    DATESPLIT_POSIT()
 }
