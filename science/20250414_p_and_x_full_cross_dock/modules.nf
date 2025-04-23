@@ -412,7 +412,8 @@ process RUN_EVALUATORS {
     """
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
-    --evaluator ${evaluator_json.join(' ')} \
+    --evaluator ${evaluator_jsons.join(' ')} \
+    --ncpus ${params.K}
     """
 }
 process COMBINE_EVALUATIONS {
