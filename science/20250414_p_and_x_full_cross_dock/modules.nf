@@ -405,7 +405,10 @@ process RUN_EVALUATORS {
     cpus params.K
 
     input:
-    tuple path(evaluator_jsons), val(name), path(docking_results)
+    val(name)
+    path(docking_results)
+    path("evaluator_jsons_*")
+
 
     output:
     path("*.csv"), emit: evaluator_results
@@ -414,7 +417,7 @@ process RUN_EVALUATORS {
     """
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
-    --evaluator ${evaluator_jsons.join(' ')} \
+    --evaluator "evaluator_jsons_*" \
     --n-cpus ${params.K}
     """
 }

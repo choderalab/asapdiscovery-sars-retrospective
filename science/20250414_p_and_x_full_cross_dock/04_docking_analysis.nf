@@ -22,14 +22,11 @@ workflow RUN_DOCKING_ANALYSIS {
     CREATE_EVALUATORS.out.evaluator_json
         .flatten()
         .buffer(size: params.K)
-        .map { it -> tuple(it) }  // Wrap files in tuple
-        .combine(name_ch)
-        .combine(results_ch)
         .set { eval_inputs_ch }
 
     eval_inputs_ch.first().view()
 
-    RUN_EVALUATORS(eval_inputs_ch)
+    RUN_EVALUATORS(name_ch, results_ch, eval_inputs_ch)
 
     COMBINE_EVALUATIONS(
         name_ch,
