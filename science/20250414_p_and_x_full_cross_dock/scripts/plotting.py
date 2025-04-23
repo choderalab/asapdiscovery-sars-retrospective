@@ -30,6 +30,15 @@ def cli():
     pass
 
 
+# make some common click args
+def fig_name_option():
+    return click.option(
+        "--fig-name",
+        required=True,
+        help="Output figure name",
+    )
+
+
 @cli.command("plot-filled-in-error-bars")
 @click.argument("data-csv")
 @click.option("--x-var", default=X_VAR, help="X variable")
@@ -38,7 +47,7 @@ def cli():
 @click.option("--style-var", default=STYLE_VAR, help="Style variable")
 @click.option("--ci-lower", default=CI_LOWER, help="Lower confidence interval column")
 @click.option("--ci-upper", default=CI_UPPER, help="Upper confidence interval column")
-@click.option("--fig-name", required=True, help="Output figure name")
+@fig_name_option()
 def plot_filled_in_error_bars(
     data_csv,
     x_var,
@@ -118,12 +127,24 @@ def plot_filled_in_error_bars(
 
 
 @cli.command("plot-similarity-ecdf")
-@click.option("--input-file", required=True, help="Input data file")
-@click.option("--fig-name", required=True, help="Output figure name")
-def plot_similarity_ecdf(input_file, fig_name):
+@click.argument("ligand-similarity-csv")
+@fig_name_option()
+def plot_similarity_ecdf(ligand_similarity_csv, fig_name):
     """Plot empirical cumulative distribution function for similarity data."""
-    # Implement ECDF plotting logic here
-    pass
+    # Load data
+    df = pd.read_csv(ligand_similarity_csv)
+    df = df.sort_values(by=["Similarity Metric", "Tanimoto"])
+
+    # Create ECDF
+    plt.figure(figsize=FIG_SIZE)
+    sns.ecdfplot(df, x="Tanimoto", hue="Similarity Metric", stat="proportion")
+    plt.xlabel("Tanimoto Similarity", fontsize=FONT_SIZES["xlabel"], fontweight="bold")
+    plt.ylabel("Fraction of Ligands", fontsize=FONT_SIZES["ylabel"], fontweight="bold")
+
+    plt.tight_layout()
+
+    plt.savefig(fig_name + ".svg", format="svg", bbox_inches="tight")
+    plt.savefig(fig_name + ".png", format="png", bbox_inches="tight")
 
 
 if __name__ == "__main__":

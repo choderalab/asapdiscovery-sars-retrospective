@@ -1,13 +1,7 @@
 #!/usr/bin/env nextflow
 
 process DATESPLIT_POSIT {
-    publishDir "${params.figuresPath}", mode: 'copy', overwrite: true
-    conda "${params.harbor}"
-
-    output:
-    file("*.png")
-    file("*.svg")
-
+    label 'figure'
     script:
     """
     python ${params.scripts}/plotting.py \
@@ -15,6 +9,18 @@ process DATESPLIT_POSIT {
         ${params.datesplitPositResults} \
         --fig-name datesplit_posit
     """
+}
+
+process CHEMICAL_SIMILARITY_ECDF {
+    label 'figure'
+    script:
+    """
+    python ${params.scripts}/plotting.py \
+        plot-chemical-similarity-ecdf \
+        ${params.combinedChemicalSimilarityPath} \
+        --fig-name chemical_similarity_ecdf
+    """
+
 }
 
 workflow {
