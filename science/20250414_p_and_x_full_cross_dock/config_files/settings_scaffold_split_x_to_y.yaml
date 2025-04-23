@@ -5,6 +5,7 @@
 # pose_id_column: Name of the column containing the pose id
 # n_poses: Number of poses to select
 # use_random_split: 
+# update_n_per_split: Update n_per_split based on data
 # n_per_split: A list of the number of reference structures that will be used in each split
 # use_date_split: 
 # reference_structure_date_column: Name of the column where the date of the reference structure deposition is saved
@@ -38,7 +39,9 @@ pose_id_column: Pose_ID
 n_poses:
 - 1
 use_random_split: true
-update_n_per_split: true
+update_n_per_split: false
+n_per_split:
+- -1
 use_date_split: true
 reference_structure_date_column: Reference_Structure_Date
 randomize_by_n_days: 1
@@ -46,8 +49,8 @@ use_similarity_split: false
 similarity_column_name: null
 similarity_groupby: {}
 similarity_range:
-- 0
-- 1
+- 0.0
+- 1.0
 similarity_n_thresholds: 21
 use_scaffold_split: true
 scaffold_split_option: x_to_y
