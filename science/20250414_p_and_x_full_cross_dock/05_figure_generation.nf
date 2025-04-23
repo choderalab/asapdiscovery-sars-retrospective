@@ -2,6 +2,10 @@
 
 process DATESPLIT_POSIT {
     label 'figure'
+    output:
+    file("*.png")
+    file("*.svg")
+
     script:
     """
     python ${params.scripts}/plotting.py \
@@ -13,6 +17,10 @@ process DATESPLIT_POSIT {
 
 process CHEMICAL_SIMILARITY_ECDF {
     label 'figure'
+    output:
+    file("*.png")
+    file("*.svg")
+
     script:
     """
     python ${params.scripts}/plotting.py \
