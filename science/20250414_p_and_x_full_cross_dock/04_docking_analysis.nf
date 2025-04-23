@@ -17,7 +17,7 @@ workflow RUN_DOCKING_ANALYSIS {
 //     config_tuple.view()
 
 
-    CREATE_EVALUATORS(name_ch, docking_results, settings)
+    CREATE_EVALUATORS(name, docking_results, settings)
 
     CREATE_EVALUATORS.out.evaluator_json
         .flatten()
