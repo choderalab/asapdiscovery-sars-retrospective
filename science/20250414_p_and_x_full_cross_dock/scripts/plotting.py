@@ -11,8 +11,8 @@ X_LABEL = "Number of Reference Structures Available to Use"
 Y_LABEL = "Fraction of Ligands Posed \n<2Å from Reference"
 COLOR_VAR = "Score"
 STYLE_VAR = "Split"
-CI_LOWER = "CI_LOWER"
-CI_UPPER = "CI_UPPER"
+CI_LOWER = "CI_Lower"
+CI_UPPER = "CI_Upper"
 FIG_SIZE = (12, 8)
 FONT_SIZES = {
     "xlabel": 24,
