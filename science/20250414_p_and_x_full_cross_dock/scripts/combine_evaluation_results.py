@@ -5,16 +5,14 @@ import click
 
 
 @click.command()
-@click.argument(
-    "--input-csvs",
-    "-c",
+@click.option(
+    "input-csvs",
     nargs=-1,
     type=click.Path(exists=True),
-    help="One or more CSV files containing docking results",
 )
-@click.argument("--output-file", "-o", type=click.Path(), help="Output CSV file path")
-def combine_csv_files(input_path, input_csvs, output_file, pattern):
-    """Combine multiple CSV files into a single CSV file."""
+@click.argument("output-file", type=click.Path(), help="Output CSV file path")
+def combine_csv_files(input_csvs, output_file):
+    """Combine multiple INPUT_CSVS into a single OUTPUT_FILE."""
     csv_files = list(input_csvs)
 
     # Create empty list to store dataframes
