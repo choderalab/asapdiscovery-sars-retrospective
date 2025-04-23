@@ -50,10 +50,15 @@ params.settings_similarity_split_tanimotocombo = "${params.configFiles}/settings
 params.settings_similarity_split_ecfp = "${params.configFiles}/settings_similarity_split_ecfp.yml"
 params.settings_similarity_split_mcs = "${params.configFiles}/settings_similarity_split_mcs.yml"
 
+params.K = 4 // Number of evaluations to run in parallel per task
 workflow DATESPLIT_POSIT {
     RUN_DOCKING_ANALYSIS("datesplit_posit", params.all_no_sim, params.datesplit_settings)
+}
+workflow DATESPLIT_FRED {
+    RUN_DOCKING_ANALYSIS("datesplit_fred", params.fred_no_sim, params.datesplit_settings)
 }
 
 workflow {
     DATESPLIT_POSIT()
+    DATESPLIT_FRED()
 }
