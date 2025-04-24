@@ -128,16 +128,20 @@ def plot_filled_in_error_bars(
 
 @cli.command("plot-similarity-ecdf")
 @click.argument("ligand-similarity-csv")
+@click.option(
+    "--color-var", default="Type", help="Variable to use for splitting into colors"
+)
+@click.option("--x-var", default="Tanimoto", help="X variable")
 @fig_name_option()
-def plot_similarity_ecdf(ligand_similarity_csv, fig_name):
+def plot_similarity_ecdf(ligand_similarity_csv, color_var, x_var, fig_name):
     """Plot empirical cumulative distribution function for similarity data."""
     # Load data
     df = pd.read_csv(ligand_similarity_csv)
-    df = df.sort_values(by=["Similarity Metric", "Tanimoto"])
+    df = df.sort_values(by=[color_var, x_var])
 
     # Create ECDF
     plt.figure(figsize=FIG_SIZE)
-    sns.ecdfplot(df, x="Tanimoto", hue="Similarity Metric", stat="proportion")
+    sns.ecdfplot(df, x=x_var, hue=color_var, stat="proportion")
     plt.xlabel("Tanimoto Similarity", fontsize=FONT_SIZES["xlabel"], fontweight="bold")
     plt.ylabel("Fraction of Ligands", fontsize=FONT_SIZES["ylabel"], fontweight="bold")
 

@@ -2,6 +2,7 @@
 
 process DATESPLIT_POSIT {
     label 'figure'
+    publishDir "${params.figuresPath}", mode: 'copy', overwrite: true
     output:
     file("*.png")
     file("*.svg")
