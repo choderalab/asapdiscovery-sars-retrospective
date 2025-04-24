@@ -28,7 +28,7 @@ process CHEMICAL_SIMILARITY_ECDF {
     script:
     """
     python ${params.scripts}/plotting.py \
-        plot-chemical-similarity-ecdf \
+        plot-similarity-ecdf \
         ${params.combinedChemicalSimilarityPath} \
         --fig-name chemical_similarity_ecdf
     """
