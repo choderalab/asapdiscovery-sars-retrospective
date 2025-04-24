@@ -3,6 +3,7 @@
 process DATESPLIT_POSIT {
     label 'figure'
     publishDir "${params.figuresPath}", mode: 'copy', overwrite: true
+    conda "${params.harbor}"
     output:
     file("*.png")
     file("*.svg")
@@ -18,6 +19,8 @@ process DATESPLIT_POSIT {
 
 process CHEMICAL_SIMILARITY_ECDF {
     label 'figure'
+    publishDir "${params.figuresPath}", mode: 'copy', overwrite: true
+    conda "${params.harbor}"
     output:
     file("*.png")
     file("*.svg")
