@@ -1,9 +1,15 @@
 import pytest
-from data_schema import PoseData, ChemicalSimilarityData, KeyColumn, ValueColumn
+from data_schema import (
+    PoseData,
+    ChemicalSimilarityData,
+    DockingDataModel,
+    KeyColumn,
+    ParamColumn,
+    ValueColumn,
+)
 import pandas as pd
 import numpy as np
 import itertools
-import pyarrow.parquet as pq
 
 
 @pytest.fixture()
@@ -65,8 +71,13 @@ def ecfp_dataframe(refs, ligs):
                 "Reference_Structure": ref,
                 "Query_Ligand": lig,
                 "Tanimoto": np.random.random(),
+                "Type": "ECFP",
+                "radius": radius,
+                "bitsize": bitsize,
             }
-            for ref, lig in itertools.product(refs, ligs)
+            for ref, lig, radius, bitsize in itertools.product(
+                refs, ligs, [2, 5], [2048]
+            )
         ]
     )
 
@@ -106,6 +117,11 @@ def test_pose_data_model(pose_dataframe):
 def test_chemical_similarity_data_model(ecfp_dataframe, tanimotocombo_data):
     ecfp_data = ChemicalSimilarityData(
         dataframe=ecfp_dataframe,
+        type=ParamColumn(name="ECFP"),
+        other_columns=[
+            ParamColumn(name="radius"),
+            ParamColumn(name="bitsize"),
+        ],
     )
     ecfp_data.to_parquet("ecfp_data.parquet")
     loaded_ecfp_data = ChemicalSimilarityData.from_parquet("ecfp_data.parquet")
@@ -115,7 +131,23 @@ def test_chemical_similarity_data_model(ecfp_dataframe, tanimotocombo_data):
     # Test TanimotoCombo data
     tanimotocombo_data = ChemicalSimilarityData(
         dataframe=tanimotocombo_data,
-        other_columns=[KeyColumn("Aligned")],
+        type=ParamColumn(name="TanimotoCombo"),
+        other_columns=[ParamColumn(name="Aligned")],
+    )
+    tanimotocombo_data.to_parquet("tanimotocombo_data.parquet")
+    loaded_tanimotocombo_data = ChemicalSimilarityData.from_parquet(
+        "tanimotocombo_data.parquet"
+    )
+    assert tanimotocombo_data == loaded_tanimotocombo_data
+    pd.testing.assert_frame_equal(
+        tanimotocombo_data.dataframe, loaded_tanimotocombo_data.dataframe
+    )
+
+
+def test_docking_data_model(pose_dataframe, ecfp_dataframe, tanimotocombo_data):
+    """Test the DockingDataModel."""
+    docking_data = DockingDataModel(
+        pose_data=PoseData(dataframe=pose_dataframe),
     )
 
 
@@ -124,5 +156,5 @@ def test_raises_validation_error():
     with pytest.raises(ValueError):
         ChemicalSimilarityData(
             dataframe=pd.DataFrame(),
-            other_columns=[KeyColumn("Aligned")],
+            other_columns=[ParamColumn(name="Aligned")],
         )
