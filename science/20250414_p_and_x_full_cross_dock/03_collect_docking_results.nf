@@ -2,6 +2,7 @@
 include {
     CALCULATE_RMSD
     COMBINE_AND_PROCESS_RESULTS
+    CONVERT_TO_DOCKING_DATA_MODEL
 } from "./modules.nf"
 
 workflow COMBINE_DOCKING_RESULTS {
@@ -51,6 +52,8 @@ workflow COMBINE_DOCKING_RESULTS {
     emit:
     combined_results = COMBINE_AND_PROCESS_RESULTS.out.combined_results_with_similarity
     combined_results_no_similarity = COMBINE_AND_PROCESS_RESULTS.out.combined_results_no_similarity
+
+    CONVERT_TO_DOCKING_DATA_MODEL(combined_results, method_ch)
 }
 
 // Create named entry points for each dataset

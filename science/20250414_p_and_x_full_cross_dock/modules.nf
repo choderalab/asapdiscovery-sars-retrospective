@@ -330,7 +330,7 @@ process CALCULATE_RMSD {
 }
 process COMBINE_AND_PROCESS_RESULTS {
     publishDir "${params.combinedDockingResultsPath}", mode: 'copy', overwrite: true
-    conda "${params.harbor}"
+    conda "${params.asap}"
     tag "combine-and-process-results ${method}"
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
     maxRetries 3
@@ -354,7 +354,7 @@ process COMBINE_AND_PROCESS_RESULTS {
 
     script:
     """
-    python3 "${params.scripts}"/combine_and_process_results_v2.py \
+    python3 "${params.scripts}"/combine_and_process_results.py \
     --input-csvs ${dockedLigandRMSDs.join(' ')} \
     --protein-cache "${fixedFragalysisCache}" \
     --ligand-cache "${fixedFragalysisCache}" \
@@ -367,6 +367,34 @@ process COMBINE_AND_PROCESS_RESULTS {
     --add-padding
     """
 }
+process CONVERT_TO_DOCKING_DATA_MODEL {
+    publishDir "${params.combinedDockingResultsPath}", mode: 'copy', overwrite: true
+    conda "${params.harbor}"
+    tag "combine-and-process-results ${method}"
+    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
+    maxRetries 3
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
+
+    input:
+    path(input_csv)
+    val(method)
+
+    output:
+    path("*.parquet"), emit: docking_data_model_dataframe
+    path("*.json"), emit: docking_data_model_schema
+
+    script:
+    """
+    python3 "${params.scripts}"/combine_and_process_results_v2.py \
+    --input-csv ${input_csv} \
+    --output-file-name "${method}"_combined_results \
+    """
+}
+
+
 process CREATE_EVALUATORS {
     conda "${params.harbor}"
     tag "create-evaluators ${name}"
