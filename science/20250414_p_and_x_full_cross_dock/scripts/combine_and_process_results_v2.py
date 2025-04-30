@@ -1,7 +1,6 @@
 """
 This script combines the results csvs and generates an input CSV that will be used to run the full cross docking evaluation.
 """
-
 import click
 import pandas as pd
 from pathlib import Path
@@ -10,8 +9,8 @@ from asapdiscovery.data.util.logging import FileLogger
 import json
 from pydantic import ValidationError
 import yaml
-from cross_docking.models import DockingDataModel
-
+from harbor.analysis.cross_docking import DataFrameModel, DataFrameType, DockingDataModel
+import numpy as np
 
 def load_cache(cache_source: Path) -> dict[str, str]:
     """Load protein/ligand cache and return compound to fragment mapping"""
@@ -122,53 +121,136 @@ def main(
         json.dump(cmpd_to_frag_dict, f, indent=4)
 
     # Load and combine CSVs into DockingDataModel
+    report_dict = {"err_msg": []}
     logger.info("Loading csvs")
     dfs = [pd.read_csv(csv) for csv in input_csvs]
-    data = DockingDataModel(pd.concat(dfs))
+    df = pd.concat(dfs)
 
-    # Add structure information
-    data.add_structure_mapping(cmpd_to_frag_dict)
+    query_lig_set = {lig for lig in df["Query_Ligand"]}
+    ref_lig_set = {lig for lig in df["Reference_Ligand"]}
+    report_dict["never_docked"] = list(ref_lig_set - query_lig_set)
+    report_dict["never_used_as_ref"] = list(query_lig_set - ref_lig_set)
 
     # Add padding if requested
     if add_padding:
-        logger.info("Padding the data with missing pairs")
-        data.add_missing_pairs()
+        logger.info("Padding the data with the missing pairs")
+        all_ligs = query_lig_set | ref_lig_set
+        refs = df.Reference_Ligand
+        queries = df.Query_Ligand
+        pairs = {(ref, query) for ref, query in zip(refs, queries)}
+        from itertools import permutations
 
-    # Add dates
+        possible_pairs = set(list(permutations(all_ligs, 2)))
+
+        missing_pairs = possible_pairs - pairs
+        report_dict["missing_pairs"] = list(missing_pairs)
+        null_df = pd.DataFrame(
+            {
+                "Reference_Ligand": [i for i, j in missing_pairs],
+                "Query_Ligand": [j for i, j in missing_pairs],
+                "RMSD": np.nan,
+                "Pose_ID": 0,
+                "POSIT_Method": "Failed",
+            }
+        )
+        null_df["Reference_Structure"] = null_df.Reference_Ligand.apply(
+            lambda x: cmpd_to_frag_dict[x]
+        )
+
+        padded = pd.concat([df, null_df])
+        df = padded.copy()
+        df = df.reindex()
+
+        refs = df.Reference_Ligand
+        queries = df.Query_Ligand
+        pairs = {(ref, query) for ref, query in zip(refs, queries)}
+
+        padding_success = len(pairs) == len(possible_pairs)
+        report_dict["padding_success"] = padding_success
+        if not padding_success:
+            report_dict["err_msg"].append(
+                f"Expected {len(possible_pairs)} pairs after padding, got {len(pairs)} pairs"
+            )
+    if not all(df["Reference_Structure"]== df.Reference_Ligand.apply(lambda x: cmpd_to_frag_dict[x])):
+        report_dict["err_msg"].append(
+            "Reference_Structure column does not match cmpd_to_frag_dict"
+        )
+
+    df["Query_Structure"] = df.Query_Ligand.apply(lambda x: cmpd_to_frag_dict[x])
+
+    # Add Date Information
     logger.info("Adding date information")
     with open(date_dict, "r") as f:
-        date_dict_data = json.load(f)
-    data.add_dates(date_dict_data)
+        date_dict = json.load(f)
+    missing = [
+        ref_structure
+        for ref_structure in df.Reference_Structure.unique()
+        if ref_structure[:-3] not in date_dict.keys()
+    ]
+    if len(missing) > 0:
+        report_dict["err_msg"].append(
+            f"The following Reference_Structure were not in date_dict.json:"
+        )
+        report_dict["missing_reference_structures"] = missing
 
-    # Add method ID if provided
+    df["Reference_Structure_Date"] = df.Reference_Structure.apply(
+        lambda x: date_dict.get(x[:-3], None)
+    )
+    df["Query_Structure_Date"] = df.Query_Structure.apply(
+        lambda x: date_dict.get(x[:-3], None)
+    )
+
+    # Add Method ID
     if method_id:
         logger.info("Adding method ID")
-        data.add_method_id(method_id)
+        df["Method_ID"] = method_id
 
-    # Save intermediate result
-    logger.info("Writing intermediate output")
-    data.to_csv(output_dir / f"{output_file_name}_no_chemical_similarity.csv")
+    logger.info("Writing intermediate_output")
+    df.to_csv(output_dir / f"{output_file_name}_no_chemical_similarity.csv")
 
-    # Add chemical similarity information
+    # Add chemical similarity info
     logger.info("Adding chemical similarity info")
-    similarity_data = pd.read_csv(combined_chemical_similarity_csv)
-    data.add_chemical_similarity(similarity_data)
+    combined_chemical_similarity_info = pd.read_csv(
+        combined_chemical_similarity_csv
+    )
+    df = df.merge(
+        combined_chemical_similarity_info,
+        on=["Query_Ligand", "Reference_Ligand"],
+        how="left",
+    )
 
-    # Add scaffold information if provided
     if chemical_scaffold_data:
         logger.info("Adding chemical scaffold info")
-        scaffold_data = pd.read_csv(chemical_scaffold_data)
-        data.add_scaffold_information(scaffold_data)
+        scaffold_info = pd.read_csv(chemical_scaffold_data)
+        df = df.merge(
+            scaffold_info,
+            left_on="Query_Ligand",
+            right_on="compound_name",
+            how="left",
+            suffixes=(None, "_Query"),
+        )
+        df = df.merge(
+            scaffold_info,
+            left_on="Reference_Ligand",
+            right_on="compound_name",
+            how="left",
+            suffixes=(None, "_Reference"),
+        )
+    # construct Data
+    pose_data = DataFrameModel(dataframe=df, type=DataFrameType.POSE, key_columns=["Query_Ligand", "Reference_Structure", "Pose_ID"])
+    ref_data = DataFrameModel(dataframe=df, type=DataFrameType.REFERENCE, key_columns=["Reference_Structure"])
+    lig_data = DataFrameModel(dataframe=df, type=DataFrameType.QUERY, key_columns=["Query_Structure"])
+    similarity_data = DataFrameModel(dataframe=df, type=DataFrameType.CHEMICAL_SIMILARITY, key_columns=["Query_Structure", "Reference_Structure", "Aligned", "radius", "bitsize", "fingerprint"])
+    scaffold_data = DataFrameModel(dataframe=df, type=DataFrameType.CHEMICAL_SIMILARITY, key_columns=["Query_Ligand", "Reference_Ligand"])
+    data = DockingDataModel.from_models([pose_data, ref_data, lig_data, similarity_data, scaffold_data])
 
-    # Generate report
-    report = data.generate_report()
-
-    # Save final outputs
+    # write output
     logger.info("Writing output")
-    data.to_csv(output_dir / f"{output_file_name}.csv")
+    data.serialize(output_dir / output_file_name)
 
-    with open(output_dir / f"{output_file_name}_report.yaml", "w") as f:
-        yaml.dump(report, f)
+    output_report = output_dir / f"{output_file_name}_report.yaml"
+    with open(output_report, "w") as f:
+        yaml.dump(report_dict, f)
 
 
 if __name__ == "__main__":
