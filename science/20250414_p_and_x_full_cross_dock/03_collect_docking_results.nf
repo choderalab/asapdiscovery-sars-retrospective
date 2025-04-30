@@ -49,10 +49,6 @@ workflow COMBINE_DOCKING_RESULTS {
         method_ch
     )
 
-    emit:
-    combined_results = COMBINE_AND_PROCESS_RESULTS.out.combined_results_with_similarity
-    combined_results_no_similarity = COMBINE_AND_PROCESS_RESULTS.out.combined_results_no_similarity
-
     CONVERT_TO_DOCKING_DATA_MODEL(COMBINE_AND_PROCESS_RESULTS.out.combined_results_with_similarity, method_ch)
 }
 
