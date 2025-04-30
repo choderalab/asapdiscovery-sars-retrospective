@@ -53,7 +53,7 @@ workflow COMBINE_DOCKING_RESULTS {
     combined_results = COMBINE_AND_PROCESS_RESULTS.out.combined_results_with_similarity
     combined_results_no_similarity = COMBINE_AND_PROCESS_RESULTS.out.combined_results_no_similarity
 
-    CONVERT_TO_DOCKING_DATA_MODEL(COMBINE_AND_PROCESS_RESULTS.combined_results, method_ch)
+    CONVERT_TO_DOCKING_DATA_MODEL(COMBINE_AND_PROCESS_RESULTS.out.combined_results_with_similarity, method_ch)
 }
 
 // Create named entry points for each dataset
