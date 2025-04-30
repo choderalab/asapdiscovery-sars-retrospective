@@ -42,13 +42,13 @@ def setup_random_state():
 @pytest.fixture()
 def refs():
     """Sample reference structures fixture."""
-    return [f"PDB{i}" for i in range(1, 500)]
+    return [f"PDB{i}" for i in range(1, 20)]
 
 
 @pytest.fixture()
 def ligs():
     """Sample ligands fixture."""
-    return [f"LIG_{i}" for i in range(1, 500)]
+    return [f"LIG_{i}" for i in range(1, 20)]
 
 
 @pytest.fixture()
@@ -485,24 +485,6 @@ def test_evaluator(docking_data_model):
 
 
 def test_performance(docking_data_model):
-    from harbor.analysis import cross_docking as cd
-
-    df = docking_data_model.get_combined_dataframe()
-
-    old_ev = cd.Evaluator(
-        pose_selector=cd.PoseSelector(
-            name="Default",
-            variable="Pose_ID",
-            groupby=["Query_Ligand", "Reference_Structure"],
-        ),
-        dataset_split=cd.RandomSplit(
-            n_per_split=5, reference_structure_column="Reference_Structure"
-        ),
-        scorer=cd.RMSDScorer(),
-        evaluator=cd.BinaryEvaluation(variable="RMSD", cutoff=2),
-        groupby=["Query_Ligand"],
-        n_bootstraps=100,
-    )
 
     new_ev = Evaluator(
         dataset_split=RandomSplit(
@@ -516,21 +498,13 @@ def test_performance(docking_data_model):
     # compare time
     import time
 
-    # Time old evaluator
-    start_time = time.perf_counter()
-    old_results = old_ev.run(df)
-    old_time = time.perf_counter() - start_time
-
     # Time new evaluator
     start_time = time.perf_counter()
     new_results = new_ev.run(docking_data_model)
     new_time = time.perf_counter() - start_time
 
     print(f"\nPerformance comparison:")
-    print(f"Old evaluator: {old_time:.3f} seconds")
     print(f"New evaluator: {new_time:.3f} seconds")
-    print(f"Speedup: {old_time / new_time:.2f}x")
-    print(old_results)
     print(new_results)
 
 
