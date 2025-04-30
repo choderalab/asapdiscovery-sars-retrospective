@@ -388,7 +388,7 @@ process CONVERT_TO_DOCKING_DATA_MODEL {
 
     script:
     """
-    python3 "${params.scripts}"/combine_and_process_results_v2.py \
+    python3 "${params.scripts}"/convert_to_docking_data_model.py \
     --input-csv ${input_csv} \
     --output-file-name "${method}"_combined_results \
     """
