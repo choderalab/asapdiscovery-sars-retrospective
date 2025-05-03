@@ -16,7 +16,7 @@ workflow RUN_DOCKING_ANALYSIS {
         CREATE_EVALUATORS_TWO(name, settings, docking_results_parquet, docking_results_json)
 
         // load eval evaluator_inputs
-        eval_inputs_ch = Channel.fromPath("${params.evaluationResults}/${name}/*.json", type: 'file')
+        eval_inputs_ch = Channel.fromPath("${params.evaluationResults}/${name}/*/*.json", type: 'file')
 
         RUN_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json, eval_inputs_ch, CREATE_EVALUATORS_TWO.output.evaluator_json_directory)
         COMBINE_EVALUATIONS(
