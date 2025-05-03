@@ -39,7 +39,7 @@ def run_evaluators(evaluator_jsons, input_parquet, output):
 
     logger.info(f"Number of evaluators: {len(evaluators)}")
 
-    results = Results.calculate_results(data, evaluators)
+    results = [results for results in Results.calculate_results(data, evaluators)]
 
     logger.info(f"Writing results to disk at {output}")
     results_df = Results.df_from_results(results)
