@@ -13,7 +13,12 @@ workflow RUN_DOCKING_ANALYSIS {
 
         main:
         CREATE_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json)
-        CREATE_EVALUATORS_TWO.out.evaluator_json
+
+        // Create channel from JSON files only after evaluator creation is complete
+        // this allows resume to only re-run newly made json files while also forcing it to wait
+        // for CREATE_EVALUATORS_TWO to complete
+        evaluator_dir.evaluator_json_directory
+            .map { dir -> Channel.fromPath("${dir}/*.json") }
             .flatten()
             .buffer(size: params.K)
             .set { eval_inputs_ch }

@@ -421,6 +421,7 @@ process CREATE_EVALUATORS {
     """
 }
 process CREATE_EVALUATORS_TWO {
+    publishDir "${params.evaluationResults}", mode: 'copy', overwrite: true
     conda "${params.harbor}"
     tag "create-evaluators ${name}"
     memory { 32.GB }
@@ -433,7 +434,7 @@ process CREATE_EVALUATORS_TWO {
     path(docking_results_json)
 
     output:
-    path("*/*.json"), emit: evaluator_json
+    path("${name}"), emit: evaluator_json_directory
 
     script:
     """
