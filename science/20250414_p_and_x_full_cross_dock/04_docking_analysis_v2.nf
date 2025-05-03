@@ -32,9 +32,14 @@ workflow RUN_DOCKING_ANALYSIS {
             eval_inputs_ch,
         )
 
+        // Collect all evaluator results before combining
+        all_results = evaluator_results.evaluator_results
+            .flatten()
+            .collect()
+
         COMBINE_EVALUATIONS(
             name,
-            RUN_EVALUATORS_TWO.out.evaluator_results.collect()
+            all_results
         )
 }
 
