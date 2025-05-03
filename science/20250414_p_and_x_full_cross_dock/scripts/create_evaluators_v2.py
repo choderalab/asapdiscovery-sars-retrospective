@@ -86,8 +86,10 @@ def main(input_parquet, output):
     name = "x_to_y_scaffold_split_5_refs"
     evf.pairwise_split_settings.use = True
     evf.pairwise_split_settings.scaffold_split_settings.use = True
-    evf.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = 5
-    evf.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
+        10
+    )
+    evf.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = 10
     evf.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.X_TO_Y
     )
