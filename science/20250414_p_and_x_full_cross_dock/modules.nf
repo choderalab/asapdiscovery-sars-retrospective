@@ -497,7 +497,7 @@ process RUN_EVALUATORS_TWO {
     """
     python3 "${params.scripts}"/run_evaluators_v2.py \
     --input-parquet "${docking_results_parquet}" \
-    --evaluator evaluator_jsons_* \
+    --evaluator-json evaluator_jsons_* \
     --n-cpus ${params.K}
     """
 }
