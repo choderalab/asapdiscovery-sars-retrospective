@@ -63,4 +63,4 @@ def run_evaluators(input_parquet, output, n_cpus, evaluator_json):
 
 
 if __name__ == "__main__":
-    main()
+    run_evaluators()
