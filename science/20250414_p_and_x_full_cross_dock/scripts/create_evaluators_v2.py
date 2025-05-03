@@ -8,6 +8,16 @@ from harbor.analysis.cross_docking import DockingDataModel, EvaluatorFactory
 from harbor.analysis.utils import FileLogger
 
 
+def save_and_create_evs(
+    evf: EvaluatorFactory, data: DockingDataModel, name: str, output: Path, logger
+):
+    evf.to_yaml_file(output / f"{name}.yaml")
+    evs = evf.create_evaluators(data)
+    logger.info(f"created {len(evs)} for {name}")
+    for i, evaluator in enumerate(evs):
+        evaluator.to_json_file(output / f"evaluator_{name}_{i}.json")
+
+
 @click.command()
 @click.option(
     "-i",
@@ -51,12 +61,32 @@ def main(input_parquet, output):
     evf.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
         True
     )
-    evf.to_yaml_file(output / f"{name}.yaml")
+    save_and_create_evs(evf, data, name, logger)
 
-    evs = evf.create_evaluators(data)
-    logger.info(f"created {len(evs)} for {name}")
-    for i, evaluator in enumerate(evs):
-        evaluator.to_json_file(output / f"evaluator_{name}_{i}.json")
+    # x to y scaffold split
+    evf = EvaluatorFactory()
+    name = "x_to_y_scaffold_split"
+    evf.pairwise_split_settings.scaffold_split_settings.use = True
+    evf.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = "x_to_y"
+    evf.scorer_settings.rmsd_scorer_settings.use = True
+    evf.scorer_settings.posit_scorer_settings.use = True
+    save_and_create_evs(evf, data, name, logger)
+
+    # x to y scaffold split with 5 refs
+    evf = EvaluatorFactory()
+    name = "x_to_y_scaffold_split_5_refs"
+    evf.pairwise_split_settings.scaffold_split_settings.use = True
+    evf.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = "x_to_y"
+    evf.scorer_settings.rmsd_scorer_settings.use = True
+    evf.scorer_settings.posit_scorer_settings.use = True
+    evf.combine_reference_and_similarity_splits = True
+    evf.reference_split_settings.random_split_settings.use = True
+    evf.reference_split_settings.n_reference_structures = [5]
+    save_and_create_evs(evf, data, name, logger)
 
 
 if __name__ == "__main__":

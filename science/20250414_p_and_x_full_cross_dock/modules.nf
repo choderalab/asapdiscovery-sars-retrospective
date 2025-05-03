@@ -477,7 +477,7 @@ process RUN_EVALUATORS_TWO {
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'terminate' }
     maxRetries 3
     // Dynamic memory allocation
-    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 16.GB : 16.GB }
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 32.GB : 32.GB }
     // Dynamic time allocation
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
     // set n cpus to request
