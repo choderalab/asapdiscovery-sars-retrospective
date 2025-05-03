@@ -427,7 +427,6 @@ process CREATE_EVALUATORS_TWO {
     memory { 32.GB }
     time { 2.m }
     label 'cpushort'
-    cache false
 
     input:
     val(name)
