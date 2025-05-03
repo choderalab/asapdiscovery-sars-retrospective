@@ -31,3 +31,7 @@ workflow RUN_DOCKING_ANALYSIS_FRED {
         RUN_EVALUATORS.out.evaluator_results.collect()
     )
 }
+workflow {
+    RUN_DOCKING_ANALYSIS_FRED()
+    RUN_DOCKING_ANALYSIS_POSIT()
+}
