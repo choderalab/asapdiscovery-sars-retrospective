@@ -13,12 +13,26 @@ workflow RUN_DOCKING_ANALYSIS {
 
         main:
         settings = Channel.fromPath("${params.evaluator_configs}/*.yaml", type: 'file')
-        CREATE_EVALUATORS_TWO(name, settings, docking_results_parquet, docking_results_json)
+        def evaluator_results = CREATE_EVALUATORS_TWO(
+            name,
+            settings,
+            docking_results_parquet,
+            docking_results_json
+        )
 
-        // load eval evaluator_inputs
-        eval_inputs_ch = Channel.fromPath("${params.evaluationResults}/${name}/*/*.json", type: 'file')
+        // Create channel from JSON files only after evaluator creation
+        eval_inputs_ch = evaluator_results.evaluator_json_directory
+            .flatMap { dir -> file("${dir}/*.json") }
+            .buffer(size: params.K)
 
-        RUN_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json, eval_inputs_ch, CREATE_EVALUATORS_TWO.output.evaluator_json_directory)
+        RUN_EVALUATORS_TWO(
+            name,
+            docking_results_parquet,
+            docking_results_json,
+            eval_inputs_ch,
+            evaluator_results.evaluator_json_directory
+        )
+
         COMBINE_EVALUATIONS(
             name,
             RUN_EVALUATORS_TWO.out.evaluator_results.collect()
