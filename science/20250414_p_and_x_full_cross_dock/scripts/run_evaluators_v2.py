@@ -7,10 +7,15 @@ from harbor.analysis.utils import FileLogger
 
 
 @click.command()
+@click.argument(
+    "evaluator-jsons",
+    nargs=-1,
+    type=click.Path(exists=True),
+)
 @click.option(
     "--input-parquet",
     required=True,
-    type=click.Path(exists=True, path_type=Path),
+    type=click.Path(exists=True),
     help="Path to the input parquet file containing the cross docking data.",
 )
 @click.option(
@@ -25,14 +30,7 @@ from harbor.analysis.utils import FileLogger
     type=int,
     help="Number of CPUs to use for parallel processing.",
 )
-@click.option(
-    "--evaluator-json",
-    required=True,
-    type=click.Path(exists=True, path_type=Path),
-    multiple=True,
-    help="Paths to the evaluator JSON files.",
-)
-def run_evaluators(input_parquet, output, n_cpus, evaluator_json):
+def run_evaluators(evaluator_jsons, input_parquet, output, n_cpus):
     output.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
@@ -44,7 +42,7 @@ def run_evaluators(input_parquet, output, n_cpus, evaluator_json):
     logger.info(f"Reading data model from {input_parquet}")
     data = DockingDataModel.deserialize(input_parquet)
 
-    logger.info(f"Reading in {len(evaluator_json)} evaluators")
+    logger.info(f"Reading in {len(evaluator_jsons)} evaluators")
     evaluators = [Evaluator.from_json_file(evaluator) for evaluator in evaluator_json]
 
     nprocs = min(mp.cpu_count(), len(evaluators), n_cpus)
