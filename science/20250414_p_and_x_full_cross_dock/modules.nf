@@ -421,7 +421,7 @@ process CREATE_EVALUATORS {
     """
 }
 process CREATE_EVALUATORS_TWO {
-    publishDir "${params.evaluationResults}", mode: 'copy', overwrite: true
+    publishDir "${params.evaluationResults}", mode: 'copy', overwrite: false
     conda "${params.harbor}"
     tag "create-evaluators ${name}"
     memory { 32.GB }

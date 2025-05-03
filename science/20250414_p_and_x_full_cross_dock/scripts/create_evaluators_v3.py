@@ -15,7 +15,7 @@ from harbor.analysis.utils import FileLogger
 def save_and_create_evs(
     evf: EvaluatorFactory, data: DockingDataModel, name: str, output: Path, logger
 ):
-    evf.to_yaml_file(output / f"{name}.yaml")
+    evf.to_yaml_file(output / f"{name}")
     evs = evf.create_evaluators(data)
     logger.info(f"created {len(evs)} for {name}")
     for i, evaluator in enumerate(evs):
@@ -44,6 +44,7 @@ def save_and_create_evs(
     help="Path to the output directory where the results will be stored",
 )
 def main(input_parquet, settings, output):
+    output = output / settings.name
     output.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
