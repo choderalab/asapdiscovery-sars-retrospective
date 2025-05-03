@@ -30,7 +30,6 @@ workflow RUN_DOCKING_ANALYSIS {
             docking_results_parquet,
             docking_results_json,
             eval_inputs_ch,
-            evaluator_results.evaluator_json_directory
         )
 
         COMBINE_EVALUATIONS(
