@@ -435,7 +435,6 @@ process CREATE_EVALUATORS_TWO {
     path("*/*.json"), emit: evaluator_json
 
     script:
-    def settings = settings_file.name != 'NO_FILE' ? "--settings $settings_file" : ''
     """
     python3 "${params.scripts}"/create_evaluators_v2.py \
     --input-parquet "${docking_results}" \
