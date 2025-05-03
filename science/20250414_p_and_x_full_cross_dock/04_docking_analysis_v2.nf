@@ -12,16 +12,15 @@ workflow RUN_DOCKING_ANALYSIS {
         docking_results_json
 
         main:
-        def evaluator_results = CREATE_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json)
+        CREATE_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json)
 
-        // Create channel from JSON files only after evaluator creation is complete
-        // this allows resume to only re-run newly made json files while also forcing it to wait
-        // for CREATE_EVALUATORS_TWO to complete
-        eval_inputs_ch = evaluator_results.evaluator_json_directory
-            .flatMap { dir -> file("${dir}/*.json") }
+        // load eval evaluator_results
+        eval_results_ch = Channel.fromPath("${params.evaluationResults}/${name}/*.json", type: 'file')
+        eval_results_ch
             .buffer(size: params.K)
+            .set { eval_inputs_ch }
 
-        RUN_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json, eval_inputs_ch)
+        RUN_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json, eval_inputs_ch, CREATE_EVALUATORS_TWO.output.evaluator_json_directory)
         COMBINE_EVALUATIONS(
             name,
             RUN_EVALUATORS_TWO.out.evaluator_results.collect()
