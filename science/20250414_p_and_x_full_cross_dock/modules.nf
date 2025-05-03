@@ -466,8 +466,8 @@ process RUN_EVALUATORS {
     script:
     """
     python3 "${params.scripts}"/run_evaluators.py \
+    evaluator_jsons_* \
     --input "${docking_results}" \
-    --evaluator evaluator_jsons_* \
     --n-cpus ${params.K}
     """
 }
