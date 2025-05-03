@@ -440,7 +440,7 @@ process CREATE_EVALUATORS_TWO {
 
     script:
     """
-    python3 "${params.scripts}"/create_evaluators_v2.py \
+    python3 "${params.scripts}"/create_evaluators_v3.py \
     --input-parquet "${docking_results_parquet}" \
     --settings "${settings}" \
     --output "${name}" \
