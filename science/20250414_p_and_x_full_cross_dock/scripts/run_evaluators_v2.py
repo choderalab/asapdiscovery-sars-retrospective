@@ -1,5 +1,3 @@
-import multiprocessing as mp
-from functools import partial
 from pathlib import Path
 import click
 from harbor.analysis.cross_docking import Evaluator, DockingDataModel, Results
@@ -24,13 +22,7 @@ from harbor.analysis.utils import FileLogger
     default="./",
     help="Path to the output directory where the results will be stored.",
 )
-@click.option(
-    "--n-cpus",
-    default=1,
-    type=int,
-    help="Number of CPUs to use for parallel processing.",
-)
-def run_evaluators(evaluator_jsons, input_parquet, output, n_cpus):
+def run_evaluators(evaluator_jsons, input_parquet, output):
     output.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
@@ -45,15 +37,9 @@ def run_evaluators(evaluator_jsons, input_parquet, output, n_cpus):
     logger.info(f"Reading in {len(evaluator_jsons)} evaluators")
     evaluators = [Evaluator.from_json_file(evaluator) for evaluator in evaluator_jsons]
 
-    nprocs = min(mp.cpu_count(), len(evaluators), n_cpus)
-    logger.info(f"CPUs available: {mp.cpu_count()}")
     logger.info(f"Number of evaluators: {len(evaluators)}")
-    logger.info(f"Using {nprocs} processes for evaluation")
 
-    evaluator_with_data = partial(Results.calculate_result, df=data)
-
-    with mp.Pool(nprocs) as pool:
-        results = pool.map(evaluator_with_data, evaluators)
+    results = Results.calculate_results(data, evaluators)
 
     logger.info(f"Writing results to disk at {output}")
     results_df = Results.df_from_results(results)

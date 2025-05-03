@@ -481,7 +481,7 @@ process RUN_EVALUATORS_TWO {
     // Dynamic time allocation
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
     // set n cpus to request
-    clusterOptions "--cpus-per-task=${params.K}"
+//     clusterOptions "--cpus-per-task=${params.K}"
 
     input:
     val(name)
@@ -498,7 +498,6 @@ process RUN_EVALUATORS_TWO {
     python3 "${params.scripts}"/run_evaluators_v2.py \
     evaluator_jsons_* \
     --input-parquet "${docking_results_parquet}" \
-    --n-cpus ${params.K}
     """
 }
 process COMBINE_EVALUATIONS {
