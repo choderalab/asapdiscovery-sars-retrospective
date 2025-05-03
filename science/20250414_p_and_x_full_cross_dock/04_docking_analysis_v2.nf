@@ -6,7 +6,8 @@ include {
 } from "./modules.nf"
 
 workflow RUN_DOCKING_ANALYSIS_POSIT {
-    CREATE_EVALUATORS_TWO("all_evals_posit", params.all_sim_parquet)
+    name = "all_evals_posit"
+    CREATE_EVALUATORS_TWO(name, params.all_sim_parquet)
     CREATE_EVALUATORS_TWO.out.evaluator_json
         .flatten()
         .buffer(size: params.K)
@@ -19,7 +20,8 @@ workflow RUN_DOCKING_ANALYSIS_POSIT {
     )
 }
 workflow RUN_DOCKING_ANALYSIS_FRED {
-    CREATE_EVALUATORS_TWO("all_evals_posit", params.all_sim_parquet)
+    name = "all_evals_fred"
+    CREATE_EVALUATORS_TWO(name, params.all_sim_parquet)
     CREATE_EVALUATORS_TWO.out.evaluator_json
         .flatten()
         .buffer(size: params.K)
