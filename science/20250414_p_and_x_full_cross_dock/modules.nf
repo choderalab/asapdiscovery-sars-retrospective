@@ -436,7 +436,7 @@ process CREATE_EVALUATORS_TWO {
     path(docking_results_json)
 
     output:
-    path("${name}"), emit: evaluator_json_directory
+    path("${name}/*"), emit: evaluator_json_directory
 
     script:
     """

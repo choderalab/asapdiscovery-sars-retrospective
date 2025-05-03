@@ -44,19 +44,17 @@ def save_and_create_evs(
     help="Path to the output directory where the results will be stored",
 )
 def main(input_parquet, settings, output):
-    output = output / settings.name
+    # load evaluator factory
+    evf = EvaluatorFactory.from_yaml_file(settings)
+    output = output / evf.name
     output.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
         logname="create_evaluators", path=output, logfile="create_evaluators.log"
     ).getLogger()
     logger.info(f"Reading data model from {input_parquet}")
-
     # load docking model
     data = DockingDataModel.deserialize(input_parquet)
-
-    # load evaluator factory
-    evf = EvaluatorFactory.from_yaml_file(settings)
     save_and_create_evs(evf, data, settings.name, output, logger)
 
 
