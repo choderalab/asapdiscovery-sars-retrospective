@@ -43,7 +43,7 @@ def run_evaluators(evaluator_jsons, input_parquet, output, n_cpus):
     data = DockingDataModel.deserialize(input_parquet)
 
     logger.info(f"Reading in {len(evaluator_jsons)} evaluators")
-    evaluators = [Evaluator.from_json_file(evaluator) for evaluator in evaluator_json]
+    evaluators = [Evaluator.from_json_file(evaluator) for evaluator in evaluator_jsons]
 
     nprocs = min(mp.cpu_count(), len(evaluators), n_cpus)
     logger.info(f"CPUs available: {mp.cpu_count()}")
