@@ -431,6 +431,7 @@ process CREATE_EVALUATORS_TWO {
 
     input:
     val(name)
+    path(settings)
     path(docking_results_parquet)
     path(docking_results_json)
 
@@ -441,6 +442,7 @@ process CREATE_EVALUATORS_TWO {
     """
     python3 "${params.scripts}"/create_evaluators_v2.py \
     --input-parquet "${docking_results_parquet}" \
+    --settings "${settings}" \
     --output "${name}" \
     """
 }
