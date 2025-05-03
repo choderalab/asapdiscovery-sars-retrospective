@@ -420,6 +420,28 @@ process CREATE_EVALUATORS {
     --save
     """
 }
+process CREATE_EVALUATORS_TWO {
+    conda "${params.harbor}"
+    tag "create-evaluators ${name}"
+    memory { 32.GB }
+    time { 2.m }
+    label 'cpushort'
+
+    input:
+    val(name)
+    path(docking_results)
+
+    output:
+    path("*/*.json"), emit: evaluator_json
+
+    script:
+    def settings = settings_file.name != 'NO_FILE' ? "--settings $settings_file" : ''
+    """
+    python3 "${params.scripts}"/create_evaluators_v2.py \
+    --input-parquet "${docking_results}" \
+    --output "${name}" \
+    """
+}
 process RUN_EVALUATORS {
     conda "${params.harbor}"
     tag "run-evaluators ${name}"
@@ -445,6 +467,35 @@ process RUN_EVALUATORS {
     """
     python3 "${params.scripts}"/run_evaluators.py \
     --input "${docking_results}" \
+    --evaluator evaluator_jsons_* \
+    --n-cpus ${params.K}
+    """
+}
+process RUN_EVALUATORS_TWO {
+    conda "${params.harbor}"
+    tag "run-evaluators ${name}"
+    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'terminate' }
+    maxRetries 3
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 16.GB : 16.GB }
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
+    // set n cpus to request
+    clusterOptions "--cpus-per-task=${params.K}"
+
+    input:
+    val(name)
+    path(docking_results)
+    path("evaluator_jsons_*")
+
+
+    output:
+    path("*.csv"), emit: evaluator_results
+
+    script:
+    """
+    python3 "${params.scripts}"/run_evaluators_v2.py \
+    --input-parquet "${docking_results}" \
     --evaluator evaluator_jsons_* \
     --n-cpus ${params.K}
     """

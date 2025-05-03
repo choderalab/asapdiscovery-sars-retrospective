@@ -4,7 +4,7 @@ Create combinations of calculations to run on a cross-docking dataset
 
 from argparse import ArgumentParser
 from harbor.analysis.cross_docking import (
-    Settings,
+    EvaluatorFactory,
 )
 from harbor.analysis.utils import FileLogger
 from pathlib import Path
@@ -55,12 +55,12 @@ def main():
     if args.settings:
         logger.info(f"Reading {len(args.settings)} settings files")
         settings_list = [
-            (settings.stem, Settings.from_yaml_file(settings))
+            (settings.stem, EvaluatorFactory.from_yaml_file(settings))
             for settings in args.settings
         ]
     else:
         logger.info("No settings file provided, using defaults")
-        settings_list = [("default", Settings())]
+        settings_list = [("default", EvaluatorFactory())]
 
     logger.info(f"Reading from {args.input}")
     df = pd.read_csv(args.input, index_col=0)
