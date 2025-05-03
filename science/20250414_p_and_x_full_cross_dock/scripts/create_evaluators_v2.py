@@ -61,7 +61,7 @@ def main(input_parquet, output):
     evf.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
         True
     )
-    save_and_create_evs(evf, data, name, logger)
+    save_and_create_evs(evf, data, name, output, logger)
 
     # x to y scaffold split
     evf = EvaluatorFactory()
@@ -72,7 +72,7 @@ def main(input_parquet, output):
     evf.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = "x_to_y"
     evf.scorer_settings.rmsd_scorer_settings.use = True
     evf.scorer_settings.posit_scorer_settings.use = True
-    save_and_create_evs(evf, data, name, logger)
+    save_and_create_evs(evf, data, name, output, logger)
 
     # x to y scaffold split with 5 refs
     evf = EvaluatorFactory()
@@ -86,7 +86,7 @@ def main(input_parquet, output):
     evf.combine_reference_and_similarity_splits = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
-    save_and_create_evs(evf, data, name, logger)
+    save_and_create_evs(evf, data, name, output, logger)
 
 
 if __name__ == "__main__":
