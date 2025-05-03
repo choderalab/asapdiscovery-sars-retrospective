@@ -33,7 +33,7 @@ workflow RUN_DOCKING_ANALYSIS {
         )
 
         // Collect all evaluator results before combining
-        all_results = evaluator_results.evaluator_results
+        all_results = RUN_EVALUATORS_TWO.output.evaluator_results
             .flatten()
             .collect()
 
