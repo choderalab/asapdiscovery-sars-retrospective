@@ -489,6 +489,7 @@ process RUN_EVALUATORS_TWO {
     path(docking_results_parquet)
     path(docking_results_json)
     path("evaluator_jsons_*")
+    path(dummy_input)
 
 
     output:
