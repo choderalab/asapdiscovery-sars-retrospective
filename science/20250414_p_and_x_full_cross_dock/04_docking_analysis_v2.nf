@@ -6,16 +6,16 @@ include {
 } from "./modules.nf"
 
 workflow RUN_DOCKING_ANALYSIS {
-        take:
+    take:
         name
         docking_results_parquet
         docking_results_json
 
-        main:
-        settings = Channel.fromPath("${params.evaluator_configs}/*.yaml", type: 'file')
+    main:
+        evaluator_settings = Channel.fromPath("${params.evaluator_configs}/*.yaml", type: 'file')
         def evaluator_results = CREATE_EVALUATORS_TWO(
             name,
-            settings,
+            evaluator_settings,
             docking_results_parquet,
             docking_results_json
         )
