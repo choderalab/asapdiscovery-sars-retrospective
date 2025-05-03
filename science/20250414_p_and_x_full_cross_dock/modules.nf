@@ -429,7 +429,8 @@ process CREATE_EVALUATORS_TWO {
 
     input:
     val(name)
-    path(docking_results)
+    path(docking_results_parquet)
+    path(docking_results_json)
 
     output:
     path("*/*.json"), emit: evaluator_json
@@ -437,7 +438,7 @@ process CREATE_EVALUATORS_TWO {
     script:
     """
     python3 "${params.scripts}"/create_evaluators_v2.py \
-    --input-parquet "${docking_results}" \
+    --input-parquet "${docking_results_parquet}" \
     --output "${name}" \
     """
 }
@@ -484,7 +485,8 @@ process RUN_EVALUATORS_TWO {
 
     input:
     val(name)
-    path(docking_results)
+    path(docking_results_parquet)
+    path(docking_results_json)
     path("evaluator_jsons_*")
 
 
@@ -494,7 +496,7 @@ process RUN_EVALUATORS_TWO {
     script:
     """
     python3 "${params.scripts}"/run_evaluators_v2.py \
-    --input-parquet "${docking_results}" \
+    --input-parquet "${docking_results_parquet}" \
     --evaluator evaluator_jsons_* \
     --n-cpus ${params.K}
     """

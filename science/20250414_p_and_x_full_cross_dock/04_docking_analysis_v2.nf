@@ -18,7 +18,7 @@ workflow RUN_DOCKING_ANALYSIS {
             .buffer(size: params.K)
             .set { eval_inputs_ch }
 
-        RUN_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json)
+        RUN_EVALUATORS_TWO(name, docking_results_parquet, docking_results_json, eval_inputs_ch)
         COMBINE_EVALUATIONS(
             name,
             RUN_EVALUATORS_TWO.out.evaluator_results.collect()
