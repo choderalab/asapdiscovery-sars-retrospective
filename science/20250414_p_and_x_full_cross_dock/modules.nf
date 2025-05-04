@@ -420,6 +420,22 @@ process CREATE_EVALUATORS {
     --save
     """
 }
+
+process CREATE_EVALUATOR_FACTORY_SETTINGS(
+    publishDir "${params.evaluator_configs}"
+    conda "${params.harbor}"
+    tag "create-evaluator-factory-settings"
+
+    output:
+    path("*.yaml"), emit: evaluator_configs
+
+    script:
+    """
+    python3 "${params.scripts}"/create_evaluator_factory_settings.py
+    """
+
+)
+
 process CREATE_EVALUATORS_TWO {
     publishDir "${params.evaluationResults}", mode: 'copy', overwrite: false
     conda "${params.harbor}"

@@ -1,5 +1,6 @@
 #!/usr/bin/env nextflow
 include {
+    CREATE_EVALUATOR_FACTORY_SETTINGS
     CREATE_EVALUATORS_TWO
     RUN_EVALUATORS_TWO
     COMBINE_EVALUATIONS
@@ -50,6 +51,12 @@ workflow RUN_DOCKING_ANALYSIS_FRED {
     RUN_DOCKING_ANALYSIS("all_evals_fred", params.all_sim_parquet, params.all_sim_json)
 }
 workflow {
-    RUN_DOCKING_ANALYSIS_FRED()
-    RUN_DOCKING_ANALYSIS_POSIT()
+    CREATE_EVALUATOR_FACTORY_SETTINGS()
+
+    CREATE_EVALUATOR_FACTORY_SETTINGS.output.view { result ->
+        if (!result.empty) {
+            RUN_DOCKING_ANALYSIS_FRED()
+            RUN_DOCKING_ANALYSIS_POSIT()
+        }
+    }
 }
