@@ -48,12 +48,14 @@ workflow RUN_DOCKING_ANALYSIS {
 workflow RUN_DOCKING_ANALYSIS_POSIT {
     take:
         evaluator_settings
-    RUN_DOCKING_ANALYSIS("all_evals_posit", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
+    main:
+        RUN_DOCKING_ANALYSIS("all_evals_posit", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
 }
 workflow RUN_DOCKING_ANALYSIS_FRED {
     take:
         evaluator_settings
-    RUN_DOCKING_ANALYSIS("all_evals_fred", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
+    main:
+        RUN_DOCKING_ANALYSIS("all_evals_fred", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
 }
 workflow {
     CREATE_EVALUATOR_FACTORY_SETTINGS()
