@@ -55,7 +55,7 @@ def main(input_parquet, settings, output):
     logger.info(f"Reading data model from {input_parquet}")
     # load docking model
     data = DockingDataModel.deserialize(input_parquet)
-    save_and_create_evs(evf, data, settings.name, output, logger)
+    save_and_create_evs(evf, data, evf.name, output, logger)
 
 
 if __name__ == "__main__":
