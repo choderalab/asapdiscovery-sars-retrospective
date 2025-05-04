@@ -53,10 +53,8 @@ workflow RUN_DOCKING_ANALYSIS_FRED {
 workflow {
     CREATE_EVALUATOR_FACTORY_SETTINGS()
 
-    CREATE_EVALUATOR_FACTORY_SETTINGS.output.view { result ->
-        if (!result.empty) {
-            RUN_DOCKING_ANALYSIS_FRED()
-            RUN_DOCKING_ANALYSIS_POSIT()
-        }
+    if (!CREATE_EVALUATOR_FACTORY_SETTINGS.output.empty) {
+        RUN_DOCKING_ANALYSIS_FRED()
+        RUN_DOCKING_ANALYSIS_POSIT()
     }
 }
