@@ -28,7 +28,7 @@ def main(output):
     default.scorer_settings.posit_scorer_settings.use = True
 
     # basic date split cross docking
-    evf = default.copy()
+    evf = default.__deepcopy__()
     evf.name = "reference_split_comparison"
     evf.reference_split_settings.use = True
     evf.reference_split_settings.date_split_settings.use = True
@@ -43,7 +43,7 @@ def main(output):
     evf.to_yaml_file(output)
 
     # Scaffold split options
-    default_scaffold = default.copy()
+    default_scaffold = default.__deepcopy__()
     default_scaffold.name = "default_scaffold_settings"
     default_scaffold.pairwise_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
@@ -55,7 +55,7 @@ def main(output):
     )
 
     # x_to_y default
-    x_to_y_default = default_scaffold.copy()
+    x_to_y_default = default_scaffold.__deepcopy__()
     x_to_y_default.name = "x_to_y_scaffold_split"
     x_to_y_default.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.X_TO_Y
@@ -63,7 +63,7 @@ def main(output):
     x_to_y_default.to_yaml_file(output)
 
     # x to y scaffold split with 10 refs
-    evf = x_to_y_default.copy()
+    evf = x_to_y_default.__deepcopy__()
     evf.name = "x_to_y_scaffold_split_10_refs"
     evf.combine_reference_and_similarity_splits = True
     evf.reference_split_settings.random_split_settings.use = True
