@@ -443,6 +443,7 @@ process CREATE_EVALUATORS_TWO {
     memory { 32.GB }
     time { 2.m }
     label 'cpushort'
+    cache 'lenient'
 
     input:
     val(name)
@@ -500,6 +501,7 @@ process RUN_EVALUATORS_TWO {
     // Dynamic time allocation
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 30.m }
     // set n cpus to request
+    'lenient'
 
     input:
     val(name)

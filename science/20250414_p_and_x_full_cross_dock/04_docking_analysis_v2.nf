@@ -11,9 +11,10 @@ workflow RUN_DOCKING_ANALYSIS {
         name
         docking_results_parquet
         docking_results_json
+        evaluator_settings
 
     main:
-        evaluator_settings = Channel.fromPath("${params.evaluator_configs}/*.yaml", type: 'file')
+//         evaluator_settings = Channel.fromPath("${params.evaluator_configs}/*.yaml", type: 'file')
         CREATE_EVALUATORS_TWO(
             name,
             evaluator_settings,
@@ -45,16 +46,18 @@ workflow RUN_DOCKING_ANALYSIS {
 }
 
 workflow RUN_DOCKING_ANALYSIS_POSIT {
-    RUN_DOCKING_ANALYSIS("all_evals_posit", params.all_sim_parquet, params.all_sim_json)
+    take:
+        evaluator_settings
+    RUN_DOCKING_ANALYSIS("all_evals_posit", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
 }
 workflow RUN_DOCKING_ANALYSIS_FRED {
-    RUN_DOCKING_ANALYSIS("all_evals_fred", params.all_sim_parquet, params.all_sim_json)
+    take:
+        evaluator_settings
+    RUN_DOCKING_ANALYSIS("all_evals_fred", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
 }
 workflow {
     CREATE_EVALUATOR_FACTORY_SETTINGS()
-
-    if (!CREATE_EVALUATOR_FACTORY_SETTINGS.output.empty) {
-        RUN_DOCKING_ANALYSIS_FRED()
-        RUN_DOCKING_ANALYSIS_POSIT()
+    RUN_DOCKING_ANALYSIS_FRED(CREATE_EVALUATOR_FACTORY_SETTINGS.output.evaluator_configs)
+    RUN_DOCKING_ANALYSIS_POSIT(CREATE_EVALUATOR_FACTORY_SETTINGS.output.evaluator_configs)
     }
 }
