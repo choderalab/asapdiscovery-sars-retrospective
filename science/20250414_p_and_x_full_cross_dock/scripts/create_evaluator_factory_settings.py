@@ -54,6 +54,14 @@ def main(output):
         10
     )
 
+    # x_to_x default
+    x_to_x_default = default_scaffold.__deepcopy__()
+    x_to_x_default.name = "x_to_x_scaffold_split"
+    x_to_x_default.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.X_TO_X
+    )
+    x_to_x_default.to_yaml_file(output)
+
     # x_to_y default
     x_to_y_default = default_scaffold.__deepcopy__()
     x_to_y_default.name = "x_to_y_scaffold_split"
