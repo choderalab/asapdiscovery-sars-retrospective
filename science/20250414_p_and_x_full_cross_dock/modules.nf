@@ -425,7 +425,7 @@ process CREATE_EVALUATOR_FACTORY_SETTINGS{
     publishDir "${params.evaluator_configs}"
     conda "${params.harbor}"
     tag "create-evaluator-factory-settings"
-    cache false
+    cache 'deep'
 
     output:
     path("*.yaml"), emit: evaluator_configs
