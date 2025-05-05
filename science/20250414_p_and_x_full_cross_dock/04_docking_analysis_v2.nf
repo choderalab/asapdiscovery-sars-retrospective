@@ -55,7 +55,7 @@ workflow RUN_DOCKING_ANALYSIS_FRED {
     take:
         evaluator_settings
     main:
-        RUN_DOCKING_ANALYSIS("all_evals_fred", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
+        RUN_DOCKING_ANALYSIS("all_evals_fred", params.fred_sim_parquet, params.fred_sim_json, evaluator_settings)
 }
 workflow {
     CREATE_EVALUATOR_FACTORY_SETTINGS()
