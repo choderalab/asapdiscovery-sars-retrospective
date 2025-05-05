@@ -72,7 +72,7 @@ def main(output):
 
     # x to y scaffold split with 10 refs
     evf = x_to_y_default.__deepcopy__()
-    evf.name = "x_to_y_scaffold_split_10_refs"
+    evf.name = "x_to_y_scaffold_split_5_refs"
     evf.combine_reference_and_similarity_splits = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
