@@ -74,9 +74,53 @@ def main(output):
     evf = x_to_y_default.__deepcopy__()
     evf.name = "x_to_y_scaffold_split_5_refs"
     evf.combine_reference_and_similarity_splits = True
+    evf.reference_split_settings.use = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
     evf.to_yaml_file(output)
+
+    # x to not x scaffold split
+    x_to_not_x = default_scaffold.__deepcopy__()
+    x_to_not_x.name = "x_to_not_x_scaffold_split"
+    x_to_not_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.X_TO_NOT_X
+    )
+    x_to_not_x.combine_reference_and_similarity_splits = True
+    x_to_not_x.reference_split_settings.random_split_settings.use = True
+    x_to_not_x.reference_split_settings.update_reference_settings.use = True
+    x_to_not_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    x_to_not_x.to_yaml_file(output)
+
+    # not x to x scaffold split
+    not_x_to_x = default_scaffold.__deepcopy__()
+    not_x_to_x.name = "not_x_to_x_scaffold_split"
+    not_x_to_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.NOT_X_TO_X
+    )
+    not_x_to_x.combine_reference_and_similarity_splits = True
+    not_x_to_x.reference_split_settings.random_split_settings.use = True
+    not_x_to_x.reference_split_settings.update_reference_settings.use = True
+    not_x_to_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    not_x_to_x.to_yaml_file(output)
+
+    # similarity split
+    sim_split = default.__deepcopy__()
+    sim_split.name = "increasing_similarity_tanimoto_combo_aligned"
+    sim_split.pairwise_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
+    sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
+        "Type": "TanimotoCombo",
+        "Aligned": True,
+    }
+    sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
+        True
+    )
+    sim_split.to_yaml_file(output)
 
 
 if __name__ == "__main__":
