@@ -48,10 +48,10 @@ def main(output):
     default_scaffold.pairwise_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
-        10
+        5
     )
     default_scaffold.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = (
-        10
+        5
     )
 
     # x_to_x default
@@ -75,7 +75,7 @@ def main(output):
     evf.name = "x_to_y_scaffold_split_10_refs"
     evf.combine_reference_and_similarity_splits = True
     evf.reference_split_settings.random_split_settings.use = True
-    evf.reference_split_settings.n_reference_structures = [10]
+    evf.reference_split_settings.n_reference_structures = [5]
     evf.to_yaml_file(output)
 
 
