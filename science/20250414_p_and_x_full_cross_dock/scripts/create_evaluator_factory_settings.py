@@ -120,6 +120,9 @@ def main(output):
     sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
         True
     )
+    sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
     sim_split.to_yaml_file(output)
 
 
