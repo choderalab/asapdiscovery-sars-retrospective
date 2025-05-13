@@ -27,85 +27,85 @@ def main(output):
     default.scorer_settings.rmsd_scorer_settings.use = True
     default.scorer_settings.posit_scorer_settings.use = True
 
-    # # basic date split cross docking
-    # evf = default.__deepcopy__()
-    # evf.name = "reference_split_comparison"
-    # evf.reference_split_settings.use = True
-    # evf.reference_split_settings.date_split_settings.use = True
-    # evf.reference_split_settings.date_split_settings.reference_structure_date_column = (
-    #     "Reference_Structure_Date"
-    # )
-    # evf.reference_split_settings.random_split_settings.use = True
-    # evf.reference_split_settings.update_reference_settings.use = True
-    # evf.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
-    #     True
-    # )
-    # evf.to_yaml_file(output)
+    # basic date split cross docking
+    evf = default.__deepcopy__()
+    evf.name = "reference_split_comparison"
+    evf.reference_split_settings.use = True
+    evf.reference_split_settings.date_split_settings.use = True
+    evf.reference_split_settings.date_split_settings.reference_structure_date_column = (
+        "Reference_Structure_Date"
+    )
+    evf.reference_split_settings.random_split_settings.use = True
+    evf.reference_split_settings.update_reference_settings.use = True
+    evf.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    evf.to_yaml_file(output)
 
-    # # Scaffold split options
-    # default_scaffold = default.__deepcopy__()
-    # default_scaffold.name = "default_scaffold_settings"
-    # default_scaffold.pairwise_split_settings.use = True
-    # default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
-    # default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
-    #     5
-    # )
-    # default_scaffold.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = (
-    #     5
-    # )
-    #
-    # # x_to_x default
-    # x_to_x_default = default_scaffold.__deepcopy__()
-    # x_to_x_default.name = "x_to_x_scaffold_split"
-    # x_to_x_default.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
-    #     ScaffoldSplitOptions.X_TO_X
-    # )
-    # x_to_x_default.to_yaml_file(output)
-    #
-    # # x_to_y default
-    # x_to_y_default = default_scaffold.__deepcopy__()
-    # x_to_y_default.name = "x_to_y_scaffold_split"
-    # x_to_y_default.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
-    #     ScaffoldSplitOptions.X_TO_Y
-    # )
-    # x_to_y_default.to_yaml_file(output)
-    #
-    # # x to y scaffold split with 10 refs
-    # evf = x_to_y_default.__deepcopy__()
-    # evf.name = "x_to_y_scaffold_split_5_refs"
-    # evf.combine_reference_and_similarity_splits = True
-    # evf.reference_split_settings.use = True
-    # evf.reference_split_settings.random_split_settings.use = True
-    # evf.reference_split_settings.n_reference_structures = [5]
-    # evf.to_yaml_file(output)
-    #
-    # # x to not x scaffold split
-    # x_to_not_x = default_scaffold.__deepcopy__()
-    # x_to_not_x.name = "x_to_not_x_scaffold_split"
-    # x_to_not_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
-    #     ScaffoldSplitOptions.X_TO_NOT_X
-    # )
-    # x_to_not_x.combine_reference_and_similarity_splits = True
-    # x_to_not_x.reference_split_settings.random_split_settings.use = True
-    # x_to_not_x.reference_split_settings.update_reference_settings.use = True
-    # x_to_not_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
-    #     True
-    # )
-    # x_to_not_x.to_yaml_file(output)
-    #
-    # # not x to x scaffold split
-    # not_x_to_x = default_scaffold.__deepcopy__()
-    # not_x_to_x.name = "not_x_to_x_scaffold_split"
-    # not_x_to_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
-    #     ScaffoldSplitOptions.NOT_X_TO_X
-    # )
-    # not_x_to_x.combine_reference_and_similarity_splits = True
-    # not_x_to_x.reference_split_settings.random_split_settings.use = True
-    # not_x_to_x.reference_split_settings.update_reference_settings.use = True
-    # not_x_to_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
-    #     True
-    # )
-    # not_x_to_x.to_yaml_file(output)
+    # Scaffold split options
+    default_scaffold = default.__deepcopy__()
+    default_scaffold.name = "default_scaffold_settings"
+    default_scaffold.pairwise_split_settings.use = True
+    default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
+    default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
+        5
+    )
+    default_scaffold.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = (
+        5
+    )
+
+    # x_to_x default
+    x_to_x_default = default_scaffold.__deepcopy__()
+    x_to_x_default.name = "x_to_x_scaffold_split"
+    x_to_x_default.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.X_TO_X
+    )
+    x_to_x_default.to_yaml_file(output)
+
+    # x_to_y default
+    x_to_y_default = default_scaffold.__deepcopy__()
+    x_to_y_default.name = "x_to_y_scaffold_split"
+    x_to_y_default.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.X_TO_Y
+    )
+    x_to_y_default.to_yaml_file(output)
+
+    # x to y scaffold split with 10 refs
+    evf = x_to_y_default.__deepcopy__()
+    evf.name = "x_to_y_scaffold_split_5_refs"
+    evf.combine_reference_and_similarity_splits = True
+    evf.reference_split_settings.use = True
+    evf.reference_split_settings.random_split_settings.use = True
+    evf.reference_split_settings.n_reference_structures = [5]
+    evf.to_yaml_file(output)
+
+    # x to not x scaffold split
+    x_to_not_x = default_scaffold.__deepcopy__()
+    x_to_not_x.name = "x_to_not_x_scaffold_split"
+    x_to_not_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.X_TO_NOT_X
+    )
+    x_to_not_x.combine_reference_and_similarity_splits = True
+    x_to_not_x.reference_split_settings.random_split_settings.use = True
+    x_to_not_x.reference_split_settings.update_reference_settings.use = True
+    x_to_not_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    x_to_not_x.to_yaml_file(output)
+
+    # not x to x scaffold split
+    not_x_to_x = default_scaffold.__deepcopy__()
+    not_x_to_x.name = "not_x_to_x_scaffold_split"
+    not_x_to_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.NOT_X_TO_X
+    )
+    not_x_to_x.combine_reference_and_similarity_splits = True
+    not_x_to_x.reference_split_settings.random_split_settings.use = True
+    not_x_to_x.reference_split_settings.update_reference_settings.use = True
+    not_x_to_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    not_x_to_x.to_yaml_file(output)
 
     # similarity split
     sim_split = default.__deepcopy__()

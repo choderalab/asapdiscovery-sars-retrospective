@@ -58,5 +58,4 @@ workflow {
     NOT_X_TO_X_POSIT()
     X_TO_NOT_X_POSIT()
     X_TO_Y_POSIT()
-
 }

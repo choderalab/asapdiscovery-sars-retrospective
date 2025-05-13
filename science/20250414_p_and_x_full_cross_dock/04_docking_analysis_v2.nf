@@ -12,9 +12,9 @@ workflow RUN_DOCKING_ANALYSIS {
         docking_results_parquet
         docking_results_json
         evaluator_settings
+        settings_check
 
     main:
-//         evaluator_settings = Channel.fromPath("${params.evaluator_configs}/*.yaml", type: 'file')
         CREATE_EVALUATORS_TWO(
             name,
             evaluator_settings,
@@ -45,21 +45,52 @@ workflow RUN_DOCKING_ANALYSIS {
         )
 }
 
-workflow RUN_DOCKING_ANALYSIS_POSIT {
-    take:
-        evaluator_settings
-    main:
-        RUN_DOCKING_ANALYSIS("all_evals_posit", params.all_sim_parquet, params.all_sim_json, evaluator_settings)
+workflow DATESPLIT_POSIT {
+    RUN_DOCKING_ANALYSIS('datesplit_posit', params.all_no_sim_parquet, params.all_no_sim_json, params.datesplit_settings)
 }
-workflow RUN_DOCKING_ANALYSIS_FRED {
-    take:
-        evaluator_settings
-    main:
-        RUN_DOCKING_ANALYSIS("all_evals_fred", params.fred_sim_parquet, params.fred_sim_json, evaluator_settings)
+workflow DATESPLIT_FRED {
+    RUN_DOCKING_ANALYSIS('datesplit_fred', params.fred_no_sim_parquet, params.fred_no_sim_json, params.datesplit_settings)
 }
-workflow {
+workflow NOT_X_TO_X_POSIT {
+    RUN_DOCKING_ANALYSIS('not_x_to_x_posit', params.all_no_sim_parquet, params.all_no_sim_json, params.not_x_to_x_scaffold_split)
+}
+workflow X_TO_NOT_X_POSIT {
+    RUN_DOCKING_ANALYSIS('x_to_not_x_posit', params.all_no_sim_parquet, params.all_no_sim_json,  params.x_to_not_x_scaffold_split)
+}
+workflow X_TO_Y_POSIT {
+    RUN_DOCKING_ANALYSIS('x_to_y_posit', params.all_sim, params.x_to_y_default)
+}
+workflow X_TO_X_POSIT {
+    RUN_DOCKING_ANALYSIS('x_to_x_posit', params.all_no_sim_parquet, params.all_no_sim_json, params.x_to_x_scaffold_split)
+}
+workflow INCREASING_SIMILARITY_TC_ALIGNED_POSIT{
+    RUN_DOCKING_ANALYSIS('increasing_similarity_tanimoto_combo_aligned_posit', params.all_no_sim_parquet, params.all_no_sim_json, params.increasing_similarity_tanimoto_combo_aligned)
+}
+workflow INCREASING_SIMILARITY_TC_ALIGNED_FRED{
+    RUN_DOCKING_ANALYSIS('increasing_similarity_tanimoto_combo_aligned_fred', params.fred_no_sim_parquet, params.fred_no_sim_json, params.increasing_similarity_tanimoto_combo_aligned)
+}
+
+
+workflow CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW {
     CREATE_EVALUATOR_FACTORY_SETTINGS()
-    settings_ch = CREATE_EVALUATOR_FACTORY_SETTINGS.output.evaluator_configs.flatten()
-    RUN_DOCKING_ANALYSIS_FRED(settings_ch)
-    RUN_DOCKING_ANALYSIS_POSIT(settings_ch)
+}
+
+workflow RUN_ANALYSIS {
+    take:
+        setup_analysis_check
+
+    main:
+        DATESPLIT_POSIT()
+        DATESPLIT_FRED()
+        NOT_X_TO_X_POSIT()
+        X_TO_NOT_X_POSIT()
+        X_TO_Y_POSIT()
+        X_TO_X_POSIT()
+        INCREASING_SIMILARITY_TC_ALIGNED_POSIT()
+        INCREASING_SIMILARITY_TC_ALIGNED_FRED()
+}
+
+workflow {
+    RUN_ANALYSIS(CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW().out.collect())
+
 }
