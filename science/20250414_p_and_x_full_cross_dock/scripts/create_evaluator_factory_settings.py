@@ -125,6 +125,40 @@ def main(output):
     )
     sim_split.to_yaml_file(output)
 
+    # MCS
+    sim_split = default.__deepcopy__()
+    sim_split.name = "increasing_similarity_mcs"
+    sim_split.pairwise_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
+    sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
+        "Type": "MCS"
+    }
+    sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
+        True
+    )
+    sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    sim_split.to_yaml_file(output)
+
+    # MCS
+    sim_split = default.__deepcopy__()
+    sim_split.name = "increasing_similarity_ecfp4"
+    sim_split.pairwise_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
+    sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
+        "fingerprint": "ECFP4_2048"
+    }
+    sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
+        True
+    )
+    sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use_logarithmic_scaling = (
+        True
+    )
+    sim_split.to_yaml_file(output)
+
 
 if __name__ == "__main__":
     main()
