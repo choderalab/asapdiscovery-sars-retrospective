@@ -86,6 +86,7 @@ def main(output):
         ScaffoldSplitOptions.X_TO_NOT_X
     )
     x_to_not_x.combine_reference_and_similarity_splits = True
+    x_to_not_x.reference_split_settings.use = True
     x_to_not_x.reference_split_settings.random_split_settings.use = True
     x_to_not_x.reference_split_settings.update_reference_settings.use = True
     x_to_not_x.reference_split_settings.update_reference_settings.use_logarithmic_scaling = (
@@ -99,6 +100,7 @@ def main(output):
     not_x_to_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.NOT_X_TO_X
     )
+    not_x_to_x.reference_split_settings.use = True
     not_x_to_x.combine_reference_and_similarity_splits = True
     not_x_to_x.reference_split_settings.random_split_settings.use = True
     not_x_to_x.reference_split_settings.update_reference_settings.use = True
