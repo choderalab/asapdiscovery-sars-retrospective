@@ -12,7 +12,6 @@ workflow RUN_DOCKING_ANALYSIS {
         docking_results_parquet
         docking_results_json
         evaluator_settings
-        settings_check
 
     main:
         CREATE_EVALUATORS_TWO(
