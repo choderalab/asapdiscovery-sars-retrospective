@@ -68,6 +68,18 @@ workflow INCREASING_SIMILARITY_TC_ALIGNED_POSIT{
 workflow INCREASING_SIMILARITY_TC_ALIGNED_FRED{
     RUN_DOCKING_ANALYSIS('increasing_similarity_tanimoto_combo_aligned_fred', params.fred_sim_parquet, params.fred_sim_json, params.increasing_similarity_tanimoto_combo_aligned)
 }
+workflow INCREASING_SIMILARITY_MCS_POSIT{
+    RUN_DOCKING_ANALYSIS('increasing_similarity_mcs_posit', params.all_sim_parquet, params.all_sim_json, params.increasing_similarity_mcs)
+}
+workflow INCREASING_SIMILARITY_MCS_FRED{
+    RUN_DOCKING_ANALYSIS('increasing_similarity_mcs_fred', params.fred_sim_parquet, params.fred_sim_json, params.increasing_similarity_mcs)
+}
+workflow INCREASING_SIMILARITY_ECFP4_POSIT{
+    RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_posit', params.all_sim_parquet, params.all_sim_json, params.increasing_similarity_ecfp4)
+}
+workflow INCREASING_SIMILARITY_ECFP4_FRED{
+    RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_fred', params.fred_sim_parquet, params.fred_sim_json, params.increasing_similarity_ecfp4)
+}
 
 
 workflow CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW {
