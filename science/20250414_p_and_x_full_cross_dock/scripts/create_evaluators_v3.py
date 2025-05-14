@@ -4,6 +4,9 @@ This script creates the calculations that will be run on a cross-docking dataset
 
 import click
 from pathlib import Path
+
+import pandas as pd
+
 from harbor.analysis.cross_docking import (
     DockingDataModel,
     EvaluatorFactory,
@@ -20,6 +23,9 @@ def save_and_create_evs(
     logger.info(f"created {len(evs)} for {name}")
     for i, evaluator in enumerate(evs):
         evaluator.to_json_file(output / f"evaluator_{name}_{i}.json")
+
+    df = pd.DataFrame.from_records([ev.get_records() for ev in evs])
+    df.to_csv(output / f"{name}_evaluators.csv")
 
 
 @click.command()
