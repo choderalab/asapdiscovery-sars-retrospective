@@ -426,6 +426,9 @@ process CREATE_EVALUATOR_FACTORY_SETTINGS{
     conda "${params.harbor}"
     tag "create-evaluator-factory-settings"
     cache false
+    memory { 4.GB }
+    time { 10.m }
+    label 'cpushort'
 
     output:
     path("*.yaml"), emit: evaluator_configs
