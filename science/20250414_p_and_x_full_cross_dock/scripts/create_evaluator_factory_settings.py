@@ -64,6 +64,17 @@ def main(output):
     )
     x_to_x_default.to_yaml_file(output)
 
+    # x_to_x 5 refs
+    evf = x_to_x_default.__deepcopy__()
+    evf.name = "x_to_x_scaffold_split_5_refs"
+    evf.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
+        ScaffoldSplitOptions.X_TO_X
+    )
+    evf.reference_split_settings.use = True
+    evf.reference_split_settings.random_split_settings.use = True
+    evf.reference_split_settings.n_reference_structures = [5]
+    evf.to_yaml_file(output)
+
     # x_to_y default
     x_to_y_default = default_scaffold.__deepcopy__()
     x_to_y_default.name = "x_to_y_scaffold_split"
