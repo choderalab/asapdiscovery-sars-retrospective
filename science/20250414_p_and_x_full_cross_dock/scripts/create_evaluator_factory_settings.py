@@ -45,8 +45,8 @@ def main(output):
     # Scaffold split options
     default_scaffold = default.__deepcopy__()
     default_scaffold.name = "default_scaffold_settings"
-    default.dataset_before_similarity = False
-    evf.combine_reference_and_similarity_splits = True
+    default_scaffold.dataset_before_similarity = False
+    default_scaffold.combine_reference_and_similarity_splits = True
     default_scaffold.pairwise_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
