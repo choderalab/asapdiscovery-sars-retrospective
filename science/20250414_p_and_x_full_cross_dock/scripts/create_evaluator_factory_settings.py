@@ -45,8 +45,6 @@ def main(output):
     # Scaffold split options
     default_scaffold = default.__deepcopy__()
     default_scaffold.name = "default_scaffold_settings"
-    default_scaffold.dataset_before_similarity = False
-    default_scaffold.combine_reference_and_similarity_splits = True
     default_scaffold.pairwise_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
@@ -70,6 +68,8 @@ def main(output):
     evf.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.X_TO_X
     )
+    evf.dataset_before_similarity = False
+    evf.combine_reference_and_similarity_splits = True
     evf.reference_split_settings.use = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
@@ -86,6 +86,8 @@ def main(output):
     # x to y scaffold split with 5 refs
     evf = x_to_y_default.__deepcopy__()
     evf.name = "x_to_y_scaffold_split_5_refs"
+    evf.dataset_before_similarity = False
+    evf.combine_reference_and_similarity_splits = True
     evf.reference_split_settings.use = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
@@ -97,6 +99,8 @@ def main(output):
     x_to_not_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.X_TO_NOT_X
     )
+    x_to_not_x.dataset_before_similarity = False
+    x_to_not_x.combine_reference_and_similarity_splits = True
     x_to_not_x.reference_split_settings.use = True
     x_to_not_x.reference_split_settings.random_split_settings.use = True
     x_to_not_x.reference_split_settings.update_reference_settings.use = True
@@ -119,6 +123,8 @@ def main(output):
     not_x_to_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.NOT_X_TO_X
     )
+    not_x_to_x.combine_reference_and_similarity_splits = True
+    not_x_to_x.dataset_before_similarity = False
     not_x_to_x.reference_split_settings.use = True
     not_x_to_x.reference_split_settings.random_split_settings.use = True
     not_x_to_x.reference_split_settings.n_reference_structures = [5]
