@@ -99,7 +99,7 @@ def main(output):
     x_to_not_x.pairwise_split_settings.scaffold_split_settings.scaffold_split_option = (
         ScaffoldSplitOptions.X_TO_NOT_X
     )
-    x_to_not_x.dataset_before_similarity = False
+    x_to_not_x.dataset_before_similarity = True
     x_to_not_x.combine_reference_and_similarity_splits = True
     x_to_not_x.reference_split_settings.use = True
     x_to_not_x.reference_split_settings.random_split_settings.use = True
