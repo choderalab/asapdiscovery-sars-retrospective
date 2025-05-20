@@ -4,8 +4,6 @@ include {
     CROSS_DOCK_BY_LIGAND as CROSS_DOCK_BY_LIGAND_POSIT
 } from "./modules.nf"
 
-params.numPoses = 1
-
 workflow {
     // load in input structure dir
     input_dir = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
