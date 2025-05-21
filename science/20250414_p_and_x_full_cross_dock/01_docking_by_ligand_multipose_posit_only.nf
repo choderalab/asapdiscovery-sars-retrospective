@@ -73,10 +73,10 @@ workflow {
         .combine(ligand_files)
         .take(params.take)
 
-    // Run FRED and POSIT docking in parallel for each combination
-//     CROSS_DOCK_BY_LIGAND(
-//         docking_combinations,
-//         "ALL",
-//         "PairwiseSelector"
-//     )
+//     Run FRED and POSIT docking in parallel for each combination
+    CROSS_DOCK_BY_LIGAND(
+        docking_combinations,
+        "ALL",
+        "PairwiseSelector"
+    )
 }
