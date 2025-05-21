@@ -26,7 +26,7 @@ process CROSS_DOCK_BY_LIGAND {
     val selector
 
     output:
-    path("*_docked"), emit: docked
+    path("*_docked/*"), emit: docked
 
     script:
     """
