@@ -26,7 +26,7 @@ workflow COMBINE_DOCKING_RESULTS {
     CALCULATE_RMSD(input_pairs)
 
     // Collect the results into a single value
-    input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
+    input_csvs = CALCULATE_RMSD_TWO.out.rmsd_csv.collect()
 
     fixed_frag_cache = Channel
         .fromPath("${params.fixedFragalysisCachePath}", type: 'dir')
