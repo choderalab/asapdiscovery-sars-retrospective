@@ -23,7 +23,7 @@ workflow COMBINE_DOCKING_RESULTS {
     input_pairs = docked_dirs.combine(ligand_file_3d)
 
     // Run CALCULATE_RMSD for each pair
-    CALCULATE_RMSD(input_pairs)
+    CALCULATE_RMSD_TWO(input_pairs)
 
     // Collect the results into a single value
     input_csvs = CALCULATE_RMSD_TWO.out.rmsd_csv.collect()
