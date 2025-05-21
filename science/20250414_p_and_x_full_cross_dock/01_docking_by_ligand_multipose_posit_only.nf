@@ -74,9 +74,9 @@ workflow {
         .take(params.take)
 
     // Run FRED and POSIT docking in parallel for each combination
-    CROSS_DOCK_BY_LIGAND(
-        docking_combinations,
-        "ALL",
-        "PairwiseSelector"
+//     CROSS_DOCK_BY_LIGAND(
+//         docking_combinations,
+//         "ALL",
+//         "PairwiseSelector"
     )
 }
