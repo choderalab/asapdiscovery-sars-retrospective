@@ -61,6 +61,10 @@ workflow PROCESS_ALL {
     COMBINE_DOCKING_RESULTS('ALL')
 }
 
+workflow PROCESS_ALL_MULTIPOSE {
+    COMBINE_DOCKING_RESULTS('ALL_multipose')
+}
+
 workflow {
     PROCESS_FRED()
     PROCESS_ALL()
