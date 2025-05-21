@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 params.numPoses = 5
-params.take = 1
+params.take = 2
 params.test_cache = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_cache_fixed_test"
 params.test_dir = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_test"
 
