@@ -28,7 +28,7 @@ process CROSS_DOCK_BY_LIGAND {
 
     script:
     """
-    asap-cli docking cross-docking \
+    asap-docking cross-docking \
     --target SARS-CoV-2-Mpro \
     --use-omega \
     --omega-dense \
