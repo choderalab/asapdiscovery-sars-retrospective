@@ -7,7 +7,7 @@ process CROSS_DOCK_BY_LIGAND {
     publishDir "${params.dockedFiles}/${posit_method}_multipose", mode: 'link', overwrite: true
     conda "${params.drugforge}"
     tag "cross-dock ${compound_name}"
-    clusterOptions '--partition "cpu"'
+//     clusterOptions '--partition "cpu"' allow to run on anything
     errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     // Dynamic memory allocation
