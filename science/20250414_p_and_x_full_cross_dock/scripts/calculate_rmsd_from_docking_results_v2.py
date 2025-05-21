@@ -60,15 +60,15 @@ def calculate_ligand_rmsd_oemol(ref: oechem.OEMol, fit: oechem.OEMol) -> float:
     return oechem.OERMSD(ref, fit)
 
 
-def get_filtered_poses(results: list[POSITDockingResults], cutoff):
+def get_filtered_poses(posed_ligands: list[Ligand], cutoff):
     """
     Filter out poses with RMSD above cutoff.
     Heavily based on code by Benjamin Kaminow.
     """
 
     # sort by pose id
-    results.sort(key=lambda x: x.posed_ligand.conf_tags["Pose_ID"])
-    all_oemols = [result.posed_ligand.to_oemol() for result in results]
+    posed_ligands.sort(key=lambda x: x.tags["Pose_ID"])
+    all_oemols = [posed_ligand.to_oemol() for posed_ligand in posed_ligands]
     filtered_results_idx = []
     for i, oemol1 in enumerate(all_oemols):
 
@@ -83,7 +83,7 @@ def get_filtered_poses(results: list[POSITDockingResults], cutoff):
             filtered_results_idx.append(i)
 
     # pull Ligand objects from indices
-    filtered_results = [results[i] for i in filtered_results_idx]
+    filtered_results = [posed_ligands[i] for i in filtered_results_idx]
     return filtered_results
 
 
@@ -123,7 +123,8 @@ def main():
                         "Reference_Structure": posed_lig.tags["ReferenceStructureName"],
                         "Reference_Ligand": posed_lig.tags["ReferenceLigandName"],
                         "docking-confidence-POSIT": posed_lig.tags["docking-confidence-POSIT"],
-                        "POSIT_Method": posed_lig.tags["_POSIT_method"]
+                        "POSIT_Method": posed_lig.tags["_POSIT_method"],
+                        "SMILES": posed_lig.smiles
                         })
 
     print("Writing output")
