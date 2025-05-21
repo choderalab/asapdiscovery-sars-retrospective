@@ -8,7 +8,6 @@ from asapdiscovery.data.readers.molfile import MolFileFactory
 from asapdiscovery.data.backend.openeye import oechem
 import argparse
 import pandas as pd
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
 
 
 def get_args():
@@ -61,34 +60,6 @@ def calculate_ligand_rmsd_oemol(ref: oechem.OEMol, fit: oechem.OEMol) -> float:
     return oechem.OERMSD(ref, fit)
 
 
-def make_df_from_docking_results(results=list[POSITDockingResults]):
-    dfs = []
-    for result in results:
-        docking_dict = {}
-        docking_dict["Query_Ligand"] = result.input_pair.ligand.compound_name
-        docking_dict["Reference_Structure"] = (
-            result.input_pair.complex.target.target_name
-        )
-        docking_dict["Reference_Ligand_SMILES"] = (
-            result.input_pair.complex.ligand.smiles
-        )
-        docking_dict[DockingResultCols.SMILES.value] = result.input_pair.ligand.smiles
-        docking_dict[DockingResultCols.DOCKING_CONFIDENCE_POSIT.value] = (
-            result.posed_ligand.conf_tags["docking-confidence-POSIT"]
-        )
-        docking_dict["RMSD"] = result.posed_ligand.conf_tags["RMSD"]
-        docking_dict["Pose_ID"] = result.posed_ligand.conf_tags["Pose_ID"]
-        docking_dict["POSIT_Method"] = result.posed_ligand.conf_tags["_POSIT_method"]
-        docking_dict["Reference_Ligand"] = (
-            result.input_pair.complex.ligand.compound_name
-        )
-
-        dfs.append(pd.DataFrame(docking_dict))
-
-    df = pd.concat(dfs)
-    return df
-
-
 def get_filtered_poses(results: list[POSITDockingResults], cutoff):
     """
     Filter out poses with RMSD above cutoff.
@@ -127,52 +98,58 @@ def main():
     ligs = mff.load()
     lig_dict = {lig.compound_name: lig for lig in ligs}
 
-    # We don't want to filter across targets (at least at first)
-    target_paths = list(results_dir.glob("docking_results/*"))
-    filtered_results = []
-    print(f"Loading {len(target_paths)} docking results")
-    for target_path in target_paths:
-        json_paths = list(target_path.glob("docking_result*.json"))
-        results = [
-            POSITDockingResults.from_json_file(json_file) for json_file in json_paths
-        ]
+    # load docked poses
+    docked_poses = MolFileFactory(filename=results_dir / "docking_results.sdf").load()
+    print(f"Loaded {len(docked_poses)} docked poses")
 
-        # First, filter based on cutoff
-        filtered_results.extend(get_filtered_poses(results, args.cutoff))
+    # We don't want to filter across targets (at least at first)
+    from collections import defaultdict
+    pose_dict = defaultdict(list)
+    _ = [pose_dict[lig.tags["ReferenceStructureName"]].append(lig) for lig in docked_poses]
+    filtered_results = []
+    for target_name, posed_mols in pose_dict.items():
+        filtered_results.extend(get_filtered_poses(posed_mols, cutoff=args.cutoff))
 
     print(f"Calculating RMSD for {len(filtered_results)} poses")
-    for result in tqdm(filtered_results):
-        posed_lig = result.posed_ligand
+    records = []
+    for posed_lig in tqdm(filtered_results):
         ref = lig_dict[posed_lig.compound_name]
 
         # no need to return anything because the posed_lig is modified directly
         calculate_ligand_rmsd(ref, posed_lig)
+        records.append({"Query_Ligand": posed_lig.compound_name,
+                        "Pose_ID": int(posed_lig.tags["Pose_ID"]),
+                        "RMSD": posed_lig.tags["RMSD"],
+                        "Reference_Structure": posed_lig.tags["ReferenceStructureName"],
+                        "Reference_Ligand": posed_lig.tags["ReferenceLigandName"],
+                        "docking-confidence-POSIT": posed_lig.tags["docking-confidence-POSIT"],
+                        "POSIT_Method": posed_lig.tags["_POSIT_method"]
+                        })
 
     print("Writing output")
-    df = make_df_from_docking_results(filtered_results)
-    og_df = results_dir / "data_intermediates/docking_scores_raw.csv"
-    if og_df.exists():
-        og_df = pd.read_csv(og_df)
-        og_df = og_df[
-            [
-                "docking-structure-POSIT",
-                "pose_id",
-                "ligand_id",
-                "docking-score-POSIT",
-            ]
+    df = pd.DataFrame.from_records(records)
+    og_df = results_dir / "docking_scores_raw.csv"
+    og_df = pd.read_csv(og_df)
+    og_df = og_df[
+        [
+            "docking-structure-POSIT",
+            "pose_id",
+            "ligand_id",
+            "docking-score-POSIT",
         ]
-        og_df.columns = [
-            "Reference_Structure",
-            "Pose_ID",
-            "Query_Ligand",
-            "Docking_Score",
-        ]
-        # make sure Pose_ID is an int
-        og_df["Pose_ID"] = og_df["Pose_ID"].astype(int)
-        df["Pose_ID"] = df["Pose_ID"].astype(int)
-        df = pd.merge(
-            df, og_df, on=["Reference_Structure", "Pose_ID", "Query_Ligand"], how="left"
-        )
+    ]
+    og_df.columns = [
+        "Reference_Structure",
+        "Pose_ID",
+        "Query_Ligand",
+        "Docking_Score",
+    ]
+    # make sure Pose_ID is an int
+    og_df["Pose_ID"] = og_df["Pose_ID"].astype(int)
+    df["Pose_ID"] = df["Pose_ID"].astype(int)
+    df = pd.merge(
+        df, og_df, on=["Reference_Structure", "Pose_ID", "Query_Ligand"], how="left"
+    )
     df.to_csv(args.output_file, index=False)
 
 
