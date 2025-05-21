@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 include {
-    CALCULATE_RMSD
+    CALCULATE_RMSD_TWO
     COMBINE_AND_PROCESS_RESULTS
     CONVERT_TO_DOCKING_DATA_MODEL
 } from "./modules.nf"
