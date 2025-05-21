@@ -2,7 +2,8 @@
 
 params.numPoses = 100
 params.take = 1
-params.test_dir = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_cache_fixed_test"
+params.test_cache = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_cache_fixed_test"
+params.test_dir = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_test"
 
 process CROSS_DOCK_BY_LIGAND {
     publishDir "${params.dockedFiles}/${posit_method}_multipose", mode: 'link', overwrite: true
@@ -54,9 +55,10 @@ process CROSS_DOCK_BY_LIGAND {
 
 workflow {
     // load in input structure dir
-    input_dir = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
+//     input_dir = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
+    input_dir = Channel.fromPath("${params.test_dir}", type: 'dir')
 //     cache_dir = Channel.fromPath("${params.dataPath}/${params.fixedFragalysisCache}", type: 'dir')
-    cache_dir = Channel.fromPath("${params.test_dir}", type: 'dir')
+    cache_dir = Channel.fromPath("${params.test_cache}", type: 'dir')
 
     // Create a channel for each ligand file and flatten it
     ligand_files = Channel
