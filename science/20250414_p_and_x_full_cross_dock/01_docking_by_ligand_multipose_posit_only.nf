@@ -7,15 +7,16 @@ process CROSS_DOCK_BY_LIGAND {
     publishDir "${params.dockedFiles}/${posit_method}_multipose", mode: 'link', overwrite: true
     conda "${params.drugforge}"
     tag "cross-dock ${compound_name}"
+    label 'local'
 //     clusterOptions '--partition "cpu"' allow to run on anything
     errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     // Dynamic memory allocation
-    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
-
-    // Dynamic time allocation
-//     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
-    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 10.m }
+//     memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+//
+//     // Dynamic time allocation
+// //     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
+//     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 10.m }
 
     input:
     tuple path(input_dir), path(prepped_dir), val(compound_name), path(ligandFile2d)
