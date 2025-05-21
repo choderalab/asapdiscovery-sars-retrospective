@@ -47,11 +47,11 @@ process CROSS_DOCK_BY_LIGAND {
     --no-save-to-cache \
     --use-only-cache \
     --num-poses "${params.numPoses}" \
-    --use-dask \
-    --dask-type local \
-    --dask-n-workers 32
     """
 }
+// --use-dask \
+// --dask-type local \
+// --dask-n-workers 32
 
 workflow {
     // load in input structure dir
