@@ -93,8 +93,8 @@ workflow CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW {
     CREATE_EVALUATOR_FACTORY_SETTINGS()
 }
 
-workflow INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE{
-    RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_posit_multipose', params.)
+workflow INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE {
+    RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_posit_multipose', params.all_multipose_parquet, params.all_multipose_json, params.increasing_similarity_ecfp4)
 }
 
 workflow RUN_DATESPLIT {
