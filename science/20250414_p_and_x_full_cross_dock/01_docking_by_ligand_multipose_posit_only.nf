@@ -13,7 +13,7 @@ process CROSS_DOCK_BY_LIGAND {
     clusterOptions '--partition "cpu" --cpus-per-task=32'
     errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
-    Dynamic memory allocation
+    // Dynamic memory allocation
     memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
 
     // Dynamic time allocation
