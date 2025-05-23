@@ -32,7 +32,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     --date-dict "${params.dateDictPath}" \
     --structure-cmpd-dict "${params.dataPath}/cmpd_date_dict/structure_to_cmpd_dict.json" \
     --chemical-scaffold-data "${params.genericScaffoldPath}" \
-    --output-file-prefix "${name} \
+    --output-file-prefix "${name}" \
     --deduplicate
     """
 }
