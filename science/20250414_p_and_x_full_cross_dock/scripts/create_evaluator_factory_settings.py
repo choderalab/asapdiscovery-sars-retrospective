@@ -25,7 +25,12 @@ def main(output):
     # update default settings
     default = EvaluatorFactory(name="default")
     default.scorer_settings.rmsd_scorer_settings.use = True
+    default.scorer_settings.rmsd_scorer_settings.rmsd_column_name = "PoseData_RMSD"
+
     default.scorer_settings.posit_scorer_settings.use = True
+    default.scorer_settings.posit_scorer_settings.posit_score_column_name = (
+        "PoseData_POSIT_Probability"
+    )
 
     # basic date split cross docking
     evf = default.__deepcopy__()
@@ -33,7 +38,7 @@ def main(output):
     evf.reference_split_settings.use = True
     evf.reference_split_settings.date_split_settings.use = True
     evf.reference_split_settings.date_split_settings.reference_structure_date_column = (
-        "Reference_Structure_Date"
+        "RefData_Date"
     )
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.update_reference_settings.use = True
@@ -47,6 +52,12 @@ def main(output):
     default_scaffold.name = "default_scaffold_settings"
     default_scaffold.pairwise_split_settings.use = True
     default_scaffold.pairwise_split_settings.scaffold_split_settings.use = True
+    default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_id_column = (
+        "RefData_Scaffold_ID"
+    )
+    default_scaffold.pairwise_split_settings.scaffold_split_settings.query_scaffold_id_column = (
+        "QueryData_Scaffold_ID"
+    )
     default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
         5
     )
@@ -137,8 +148,8 @@ def main(output):
     sim_split.pairwise_split_settings.similarity_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
     sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
-        "Type": "TanimotoCombo",
-        "Aligned": True,
+        "TanimotoComboData_Type": "TanimotoCombo",
+        "TanimotoComboData_Aligned": True,
     }
     sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
         True
@@ -155,7 +166,7 @@ def main(output):
     sim_split.pairwise_split_settings.similarity_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
     sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
-        "Type": "MCS"
+        "MCSData_Type": "MCS"
     }
     sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
         True
@@ -172,7 +183,7 @@ def main(output):
     sim_split.pairwise_split_settings.similarity_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
     sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
-        "fingerprint": "ECFP4_2048"
+        "ECFPData_fingerprint": "ECFP4_2048"
     }
     sim_split.pairwise_split_settings.similarity_split_settings.update_reference_settings.use = (
         True
