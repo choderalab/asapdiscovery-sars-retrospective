@@ -146,6 +146,9 @@ def main(output):
     sim_split.name = "increasing_similarity_tanimoto_combo_aligned"
     sim_split.pairwise_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.use = True
+    sim_split.pairwise_split_settings.similarity_split_settings.similarity_column_name = (
+        "TanimotoComboData_Tanimoto"
+    )
     sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
     sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
         "TanimotoComboData_Type": "TanimotoCombo",
@@ -165,6 +168,9 @@ def main(output):
     sim_split.pairwise_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
+    sim_split.pairwise_split_settings.similarity_split_settings.similarity_column_name = (
+        "MCSData_Tanimoto"
+    )
     sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
         "MCSData_Type": "MCS"
     }
@@ -182,6 +188,9 @@ def main(output):
     sim_split.pairwise_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.use = True
     sim_split.pairwise_split_settings.similarity_split_settings.include_similar = False
+    sim_split.pairwise_split_settings.similarity_split_settings.similarity_column_name = (
+        "ECFPData_Tanimoto"
+    )
     sim_split.pairwise_split_settings.similarity_split_settings.similarity_groupby_dict = {
         "ECFPData_fingerprint": "ECFP4_2048"
     }
