@@ -29,7 +29,7 @@ def main(output):
 
     default.scorer_settings.posit_scorer_settings.use = True
     default.scorer_settings.posit_scorer_settings.posit_score_column_name = (
-        "PoseData_POSIT_Probability"
+        "PoseData_docking-confidence-POSIT"
     )
 
     # basic date split cross docking
