@@ -77,8 +77,10 @@ def main():
     logger.info(f"Loaded {len(queries)} query molecules.")
 
     # Create or load settings
-    radii = [2, 3, 4, 5]
-    bit_sizes = [1024, 2048]
+    # radii = [2, 3, 4, 5]
+    radii = [2, 5]
+    # bit_sizes = [1024, 2048]
+    bit_sizes = [2028]
     dfs = []
     for radius, bit_size in itertools.product(radii, bit_sizes):
         logger.info(
