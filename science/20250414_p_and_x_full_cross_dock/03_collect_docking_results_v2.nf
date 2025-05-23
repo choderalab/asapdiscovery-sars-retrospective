@@ -30,7 +30,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     --ecfp-data "${params.chemicalSimilarityData}/ecfp_tanimoto/fingerprint_similarities.csv" \
     --mcs-data "${params.chemicalSimilarityData}/mcs_tanimoto/mcs_tanimoto.csv" \
     --date-dict "${params.dateDictPath}" \
-    --structure-cmpd-dict "${params.dataPath}/cmpd_date_dict/structure_to_cmpd_dict.json"
+    --structure-cmpd-dict "${params.dataPath}/cmpd_date_dict/structure_to_cmpd_dict.json" \
     --chemical-scaffold-data "${params.genericScaffoldPath}" \
     --output-file-prefix "${name} \
     --deduplicate
