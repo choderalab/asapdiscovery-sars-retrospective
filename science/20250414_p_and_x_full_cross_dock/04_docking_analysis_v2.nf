@@ -5,6 +5,7 @@ include {
     RUN_EVALUATORS_TWO
     COMBINE_EVALUATIONS
 } from "./modules.nf"
+params.K = 10
 
 workflow RUN_DOCKING_ANALYSIS {
     take:
