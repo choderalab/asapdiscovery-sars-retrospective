@@ -10,7 +10,7 @@ process CROSS_DOCK_BY_LIGAND {
     conda "${params.drugforge}"
     tag "cross-dock ${compound_name}"
 //     label 'local'
-    clusterOptions '--partition "cpu" --cpus-per-task=32' allow to run on anything
+    clusterOptions '--partition "cpu" --cpus-per-task=32'
     errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     Dynamic memory allocation
