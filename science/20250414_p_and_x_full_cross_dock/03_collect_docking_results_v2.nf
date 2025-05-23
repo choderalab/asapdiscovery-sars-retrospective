@@ -26,9 +26,9 @@ process COMBINE_AND_PROCESS_RESULTS {
     """
     python3 "${params.scripts}"/combine_and_process_results_v2.py \
     ${dockedLigandRMSDs.join(' ')} \
-    --tc-data "${params.combinedChemicalSimilarityPath}/tanimoto_combo/tanimoto_combo.csv" \
-    --ecfp-data "${params.combinedChemicalSimilarityPath}/ecfp_tanimoto/fingerprint_similarities.csv" \
-    --mcs-data "${params.combinedChemicalSimilarityPath}/mcs_tanimoto/mcs_tanimoto.csv" \
+    --tc-data "${params.chemicalSimilarityData}/tanimoto_combo/tanimoto_combo.csv" \
+    --ecfp-data "${params.chemicalSimilarityData}/ecfp_tanimoto/fingerprint_similarities.csv" \
+    --mcs-data "${params.chemicalSimilarityData}/mcs_tanimoto/mcs_tanimoto.csv" \
     --date-dict "${params.dateDictPath}" \
     --structure-cmpd-dict "${params.dataPath}/cmpd_date_dict/structure_to_cmpd_dict.json"
     --chemical-scaffold-data "${params.genericScaffoldPath}" \
