@@ -1,0 +1,208 @@
+"""
+This script combines the results csvs and generates an input CSV that will be used to run the full cross docking evaluation.
+"""
+
+import pandas as pd
+from pathlib import Path
+from harbor.analysis.cross_docking import (
+    DataFrameModel,
+    DataFrameType,
+    DockingDataModel,
+)
+from harbor.analysis.utils import FileLogger
+import click
+import numpy as np
+import json
+
+
+@click.command()
+@click.argument("pose-data", nargs=-1, type=click.Path(exists=True), required=True)
+@click.option("--tc-data", type=click.Path(exists=True))
+@click.option("--ecfp-data", type=click.Path(exists=True))
+@click.option("--mcs-data", type=click.Path(exists=True))
+@click.option("--scaffold-data", type=click.Path(exists=True))
+@click.option(
+    "--date-dict",
+    type=click.Path(exists=True),
+    required=True,
+    help="Path to date_dict.json file",
+)
+@click.option(
+    "--structure-cmpd-dict", required=True, help="Path to structure_to_cmpd_dict"
+)
+@click.option("--deduplicate/--no-deduplicate", default=False)
+@click.option("--output-file-prefix", required=True, help="Output file suffix")
+@click.option("--add-padding/--no-add-padding", default=True)
+def main(
+    pose_data,
+    tc_data,
+    ecfp_data,
+    mcs_data,
+    scaffold_data,
+    date_dict,
+    structure_cmpd_dict,
+    deduplicate,
+    output_file_prefix,
+    add_padding,
+):
+    logger = FileLogger(
+        logname="combine_and_process_results",
+        path="combine_and_process_results.log",
+    ).getLogger()
+
+    dfms = []
+
+    report_dict = {"err_msg": []}
+
+    pose_df = pd.concat([pd.read_csv(csv) for csv in pose_data])
+    query_lig_set = set(pose_df["Query_Ligand"].unique())
+    ref_lig_set = set(pose_df["Reference_Structure"].unique())
+    report_dict["never_docked"] = list(ref_lig_set - query_lig_set)
+    report_dict["never_used_as_ref"] = list(query_lig_set - ref_lig_set)
+
+    # Add Date Information
+    logger.info("Adding date information")
+    with open(date_dict, "r") as f:
+        date_dict = json.load(f)
+    missing = [
+        ref_structure
+        for ref_structure in pose_df.Reference_Structure.unique()
+        if ref_structure[:-3] not in date_dict.keys()
+    ]
+    if len(missing) > 0:
+        report_dict["err_msg"].append(
+            f"The following Reference_Structure were not in date_dict.json:"
+        )
+        report_dict["missing_reference_structures"] = missing
+
+    with open(structure_cmpd_dict, "r") as f:
+        structure_cmpd_dict = json.load(f)
+
+    refdf = pd.DataFrame(
+        {
+            "Reference_Structure": list(pose_df.Reference_Structure.unique()),
+            "Reference_Ligand": [
+                structure_cmpd_dict.get(x[:-3], None)
+                for x in pose_df.Reference_Structure.unique()
+            ],
+            "Date": [
+                date_dict.get(x[:-3], None)
+                for x in pose_df.Reference_Structure.unique()
+            ],
+        }
+    )
+
+    ref_data = DataFrameModel(
+        name="RefData",
+        type=DataFrameType.REFERENCE,
+        dataframe=refdf,
+        key_columns=["Reference_Structure", "Reference_Ligand"],
+    )
+
+    pose_dfm = DataFrameModel(
+        name="PoseData",
+        type=DataFrameType.POSE,
+        dataframe=pose_df,
+        key_columns=[
+            "Reference_Structure",
+            "Query_Ligand",
+            "Reference_Ligand",
+            "Pose_ID",
+        ],
+    )
+
+    dfms.extend([pose_dfm])
+
+    common_key_cols = ["Reference_Ligand", "Query_Ligand"]
+
+    def get_dataframe(
+        df_path: Path,
+        deduplicate: bool,
+        param_args: list = [],
+    ):
+        return (
+            pd.read_csv(df_path).groupby(common_key_cols + param_args).head(1)
+            if deduplicate
+            else pd.read_csv(df_path)
+        )
+
+    if tc_data:
+        dfms.append(
+            DataFrameModel(
+                name="TanimotoComboData",
+                type=DataFrameType.CHEMICAL_SIMILARITY,
+                dataframe=get_dataframe(tc_data, deduplicate, ["Aligned"]),
+                key_columns=common_key_cols,
+                param_columns=["Aligned"],
+            )
+        )
+    if ecfp_data:
+        dfms.append(
+            DataFrameModel(
+                name="ECFPData",
+                type=DataFrameType.CHEMICAL_SIMILARITY,
+                dataframe=get_dataframe(ecfp_data, deduplicate, ["radius", "bitsize"]),
+                key_columns=common_key_cols,
+                param_columns=["radius", "bitsize"],
+            )
+        )
+    if mcs_data:
+        df = get_dataframe(mcs_data, deduplicate)
+        dfms.append(
+            DataFrameModel(
+                name="MCSData",
+                type=DataFrameType.CHEMICAL_SIMILARITY,
+                dataframe=df,
+                key_columns=common_key_cols,
+            )
+        )
+    if scaffold_data:
+        query_data = pd.read_csv(scaffold_data)
+        query_data.columns = [
+            "Query_Ligand",
+            "Scaffold_ID",
+            "Scaffold_Smarts",
+            "Scaffold_Type",
+        ]
+        dfms.append(
+            DataFrameModel(
+                name="QueryData",
+                type=DataFrameType.QUERY,
+                dataframe=(
+                    query_data.groupby("Query_Ligand").head(1)
+                    if deduplicate
+                    else query_data
+                ),
+                key_columns=["Query_Ligand"],
+                param_columns=["Scaffold_Type"],
+            )
+        )
+
+        ref_scaffold_df = pd.read_csv(scaffold_data)
+        ref_scaffold_df.columns = [
+            "Reference_Ligand",
+            "Scaffold_ID",
+            "Scaffold_Smarts",
+            "Scaffold_Type",
+        ]
+        ref_scaffold_df = ref_scaffold_df.merge(
+            ref_data.dataframe, on="Reference_Ligand", how="outer"
+        )
+        ref_data = DataFrameModel(
+            name="RefData",
+            type=DataFrameType.REFERENCE,
+            dataframe=(
+                ref_scaffold_df.groupby("Reference_Ligand").head(1)
+                if deduplicate
+                else ref_scaffold_df
+            ),
+            key_columns=["Reference_Ligand", "Reference_Structure"],
+            param_columns=["Scaffold_Type"],
+        )
+    dfms.append(ref_data)
+    ddm = DockingDataModel.from_models(dfms)
+    ddm.serialize(output_file_prefix)
+
+
+if __name__ == "__main__":
+    main()
