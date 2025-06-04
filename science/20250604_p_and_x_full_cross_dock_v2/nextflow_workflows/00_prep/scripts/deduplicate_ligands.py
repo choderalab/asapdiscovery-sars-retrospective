@@ -67,6 +67,8 @@ def get_records_from_complexes(complexes):
 )
 def main(fragalysis_dir, prepped_path, output_dir):
     """Filter and copy protein structures based on deduplication criteria."""
+    print(prepped_path)
+    print(type(prepped_path))
     pcs_to_load = list(prepped_path.glob("./*/*.json"))
     if not pcs_to_load:
         click.echo("No prepped complexes found to load.")
