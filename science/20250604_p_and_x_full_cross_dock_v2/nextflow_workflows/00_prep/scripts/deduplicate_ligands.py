@@ -3,7 +3,7 @@ import click
 
 """
 Example usage:
-python filter_structures.py \
+python deduplicate_ligands.py \
     --fragalysis-dir /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated \
     --prepped-path /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache \
     --output-dir /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache_fixed
@@ -67,8 +67,15 @@ def get_records_from_complexes(complexes):
 )
 def main(fragalysis_dir, prepped_path, output_dir):
     """Filter and copy protein structures based on deduplication criteria."""
+    pcs_to_load = list(prepped_path.glob("./*/*.json"))
+    if not pcs_to_load:
+        click.echo("No prepped complexes found to load.")
+        return
+
+    click.echo(f"Found {len(pcs_to_load)} prepped complexes to load.")
+
     # Load Fragalysis data
-    pcs = [PreppedComplex.from_json_file(f) for f in prepped_path.glob("./*/*.json")]
+    pcs = [PreppedComplex.from_json_file(f) for f in pcs_to_load]
 
     # Create initial dataframe
     df = pd.DataFrame.from_records(get_records_from_complexes(pcs))
