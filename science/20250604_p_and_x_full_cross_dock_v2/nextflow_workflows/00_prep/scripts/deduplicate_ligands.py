@@ -98,7 +98,7 @@ def main(fragalysis_dir, prepped_path, output_dir):
     ordered_df["Date"] = ordered_df.Target_Name.apply(lambda x: date_dict[x[:-3]])
     to_keep = ordered_df.sort_values("Date").groupby(["SMILES"]).head(1)
     targets_to_keep = set(to_keep.Target_Name.unique())
-    all_targets = set(ordered_df.Target_Name.unique())
+    all_targets = set(df.Target_Name.unique())
     all_duped_targets = set(ordered_df.Target_Name.unique())
     non_duped_targets = all_targets - all_duped_targets
     targets_to_remove = all_duped_targets - targets_to_keep
