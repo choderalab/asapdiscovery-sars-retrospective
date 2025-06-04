@@ -100,6 +100,9 @@ def main(fragalysis_dir, prepped_path, output_dir):
     targets_to_keep = set(to_keep.Target_Name.unique())
     all_duped_targets = set(ordered_df.Target_Name.unique())
     targets_to_remove = all_duped_targets - targets_to_keep
+    click.echo(f"Total SMILES with duplicates: {ordered_df.SMILES.nunique()}")
+    click.echo(f"Targets to keep: {len(targets_to_keep)}")
+    click.echo(f"Targets to remove: {len(targets_to_remove)}")
 
     # Create output directory
     output_path = Path(output_dir)
