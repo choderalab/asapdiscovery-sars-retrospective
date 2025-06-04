@@ -98,11 +98,14 @@ def main(fragalysis_dir, prepped_path, output_dir):
     ordered_df["Date"] = ordered_df.Target_Name.apply(lambda x: date_dict[x[:-3]])
     to_keep = ordered_df.sort_values("Date").groupby(["SMILES"]).head(1)
     targets_to_keep = set(to_keep.Target_Name.unique())
+    all_targets = set(ordered_df.Target_Name.unique())
     all_duped_targets = set(ordered_df.Target_Name.unique())
+    non_duped_targets = all_targets - all_duped_targets
     targets_to_remove = all_duped_targets - targets_to_keep
+    all_targets_to_keep = non_duped_targets.union(targets_to_keep)
     click.echo(f"Total SMILES with duplicates: {ordered_df.SMILES.nunique()}")
-    click.echo(f"Targets to keep: {len(targets_to_keep)}")
     click.echo(f"Targets to remove: {len(targets_to_remove)}")
+    click.echo(f"Total targets: {len(all_targets_to_keep)}")
 
     # Create output directory
     output_path = Path(output_dir)
@@ -116,7 +119,7 @@ def main(fragalysis_dir, prepped_path, output_dir):
     for src_path in prepped_path.glob("*/*.json"):
         target_name = src_path.parent.name
         # Check if the target should be removed (starts with any name in targets_to_remove)
-        if not any(target_name.startswith(x[:-3]) for x in targets_to_remove):
+        if any(target_name.startswith(x) for x in all_targets_to_keep):
             dest_dir = output_path / src_path.parent.name
             dest_dir.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src_path, dest_dir / src_path.name)
