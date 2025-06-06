@@ -120,9 +120,9 @@ def main(fragalysis_dir, prepped_path, output_dir):
         target_name = src_path.parent.name
         # Check if the target should be removed (starts with any name in targets_to_remove)
         if any(target_name.startswith(x) for x in all_targets_to_keep):
-            dest_dir = output_path / src_path.parent.name
+            dest_dir = output_path
             dest_dir.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src_path, dest_dir / src_path.name)
+            shutil.copy2(src_path.parent, dest_dir / src_path.name)
             copied += 1
         else:
             skipped += 1
