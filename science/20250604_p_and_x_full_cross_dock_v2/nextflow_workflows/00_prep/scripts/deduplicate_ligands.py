@@ -117,12 +117,13 @@ def main(fragalysis_dir, prepped_path, output_dir):
     skipped = 0
 
     for src_path in prepped_path.glob("*/*.json"):
-        target_name = src_path.parent.name
+        src_dir = src_path.parent
+        target_name = src_dir.name
         # Check if the target should be removed (starts with any name in targets_to_remove)
         if any(target_name.startswith(x) for x in all_targets_to_keep):
-            dest_dir = output_path
+            dest_dir = output_path / target_name
             dest_dir.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src_path.parent, dest_dir / src_path.name)
+            shutil.copytree(src_dir, dest_dir)
             copied += 1
         else:
             skipped += 1
