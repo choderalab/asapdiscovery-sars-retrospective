@@ -1,3 +1,5 @@
+params.workflow_path = "${params.projectDir}/nextflow_workflows/00_prep"
+params.scripts = "${params.workflow_path}/scripts"
 process PREP_FRAGALYSIS {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.fragalysisCache}"}
     conda "${params.asap}"
