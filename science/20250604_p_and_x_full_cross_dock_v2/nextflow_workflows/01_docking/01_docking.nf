@@ -12,6 +12,7 @@ workflow RUN_LIGAND_DOCKING {
         posit_method
         pairwise_selector
 
+    main:
     // load in input structure dir
     // input_dir = Channel.fromPath("${params.curatedFragalysis}", type: 'dir')
     input_dir = Channel.fromPath("${params.test_dir}", type: 'dir')
