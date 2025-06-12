@@ -79,3 +79,25 @@ process GENERATE_SPLIT_LIGAND_FILES {
     python3 ${params.scripts}/split_sdf.py --sdf_fn ${ligandFile2d} --out_dir ${params.split2dligandFiles} --chunk_size 1 --name_convention "integer"
     """
 }
+
+process DEDUPLICATE_LIGANDS {
+    publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.fixedFragalysisCache}"}
+    conda "${params.asap}"
+    tag "deduplicate-ligands"
+    label 'local'
+
+    input:
+    path fragalysis_dir
+    path prepped_path
+
+    output:
+    path "deduped_cache", emit: fixed_cache
+
+    script:
+    """
+    python3 ${params.scripts}/deduplicate_ligands.py \
+    --fragalysis-dir ${fragalysis_dir} \
+    --prepped-path ${prepped_path} \
+    --output-dir deduped_cache \
+    """
+}
