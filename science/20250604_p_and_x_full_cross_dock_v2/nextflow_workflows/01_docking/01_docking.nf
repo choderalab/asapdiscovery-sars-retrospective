@@ -42,7 +42,8 @@ workflow RUN_LIGAND_DOCKING {
         CROSS_DOCK_BY_LIGAND(
             docking_combinations,
             posit_method,
-            pairwise_selector
+            pairwise_selector,
+            num_poses
     )
 }
 
