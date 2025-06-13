@@ -41,7 +41,6 @@ process COMBINE_AND_PROCESS_RESULTS {
     ${dockedLigandRMSDs.join(' ')} \
     --tc-data "${params.chemicalSimilarityData}/tanimoto_combo/tanimoto_combo.csv" \
     --ecfp-data "${params.chemicalSimilarityData}/ecfp_tanimoto/fingerprint_similarities.csv" \
-    --mcs-data "${params.chemicalSimilarityData}/mcs_tanimoto/mcs_tanimoto.csv" \
     --date-dict "${params.dateDictPath}" \
     --structure-cmpd-dict "${params.dataPath}/cmpd_date_dict/structure_to_cmpd_dict.json" \
     --scaffold-data "${params.genericScaffoldPath}" \
@@ -49,6 +48,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     --deduplicate
     """
 }
+// --mcs-data "${params.chemicalSimilarityData}/mcs_tanimoto/mcs_tanimoto.csv" \
 process CONVERT_TO_DOCKING_DATA_MODEL {
     publishDir "${params.combinedDockingResultsPath}", mode: 'copy', overwrite: true
     conda "${params.harbor}"
