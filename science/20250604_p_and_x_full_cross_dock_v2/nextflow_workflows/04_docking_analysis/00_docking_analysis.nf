@@ -105,14 +105,12 @@ workflow RUN_ANALYSIS {
         setup_analysis_check
 
     main:
-        workflow_ch.map { workflow_def ->
-            RUN_DOCKING_ANALYSIS(
-                workflow_def.name,
-                workflow_def.parquet,
-                workflow_def.json,
-                workflow_def.settings
-            )
-        }
+        RUN_DOCKING_ANALYSIS(
+            workflow_ch.map { it.name },
+            workflow_ch.map { it.parquet },
+            workflow_ch.map { it.json },
+            workflow_ch.map { it.settings }
+        )
 }
 
 workflow CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW {
