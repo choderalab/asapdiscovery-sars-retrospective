@@ -5,11 +5,14 @@ include {
     RUN_EVALUATORS
     COMBINE_EVALUATIONS
 } from "./modules.nf"
+
+import groovy.yaml.YamlSlurper
+
 params.K = 10
 params.analysis_config = "docking_analysis_config.yaml"
 
-// Load configuration
-def config = readYamlConfig(params.analysis_config)
+// Load configuration using YamlSlurper
+def config = new YamlSlurper().parse(file(params.analysis_config))
 
 workflow RUN_DOCKING_ANALYSIS {
     take:
@@ -77,6 +80,7 @@ config.analyses.each { analysis_name, analysis_config ->
     }
 }
 
+// Rest of your script remains the same, but fix the RUN_ANALYSIS workflow:
 workflow RUN_ANALYSIS {
     take:
         setup_analysis_check
@@ -84,11 +88,11 @@ workflow RUN_ANALYSIS {
     main:
         // Dynamically call all enabled workflows
         config.analyses.each { analysis_name, analysis_config ->
-                analysis_config.variants.each { variant_name, variant_config ->
-                    variant_config.enabled_datasets.each { dataset_name ->
-                        workflow."${getWorkflowName(analysis_name, dataset_name, variant_name)}"()
-                    }
+            analysis_config.each { variant_name, variant_config ->
+                variant_config.enabled_datasets.each { dataset_name ->
+                    workflow."${getWorkflowName(analysis_name, dataset_name, variant_name)}"()
                 }
+            }
         }
 }
 
