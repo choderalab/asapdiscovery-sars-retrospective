@@ -62,14 +62,14 @@ def workflow_definitions = []
 config.analyses.each { analysis_name, analysis_config ->
     analysis_config.each { variant_name, variant_config ->
         variant_config.enabled_datasets.each { dataset_id ->
-            def dataset_name = config.datasets[dataset_id].name
+            def dataset = config.datasets[dataset_id]
 
-            if (!dataset_name) {
+            if (!dataset) {
                 println "\nWarning: Dataset '${dataset_id}' not found in config, skipping workflow"
                 return  // skip this iteration
             }
 
-
+            def dataset_name = dataset.name
             def workflow_name = getWorkflowName(analysis_name, dataset_name, variant_name)
             def dataset_parquet = "${params.combinedDockingResultsPath}/${dataset_name}.parquet"
             def dataset_json = "${params.combinedDockingResultsPath}/${dataset_name}.json"
