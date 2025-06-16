@@ -20,7 +20,7 @@ process CALCULATE_RMSD{
 process COMBINE_AND_PROCESS_RESULTS {
     publishDir "${params.combinedDockingResultsPath}", mode: 'copy', overwrite: true
     conda "${params.drugforge}"
-    tag "combine-and-process-results ${method}"
+    tag "combine-and-process-results ${name}"
     errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
     maxRetries 3
     // Dynamic memory allocation

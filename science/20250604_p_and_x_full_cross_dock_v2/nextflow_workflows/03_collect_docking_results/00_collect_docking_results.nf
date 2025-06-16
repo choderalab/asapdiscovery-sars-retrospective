@@ -7,34 +7,34 @@ include {
 
 workflow COMBINE_DOCKING_RESULTS {
     take:
-    name
+        name
 
     main:
-    docked_dirs = Channel
-        .fromPath("${params.dockedFiles}/${name}/*docked", type: 'dir')
-        .map { results_dir ->
-            def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
-            return tuple(name, id, results_dir)
-        }
-    ligand_file_3d = Channel
-        .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
+        docked_dirs = Channel
+            .fromPath("${params.dockedFiles}/${name}/*docked", type: 'dir')
+            .map { results_dir ->
+                def id = results_dir.name.toString().find(/([a-zA-Z0-9_-]+)\_docked/) { match, code -> code }
+                return tuple(name, id, results_dir)
+            }
+        ligand_file_3d = Channel
+            .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
 
-    // Combine each docked directory with the ligand file
-    input_pairs = docked_dirs.combine(ligand_file_3d)
+        // Combine each docked directory with the ligand file
+        input_pairs = docked_dirs.combine(ligand_file_3d)
 
-    // Run CALCULATE_RMSD for each pair
-    CALCULATE_RMSD(input_pairs)
+        // Run CALCULATE_RMSD for each pair
+        CALCULATE_RMSD(input_pairs)
 
-    // Collect the results into a single value
-    input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
+        // Collect the results into a single value
+        input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
 
-    // Convert method to a channel
-    name_ch = Channel.value(name)
+        // Convert method to a channel
+        name_ch = Channel.value(name)
 
-    COMBINE_AND_PROCESS_RESULTS(
-        input_csvs,
-        name_ch
-    )
+        COMBINE_AND_PROCESS_RESULTS(
+            input_csvs,
+            name_ch
+        )
 }
 
 // Create named entry points for each dataset
