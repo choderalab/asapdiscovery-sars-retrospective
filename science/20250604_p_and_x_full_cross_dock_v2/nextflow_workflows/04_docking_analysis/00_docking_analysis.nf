@@ -97,26 +97,21 @@ workflow_definitions.each { def workflow_def ->
 }
 println "====================\n"
 
-
-// Define individual workflows
-workflow_definitions.each { def workflow_def ->
-    workflow."${workflow_def.name}" = {
-        RUN_DOCKING_ANALYSIS(
-            workflow_def.name,
-            workflow_def.parquet,
-            workflow_def.json,
-            workflow_def.settings
-        )
-    }
-}
+// Convert workflow definitions to a channel
+def workflow_ch = Channel.fromList(workflow_definitions)
 
 workflow RUN_ANALYSIS {
     take:
         setup_analysis_check
 
     main:
-        workflow_definitions.each { def workflow_def ->
-            workflow."${workflow_def.name}"()
+        workflow_ch.map { workflow_def ->
+            RUN_DOCKING_ANALYSIS(
+                workflow_def.name,
+                workflow_def.parquet,
+                workflow_def.json,
+                workflow_def.settings
+            )
         }
 }
 
