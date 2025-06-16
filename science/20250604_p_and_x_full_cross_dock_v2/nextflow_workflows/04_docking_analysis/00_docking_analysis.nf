@@ -77,6 +77,20 @@ config.analyses.each { analysis_name, analysis_config ->
     }
 }
 
+// Print workflow definitions
+println "\nWorkflow Definitions:"
+println "===================="
+workflow_definitions.each { def workflow_def ->
+    println """
+    Name: ${workflow_def.name}
+    Parquet: ${workflow_def.parquet}
+    JSON: ${workflow_def.json}
+    Settings: ${workflow_def.settings}
+    -------------------"""
+}
+println "====================\n"
+
+
 // Define individual workflows
 workflow_definitions.each { def workflow_def ->
     workflow."${workflow_def.name}" = {
