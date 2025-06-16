@@ -24,6 +24,10 @@ def main(output):
 
     # update default settings
     default = EvaluatorFactory(name="default")
+
+    default.success_rate_evaluator_settings.use = True
+    default.success_rate_evaluator_settings.success_rate_column = "PoseData_RMSD"
+
     default.scorer_settings.rmsd_scorer_settings.use = True
     default.scorer_settings.rmsd_scorer_settings.rmsd_column_name = "PoseData_RMSD"
 
