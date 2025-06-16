@@ -82,8 +82,12 @@ def get_records_from_complexes(complexes):
 )
 def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
     """Filter and copy protein structures based on deduplication criteria."""
+    # Create output directory
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
     logger = FileLogger(
-        "deduplicate_ligands", logfile="deduplicate_ligands.log"
+        "deduplicate_ligands", path=output_path, logfile="deduplicate_ligands.log"
     ).getLogger()
 
     pcs_to_load = list(Path(prepped_path).glob("./*/*.json"))
@@ -149,10 +153,6 @@ def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
     logger.info(
         f"Keeping {len(all_targets_to_keep)} unique targets after deduplication."
     )
-
-    # Create output directory
-    output_path = Path(output_dir)
-    output_path.mkdir(parents=True, exist_ok=True)
 
     # Copy files, skipping removed targets
     prepped_path = Path(prepped_path)
