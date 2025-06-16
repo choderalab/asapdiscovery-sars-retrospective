@@ -71,8 +71,8 @@ config.analyses.each { analysis_name, analysis_config ->
 
             def dataset_name = dataset.name
             def workflow_name = getWorkflowName(analysis_name, dataset_name, variant_name)
-            def dataset_parquet = "${params.combinedDockingResultsPath}/${dataset_name}.parquet"
-            def dataset_json = "${params.combinedDockingResultsPath}/${dataset_name}.json"
+            def dataset_parquet = Channel.fromPath("${params.combinedDockingResultsPath}/${dataset_name}.parquet", type: 'file')
+            def dataset_json = Channel.fromPath("${params.combinedDockingResultsPath}/${dataset_name}.json", type: 'file')
 
             workflow_definitions << [
                 name: workflow_name,
