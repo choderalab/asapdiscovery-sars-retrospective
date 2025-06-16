@@ -75,6 +75,7 @@ config.analyses.each { analysis_name, analysis_config ->
             }
         }
     }
+}
 
 workflow RUN_ANALYSIS {
     take:
