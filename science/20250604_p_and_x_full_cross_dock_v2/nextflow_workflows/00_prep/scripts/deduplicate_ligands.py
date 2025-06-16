@@ -6,13 +6,24 @@ Example usage:
 python deduplicate_ligands.py \
     --fragalysis-dir /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated \
     --prepped-path /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache \
-    --output-dir /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache_fixed
+    --output-dir /data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache_fixed \
+    --remove-covalent
 """
 from pathlib import Path
 import pandas as pd
 from datetime import datetime
 import shutil
 from asapdiscovery.modeling.protein_prep import PreppedComplex
+
+
+def get_duplicates(df):
+    from itertools import combinations
+
+    return_dict = {}
+    for col1, col2 in combinations(df.columns, 2):
+        counts = df.groupby(col1).nunique()
+        return_dict[f"{col1}_to_{col2}"] = counts[(counts[col2] > 1)].index.unique()
+    return return_dict
 
 
 def date_processor(date_string):
@@ -65,7 +76,10 @@ def get_records_from_complexes(complexes):
     required=True,
     help="Output directory for filtered structures",
 )
-def main(fragalysis_dir, prepped_path, output_dir):
+@click.option(
+    "--remove-covalent", is_flag=True, default=False, help="Remove covalent ligands"
+)
+def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
     """Filter and copy protein structures based on deduplication criteria."""
     pcs_to_load = list(Path(prepped_path).glob("./*/*.json"))
     if not pcs_to_load:
@@ -80,14 +94,23 @@ def main(fragalysis_dir, prepped_path, output_dir):
     # Create initial dataframe
     df = pd.DataFrame.from_records(get_records_from_complexes(pcs))
 
-    # Get duplicated SMILES
-    smiles_counts = df.groupby("SMILES").nunique()
-    dup_smiles = smiles_counts[
-        (smiles_counts["Compound_Name"] > 1) | (smiles_counts["Target_Name"] > 1)
-    ].index
+    # Remove covalent ligands if specified
+    if remove_covalent:
+        data = pd.read_csv(
+            Path(fragalysis_dir) / "extra_files" / "Mpro_compound_tracker_csv.csv"
+        )
+        relevant_data = data[data["Compound ID"].isin(df.Compound_Name.unique())]
+        suspected_covalent = relevant_data[
+            relevant_data.why_suspected_SMILES == "Covalent"
+        ]["Compound ID"].unique()
+        noncovalent = df[~df.Compound_Name.isin(suspected_covalent)]
 
-    # Process duplicates
-    ordered_df = df[df.SMILES.isin(dup_smiles)].sort_values(["SMILES", "Target_Name"])
+        covalent_target_names = set(df.Target_Name.unique()) - set(
+            noncovalent.Target_Name.unique()
+        )
+        click.echo(
+            f"Removing {len(suspected_covalent)} covalent compounds with {len(covalent_target_names)} associated crystal structures."
+        )
 
     # Load and process dates
     soaks_path = Path(fragalysis_dir) / "extra_files" / "Mpro_soaks.csv"
@@ -95,17 +118,31 @@ def main(fragalysis_dir, prepped_path, output_dir):
     date_dict = process_crystal_data(soaks)
 
     # Add dates and find structures to keep
-    ordered_df["Date"] = ordered_df.Target_Name.apply(lambda x: date_dict[x[:-3]])
-    to_keep = ordered_df.sort_values("Date").groupby(["SMILES"]).head(1)
-    targets_to_keep = set(to_keep.Target_Name.unique())
-    all_targets = set(df.Target_Name.unique())
-    all_duped_targets = set(ordered_df.Target_Name.unique())
-    non_duped_targets = all_targets - all_duped_targets
-    targets_to_remove = all_duped_targets - targets_to_keep
-    all_targets_to_keep = non_duped_targets.union(targets_to_keep)
-    click.echo(f"Total SMILES with duplicates: {ordered_df.SMILES.nunique()}")
-    click.echo(f"Targets to remove: {len(targets_to_remove)}")
-    click.echo(f"Total targets: {len(all_targets_to_keep)}")
+    df["Date"] = df.Target_Name.apply(lambda x: date_dict.get(x[:-3], None))
+
+    duplicates = get_duplicates(df)
+    for key, value in duplicates.items():
+        click.echo(f"Duplicate {key}: {len(value)} entries")
+
+    deduped = df.sort_values("Date").groupby("SMILES").head(1)
+    deduped = deduped.sort_values("Date").groupby("Compound_Name").head(1)
+
+    duplicates = get_duplicates(deduped)
+
+    failed = False
+    for key, value in duplicates.items():
+        if len(value) > 1:
+            # Only report duplicates with more than one entry
+            click.echo(f"Duplicate {key}: {len(value)} entries")
+            failed = True
+    if failed:
+        raise ValueError("Deduplication failed due to remaining duplicates.")
+
+    all_targets_to_keep = set(deduped.Target_Name.unique())
+
+    click.echo(
+        f"Keeping {len(all_targets_to_keep)} unique targets after deduplication."
+    )
 
     # Create output directory
     output_path = Path(output_dir)

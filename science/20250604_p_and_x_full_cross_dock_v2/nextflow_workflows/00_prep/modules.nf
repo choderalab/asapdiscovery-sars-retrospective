@@ -99,5 +99,6 @@ process DEDUPLICATE_LIGANDS {
     --fragalysis-dir ${fragalysis_dir} \
     --prepped-path ${prepped_path} \
     --output-dir deduped_cache \
+    --remove-covalent
     """
 }
