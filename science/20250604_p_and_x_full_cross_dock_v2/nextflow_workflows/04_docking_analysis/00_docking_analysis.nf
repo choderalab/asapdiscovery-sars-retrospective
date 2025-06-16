@@ -14,6 +14,13 @@ params.analysis_config = "docking_analysis_config.yaml"
 // Load configuration using YamlSlurper
 def config = new YamlSlurper().parse(file(params.analysis_config))
 
+// Helper function to generate workflow names
+def getWorkflowName(analysis, dataset, variant = null) {
+    def parts = [analysis, dataset]
+    if (variant) parts.add(variant)
+    return parts.join('_')
+}
+
 workflow RUN_DOCKING_ANALYSIS {
     take:
         name
@@ -29,7 +36,6 @@ workflow RUN_DOCKING_ANALYSIS {
             docking_results_json
         )
 
-        // Create channel from JSON files only after evaluator creation
         eval_inputs_ch = CREATE_EVALUATORS.output.evaluator_json_directory
             .flatMap { dir -> file("${dir}/*.json") }
             .buffer(size: params.K)
@@ -41,7 +47,6 @@ workflow RUN_DOCKING_ANALYSIS {
             eval_inputs_ch,
         )
 
-        // Collect all evaluator results before combining
         all_results = RUN_EVALUATORS.output.evaluator_results
             .flatten()
             .collect()
@@ -52,14 +57,8 @@ workflow RUN_DOCKING_ANALYSIS {
         )
 }
 
-// Helper function to generate workflow names
-def getWorkflowName(analysis, dataset, variant = null) {
-    def parts = [analysis, dataset]
-    if (variant) parts.add(variant)
-    return parts.join('_')
-}
-
-// Generate workflows dynamically based on config
+// Create workflow definitions first
+def workflow_definitions = []
 config.analyses.each { analysis_name, analysis_config ->
     analysis_config.each { variant_name, variant_config ->
         variant_config.enabled_datasets.each { dataset_name ->
@@ -68,31 +67,35 @@ config.analyses.each { analysis_name, analysis_config ->
             def dataset_parquet = "${params.combinedDockingResultsPath}/${dataset_name}.parquet"
             def dataset_json = "${params.combinedDockingResultsPath}/${dataset_name}.json"
 
-            workflow."${workflow_name}" = {
-                RUN_DOCKING_ANALYSIS(
-                    workflow_name,
-                    dataset_parquet,
-                    dataset_json,
-                    variant_config.settings
-                )
-            }
+            workflow_definitions << [
+                name: workflow_name,
+                parquet: dataset_parquet,
+                json: dataset_json,
+                settings: variant_config.settings
+            ]
         }
     }
 }
 
-// Rest of your script remains the same, but fix the RUN_ANALYSIS workflow:
+// Define individual workflows
+workflow_definitions.each { def workflow_def ->
+    workflow."${workflow_def.name}" = {
+        RUN_DOCKING_ANALYSIS(
+            workflow_def.name,
+            workflow_def.parquet,
+            workflow_def.json,
+            workflow_def.settings
+        )
+    }
+}
+
 workflow RUN_ANALYSIS {
     take:
         setup_analysis_check
 
     main:
-        // Dynamically call all enabled workflows
-        config.analyses.each { analysis_name, analysis_config ->
-            analysis_config.each { variant_name, variant_config ->
-                variant_config.enabled_datasets.each { dataset_name ->
-                    workflow."${getWorkflowName(analysis_name, dataset_name, variant_name)}"()
-                }
-            }
+        workflow_definitions.each { def workflow_def ->
+            workflow."${workflow_def.name}"()
         }
 }
 
