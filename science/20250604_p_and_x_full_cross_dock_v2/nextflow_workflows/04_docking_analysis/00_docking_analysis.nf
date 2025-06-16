@@ -102,7 +102,7 @@ def workflow_ch = Channel.fromList(workflow_definitions)
 
 workflow RUN_ANALYSIS {
     take:
-        setup_analysis_check = Channel.empty()
+        setup_analysis_check
 
     main:
         workflow_ch.map { workflow_def ->
