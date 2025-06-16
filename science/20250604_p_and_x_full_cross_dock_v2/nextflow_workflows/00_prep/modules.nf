@@ -1,6 +1,6 @@
 process PREP_FRAGALYSIS {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.fragalysisCache}"}
-    conda "${params.asap}"
+    conda "${params.drugforge}"
     tag "prep-fragalysis"
     clusterOptions '-c 32 --mem=128G --time=04:00:00'
 
@@ -25,7 +25,7 @@ process PREP_FRAGALYSIS {
 }
 process PREP_CACHE_FOR_DOCKING {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.fixedFragalysisCache}"}
-    conda "${params.asap}"
+    conda "${params.drugforge}"
     tag "prep-cache-for-docking"
     label 'local'
 
@@ -42,7 +42,7 @@ process PREP_CACHE_FOR_DOCKING {
 }
 process GENERATE_COMBINED_LIGAND_FILES {
     publishDir "${params.ligandFiles}", mode: 'copy', overwrite: true
-    conda "${params.asap}"
+    conda "${params.drugforge}"
     tag "generate-ligand-files"
     label 'local'
 
@@ -61,7 +61,7 @@ process GENERATE_COMBINED_LIGAND_FILES {
 }
 process GENERATE_SPLIT_LIGAND_FILES {
     publishDir "${params.ligandFiles}", mode: 'copy', overwrite: true
-    conda "${params.asap}"
+    conda "${params.drugforge}"
     tag "generate-ligand-files"
     label 'local'
 
@@ -82,7 +82,7 @@ process GENERATE_SPLIT_LIGAND_FILES {
 
 process DEDUPLICATE_LIGANDS {
     publishDir "${params.dataPath}", mode: 'copy', overwrite: true, saveAs: {fn -> "${params.fixedFragalysisCache}"}
-    conda "${params.asap}"
+    conda "${params.drugforge}"
     tag "deduplicate-ligands"
     label 'local'
 
