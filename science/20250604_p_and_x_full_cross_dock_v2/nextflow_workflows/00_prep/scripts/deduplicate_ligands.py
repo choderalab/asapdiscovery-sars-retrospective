@@ -14,6 +14,7 @@ import pandas as pd
 from datetime import datetime
 import shutil
 from asapdiscovery.modeling.protein_prep import PreppedComplex
+from harbor.analysis.utils import FileLogger
 
 
 def get_duplicates(df):
@@ -81,12 +82,16 @@ def get_records_from_complexes(complexes):
 )
 def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
     """Filter and copy protein structures based on deduplication criteria."""
+    logger = FileLogger(
+        "deduplicate_ligands", logfile="deduplicate_ligands.log"
+    ).getLogger()
+
     pcs_to_load = list(Path(prepped_path).glob("./*/*.json"))
     if not pcs_to_load:
-        click.echo("No prepped complexes found to load.")
+        logger.info("No prepped complexes found to load.")
         return
 
-    click.echo(f"Found {len(pcs_to_load)} prepped complexes to load.")
+    logger.info(f"Found {len(pcs_to_load)} prepped complexes to load.")
 
     # Load Fragalysis data
     pcs = [PreppedComplex.from_json_file(f) for f in pcs_to_load]
@@ -108,9 +113,10 @@ def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
         covalent_target_names = set(df.Target_Name.unique()) - set(
             noncovalent.Target_Name.unique()
         )
-        click.echo(
+        logger.info(
             f"Removing {len(suspected_covalent)} covalent compounds with {len(covalent_target_names)} associated crystal structures."
         )
+        df = noncovalent
 
     # Load and process dates
     soaks_path = Path(fragalysis_dir) / "extra_files" / "Mpro_soaks.csv"
@@ -122,7 +128,7 @@ def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
 
     duplicates = get_duplicates(df)
     for key, value in duplicates.items():
-        click.echo(f"Duplicate {key}: {len(value)} entries")
+        logger.info(f"Duplicate {key}: {len(value)} entries")
 
     deduped = df.sort_values("Date").groupby("SMILES").head(1)
     deduped = deduped.sort_values("Date").groupby("Compound_Name").head(1)
@@ -133,14 +139,14 @@ def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
     for key, value in duplicates.items():
         if len(value) > 1:
             # Only report duplicates with more than one entry
-            click.echo(f"Duplicate {key}: {len(value)} entries")
+            logger.info(f"Duplicate {key}: {len(value)} entries")
             failed = True
     if failed:
         raise ValueError("Deduplication failed due to remaining duplicates.")
 
     all_targets_to_keep = set(deduped.Target_Name.unique())
 
-    click.echo(
+    logger.info(
         f"Keeping {len(all_targets_to_keep)} unique targets after deduplication."
     )
 
@@ -164,9 +170,9 @@ def main(fragalysis_dir, prepped_path, output_dir, remove_covalent):
         else:
             skipped += 1
 
-    click.echo(f"Copied {copied} files")
-    click.echo(f"Skipped {skipped} files")
-    click.echo(f"Total files processed: {copied + skipped}")
+    logger.info(f"Copied {copied} files")
+    logger.info(f"Skipped {skipped} files")
+    logger.info(f"Total files processed: {copied + skipped}")
 
 
 if __name__ == "__main__":
