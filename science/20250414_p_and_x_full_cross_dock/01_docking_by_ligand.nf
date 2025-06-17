@@ -4,7 +4,7 @@ include {
     CROSS_DOCK_BY_LIGAND as CROSS_DOCK_BY_LIGAND_POSIT
 } from "./modules.nf"
 
-params.numPoses = 1
+params.numPoses = -1
 
 workflow {
     // load in input structure dir
