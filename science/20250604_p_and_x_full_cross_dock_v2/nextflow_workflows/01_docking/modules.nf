@@ -2,12 +2,11 @@ process CROSS_DOCK_BY_LIGAND {
     publishDir "${params.dockedFiles}/${posit_method}_${num_poses}_poses", mode: 'link', overwrite: true
     conda "${params.drugforge}"
     tag "cross-dock ${compound_name}"
-//     label 'local'
     clusterOptions '--partition "cpu" --cpus-per-task=32'
-    errorStrategy { task.exitStatus == 140 ? 'retry' : 'ignore' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
+    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
 
     // Dynamic memory allocation
-    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 256.GB }
 
     // Dynamic time allocation
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
