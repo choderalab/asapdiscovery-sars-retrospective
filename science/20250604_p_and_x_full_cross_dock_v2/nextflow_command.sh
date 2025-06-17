@@ -1,1 +1,0 @@
-nextflow 00_fragalysis_prep.nf -with-report -resume
