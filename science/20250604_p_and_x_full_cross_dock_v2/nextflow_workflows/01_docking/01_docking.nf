@@ -2,9 +2,9 @@
 include {
     CROSS_DOCK_BY_LIGAND
 } from "./modules.nf"
-params.take = 2
-params.test_cache = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_cache_fixed_test"
-params.test_dir = "/data1/choderaj/paynea/asap-datasets/full_cross_dock/mpro_fragalysis-04-01-24_curated_test"
+params.take = -1
+params.test_cache = "/data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache_fixed"
+params.test_dir = "/data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated"
 
 workflow RUN_LIGAND_DOCKING {
     take:
@@ -55,6 +55,14 @@ workflow POSIT_MULTIPOSE {
     )
 }
 
+workflow POSIT_SINGLE_POSE {
+    RUN_LIGAND_DOCKING(
+        1,
+        'ALL',
+        'PairwiseSelector'
+    )
+}
+
 workflow FRED_SINGLE_POSE {
     RUN_LIGAND_DOCKING(
         1,
@@ -66,5 +74,6 @@ workflow FRED_SINGLE_POSE {
 workflow {
     // Run workflows
     POSIT_MULTIPOSE()
+    POSIT_SINGLE_POSE()
     FRED_SINGLE_POSE()
 }
