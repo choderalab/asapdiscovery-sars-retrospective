@@ -2,7 +2,7 @@
 include {
     CROSS_DOCK_BY_LIGAND
 } from "./modules.nf"
-params.take = 1
+params.take = -1
 params.test_cache = "/data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated_cache_fixed"
 params.test_dir = "/data1/choderaj/paynea/asap-datasets/full_cross_dock_v2/mpro_fragalysis-04-01-24_curated"
 
