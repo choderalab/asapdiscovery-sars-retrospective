@@ -46,12 +46,16 @@ workflow RUN_DOCKING_ANALYSIS {
 }
 dataset_names = ["posit_single_pose": "ALL_1_poses"]
 
-def results = []
+def results = [:]
 dataset_names.each { label, name ->
     def parquet = "${params.dataPath}/${name}.parquet"
     def json = "${params.dataPath}/${name}.json"
 
-    results << [label: [name: name, docking_results_parquet: parquet, docking_results_json: json]]
+    results[label] = [  // Store directly in map with label as key
+        name: name,
+        docking_results_parquet: parquet,
+        docking_results_json: json
+    ]
 }
 
 // Print dataset definitions
