@@ -44,10 +44,30 @@ workflow RUN_DOCKING_ANALYSIS {
             all_results
         )
 }
+dataset_names = ["posit_single_pose": "ALL_1_poses"]
 
-params.posit = "ALL_1_poses"
-params.posit.parquet = "${params.dataPath}/${params.posit}_parquet"
-params.posit.json = "${params.dataPath}/${params.posit}_json"
+def results = []
+dataset_names.each { label, name ->
+    def parquet = "${params.dataPath}/${name}.parquet"
+    def json = "${params.dataPath}/${name}.json"
+
+    results << [label: [name: name, docking_results_parquet: parquet, docking_results_json: json]]
+}
+
+// Print dataset definitions
+println "\nDataset Definitions:"
+println "===================="
+results.each { def dataset ->
+    println """
+    Label: ${dataset.label}
+    Name: ${dataset.name}
+    Parquet: ${dataset.docking_results_parquet}
+    JSON: ${dataset.docking_results_json}
+    -------------------"""
+}
+
+
+
 
 // workflow DATESPLIT_POSIT {
 //     RUN_DOCKING_ANALYSIS(params.all_sim_parquet, params.all_sim_json, params.datesplit_settings)
