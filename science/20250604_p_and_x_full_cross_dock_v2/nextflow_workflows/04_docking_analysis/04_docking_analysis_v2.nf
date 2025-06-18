@@ -88,9 +88,11 @@ settings_map.each { label, filename ->
     settings[label] = [label: label, filename: "${params.evaluator_configs}/${filename}"]
 }
 
+CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW().out.collect()
+
 workflow {
         RUN_DOCKING_ANALYSIS(
-            "${results.posit_single_pose.name}_${settings.datesplit.name}",
+            "${results.posit_single_pose.name}_${settings.datesplit.label}",
             results.posit_single_pose.docking_results_parquet,
             results.posit_single_pose.docking_results_json,
             settings.datesplit.filename
