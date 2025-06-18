@@ -88,7 +88,7 @@ settings_map.each { label, filename ->
     settings[label] = [label: label, filename: "${params.evaluator_configs}/${filename}"]
 }
 
-CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW().out.collect()
+CREATE_EVALUATOR_FACTORY_SETTINGS()
 
 workflow {
         RUN_DOCKING_ANALYSIS(
