@@ -13,7 +13,6 @@ workflow RUN_DOCKING_ANALYSIS {
         docking_results_parquet
         docking_results_json
         evaluator_settings
-        settings_check
 
     main:
         CREATE_EVALUATORS(
@@ -89,6 +88,10 @@ settings_map.each { label, filename ->
     settings[label] = [label: label, filename: "${params.evaluator_configs}/${filename}"]
 }
 
+workflow CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW {
+    CREATE_EVALUATOR_FACTORY_SETTINGS()
+}
+
 workflow RUN_ANALYSIS {
     take:
         result
@@ -99,7 +102,6 @@ workflow RUN_ANALYSIS {
             result.docking_results_parquet,
             result.docking_results_json,
             setting.filename,
-             CREATE_EVALUATOR_FACTORY_SETTINGS().out.collect()
         )
 }
 
