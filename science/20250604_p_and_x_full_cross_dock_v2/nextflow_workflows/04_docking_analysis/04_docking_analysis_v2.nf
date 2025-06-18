@@ -89,18 +89,11 @@ settings_map.each { label, filename ->
 }
 
 workflow {
-    take:
-        name = "${results.posit_single_pose.name}_${settings.datesplit.name}"
-        docking_results_parquet = results.posit_single_pose.docking_results_parquet
-        docking_results_json = results.posit_single_pose.docking_results_json
-        evaluator_settings = settings.datesplit.filename
-
-    main:
         RUN_DOCKING_ANALYSIS(
-            name,
-            docking_results_parquet,
-            docking_results_json,
-            evaluator_settings
+            "${results.posit_single_pose.name}_${settings.datesplit.name}",
+            results.posit_single_pose.docking_results_parquet,
+            results.posit_single_pose.docking_results_json,
+            settings.datesplit.filename
         )
 }
 
