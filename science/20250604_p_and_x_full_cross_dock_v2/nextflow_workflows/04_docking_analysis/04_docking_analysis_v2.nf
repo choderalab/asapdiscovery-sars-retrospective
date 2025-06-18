@@ -88,7 +88,7 @@ settings_map.each { label, filename ->
     settings[label] = [name: name, filename: "${params.evaluator_configs}/${filename}"]
 }
 
-workflow "${results.posit_single_pose.name}_"${settings.datesplit.name} {
+workflow {
     take:
         name = "${results.posit_single_pose.name}_${settings.datesplit.name}"
         docking_results_parquet = results.posit_single_pose.docking_results_parquet
