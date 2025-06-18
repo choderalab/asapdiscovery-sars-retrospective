@@ -13,6 +13,7 @@ workflow RUN_DOCKING_ANALYSIS {
         docking_results_parquet
         docking_results_json
         evaluator_settings
+        settings_check
 
     main:
         CREATE_EVALUATORS(
@@ -88,16 +89,21 @@ settings_map.each { label, filename ->
     settings[label] = [label: label, filename: "${params.evaluator_configs}/${filename}"]
 }
 
-CREATE_EVALUATOR_FACTORY_SETTINGS()
-
-workflow {
+workflow RUN_ANALYSIS {
+    take:
+        result
+        setting
+    main:
         RUN_DOCKING_ANALYSIS(
-            "${results.posit_single_pose.name}_${settings.datesplit.label}",
-            results.posit_single_pose.docking_results_parquet,
-            results.posit_single_pose.docking_results_json,
-            settings.datesplit.filename
+            "${result.name}_${setting.label}",
+            result.docking_results_parquet,
+            result.docking_results_json,
+            setting.filename,
+             CREATE_EVALUATOR_FACTORY_SETTINGS().out.collect()
         )
 }
+
+workflow DATESPLIT_POSIT_SINGLE_POSE {RUN_ANALYSIS(results.posit_single_pose, settings.datesplit)}
 
 
 
