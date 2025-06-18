@@ -44,7 +44,10 @@ workflow RUN_DOCKING_ANALYSIS {
             all_results
         )
 }
-dataset_names = ["posit_single_pose": "ALL_1_poses"]
+dataset_names = [
+"posit_single_pose": "ALL_1_poses",
+// "fred_single_pose": "FRED_1_poses",
+]
 
 def results = [:]
 dataset_names.each { label, name ->
@@ -70,6 +73,36 @@ results.each { label, data ->
     -------------------"""
 }
 
+settings_map = [
+"datesplit": "reference_split_comparison.yaml",
+"x_to_x": "x_to_x_scaffold_split.yaml",
+"x_to_x_5": "x_to_x_scaffold_split_5_refs.yaml",
+"x_to_y": "x_to_y_scaffold_split.yaml",
+"x_to_y_5": "x_to_y_scaffold_split_5_refs.yaml",
+"ecfp4": "increasing_similarity_ecfp4.yaml",
+"mcs": "increasing_similarity_mcs.yaml",
+"tc": "increasing_similarity_tanimoto_combo_aligned.yaml",]
+
+def settings = [:]
+settings_map.each { label, filename ->
+    settings[label] = [name: name, filename: "${params.evaluator_configs}/${filename}"]
+}
+
+workflow "${results.posit_single_pose.name}_"${settings.datesplit.name} {
+    take:
+        name = "${results.posit_single_pose.name}_${settings.datesplit.name}"
+        docking_results_parquet = results.posit_single_pose.docking_results_parquet
+        docking_results_json = results.posit_single_pose.docking_results_json
+        evaluator_settings = settings.datesplit.filename
+
+    main:
+        RUN_DOCKING_ANALYSIS(
+            name,
+            docking_results_parquet,
+            docking_results_json,
+            evaluator_settings
+        )
+}
 
 
 
