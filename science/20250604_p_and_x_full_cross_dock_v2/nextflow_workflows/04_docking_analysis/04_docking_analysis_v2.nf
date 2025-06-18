@@ -61,10 +61,10 @@ dataset_names.each { label, name ->
 // Print dataset definitions
 println "\nDataset Definitions:"
 println "===================="
-results.each { name, data ->
+results.each { label, data ->
     println """
-    Name: ${name}
-    Label: ${data.label}
+    Name: ${label}
+    Label: ${data.name}
     Parquet: ${data.docking_results_parquet}
     JSON: ${data.docking_results_json}
     -------------------"""
