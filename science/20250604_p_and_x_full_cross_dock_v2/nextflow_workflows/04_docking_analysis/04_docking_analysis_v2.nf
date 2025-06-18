@@ -85,7 +85,7 @@ settings_map = [
 
 def settings = [:]
 settings_map.each { label, filename ->
-    settings[label] = [name: name, filename: "${params.evaluator_configs}/${filename}"]
+    settings[label] = [label: label, filename: "${params.evaluator_configs}/${filename}"]
 }
 
 workflow {
