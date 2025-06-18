@@ -103,7 +103,7 @@ workflow RUN_ANALYSIS {
         )
 }
 
-workflow DATESPLIT_POSIT_SINGLE_POSE {RUN_ANALYSIS(results.posit_single_pose, settings.datesplit)}
+workflow DATESPLIT_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.datesplit)}
 
 
 
