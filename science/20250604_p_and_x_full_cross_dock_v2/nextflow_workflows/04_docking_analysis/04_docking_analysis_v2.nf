@@ -51,8 +51,8 @@ dataset_names = [
 
 def results = [:]
 dataset_names.each { label, name ->
-    def parquet = "${params.dataPath}/${name}.parquet"
-    def json = "${params.dataPath}/${name}.json"
+    def parquet = "${params.combinedDockingResultsPath}/${name}.parquet"
+    def json = "${params.combinedDockingResultsPath}/${name}.json"
 
     results[label] = [  // Store directly in map with label as key
         name: name,
