@@ -1,6 +1,8 @@
 datasets:
-  fred:
-    name: "FRED_1_poses"
+#  fred:
+#    name: "FRED_1_poses"
+  posit:
+    name: "ALL_1_poses"
 
 analyses:
   datesplit:
