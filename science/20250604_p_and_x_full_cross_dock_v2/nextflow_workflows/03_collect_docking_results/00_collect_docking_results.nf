@@ -42,7 +42,7 @@ workflow PROCESS_FRED {
     COMBINE_DOCKING_RESULTS('FRED_1_poses')
 }
 
-workflow PROCESS_ALL {
+workflow PROCESS_ALL_MULTIPOSE {
     COMBINE_DOCKING_RESULTS('ALL_50_poses')
 }
 workflow PROCESS_ALL_SINGLE_POSE {
@@ -51,5 +51,5 @@ workflow PROCESS_ALL_SINGLE_POSE {
 
 workflow {
     PROCESS_FRED()
-    PROCESS_ALL()
+    PROCESS_ALL_SINGLE_POSE()
 }
