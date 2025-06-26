@@ -55,10 +55,6 @@ def main(
     report_dict = {"err_msg": []}
 
     pose_df = pd.concat([pd.read_csv(csv) for csv in pose_data])
-    query_lig_set = set(pose_df["Query_Ligand"].unique())
-    ref_lig_set = set(pose_df["Reference_Structure"].unique())
-    report_dict["never_docked"] = list(ref_lig_set - query_lig_set)
-    report_dict["never_used_as_ref"] = list(query_lig_set - ref_lig_set)
 
     # Add Date Information
     logger.info("Adding date information")
@@ -78,6 +74,47 @@ def main(
     with open(structure_cmpd_dict, "r") as f:
         structure_cmpd_dict = json.load(f)
 
+    # combine data
+    structure_cmpd_date_df = pd.DataFrame(
+        structure_cmpd_dict.items(), columns=["Structure", "Ligand"]
+    )
+    structure_cmpd_date_df["Date"] = [
+        date_dict.get(x[:-3], None) for x in structure_cmpd_date_df["Structure"]
+    ]
+
+    # Fix incorrect compound_id pulled by MetaStructureFactory from the metadata.csv
+    incorrect_cmpd_df = pose_df.groupby("Reference_Structure")[
+        ["Reference_Structure", "Reference_Ligand"]
+    ].head(1)
+
+    incorrect_cmpd_df["Correct_Ligand"] = incorrect_cmpd_df[
+        "Reference_Structure"
+    ].apply(lambda x: structure_cmpd_dict.get(x[:-3], None))
+
+    incorrect_cmpd_df = incorrect_cmpd_df[
+        incorrect_cmpd_df["Reference_Ligand"] != incorrect_cmpd_df["Correct_Ligand"]
+    ]
+
+    # replace incorrect ligands in pose_df
+    if not incorrect_cmpd_df.empty:
+        logger.warning(
+            "Found incorrect Reference_Ligand in PoseData, replacing with correct ligand."
+        )
+        pose_df = pose_df.merge(
+            incorrect_cmpd_df[["Reference_Structure", "Correct_Ligand"]],
+            on="Reference_Structure",
+            how="left",
+        )
+        pose_df["Reference_Ligand"] = pose_df["Correct_Ligand"].fillna(
+            pose_df["Reference_Ligand"]
+        )
+        pose_df.drop(columns=["Correct_Ligand"], inplace=True)
+
+    # drop any query ligands that are not in the reference structures
+    pose_df = pose_df[
+        pose_df["Query_Ligand"].isin(pose_df["Reference_Ligand"].unique())
+    ]
+
     refdf = pd.DataFrame(
         {
             "Reference_Structure": list(pose_df.Reference_Structure.unique()),
@@ -91,6 +128,20 @@ def main(
             ],
         }
     )
+
+    # add any with missing dates to report
+    missing_dates = refdf[refdf["Date"].isnull()]
+    if not missing_dates.empty:
+        report_dict["err_msg"].append(
+            "The following Reference_Structure had no date in date_dict.json:"
+        )
+        report_dict["missing_dates"] = missing_dates["Structure"].tolist()
+
+    query_lig_set = set(pose_df["Query_Ligand"].unique())
+    ref_lig_set = set(pose_df["Reference_Ligand"].unique())
+
+    report_dict["never_docked"] = list(ref_lig_set - query_lig_set)
+    report_dict["never_used_as_ref"] = list(query_lig_set - ref_lig_set)
 
     ref_data = DataFrameModel(
         name="RefData",
