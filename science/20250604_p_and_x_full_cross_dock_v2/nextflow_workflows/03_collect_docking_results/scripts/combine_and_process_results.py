@@ -83,37 +83,77 @@ def main(
     ]
 
     # Fix incorrect compound_id pulled by MetaStructureFactory from the metadata.csv
-    incorrect_cmpd_df = pose_df.groupby("Reference_Structure")[
-        ["Reference_Structure", "Reference_Ligand"]
-    ].head(1)
-
-    incorrect_cmpd_df["Correct_Ligand"] = incorrect_cmpd_df[
-        "Reference_Structure"
-    ].apply(lambda x: structure_cmpd_dict.get(x[:-3], None))
-
-    incorrect_cmpd_df = incorrect_cmpd_df[
-        incorrect_cmpd_df["Reference_Ligand"] != incorrect_cmpd_df["Correct_Ligand"]
-    ]
-
-    # replace incorrect ligands in pose_df
-    if not incorrect_cmpd_df.empty:
-        logger.warning(
-            "Found incorrect Reference_Ligand in PoseData, replacing with correct ligand."
+    ref_to_ligand_df = pose_df.groupby("Reference_Structure").head(1)
+    incorect_ref_to_ligand_dict = {
+        ref: lig
+        for ref, lig in zip(
+            ref_to_ligand_df.Reference_Structure, ref_to_ligand_df.Reference_Ligand
         )
-        pose_df = pose_df.merge(
-            incorrect_cmpd_df[["Reference_Structure", "Correct_Ligand"]],
-            on="Reference_Structure",
-            how="left",
-        )
-        pose_df["Reference_Ligand"] = pose_df["Correct_Ligand"].fillna(
-            pose_df["Reference_Ligand"]
-        )
-        pose_df.drop(columns=["Correct_Ligand"], inplace=True)
+    }
+    incorrect_lig_to_correct_lig_dict = {
+        lig: structure_cmpd_dict.get(ref[:-3])
+        for ref, lig in incorect_ref_to_ligand_dict.items()
+    }
+    correct_ref_to_ligand_dict = {
+        ref: structure_cmpd_dict.get(ref[:-3])
+        for ref in pose_df.Reference_Structure.unique()
+    }
+
+    # make an incorrect_to_correct ligand mapping
+    pose_df["Reference_Ligand"] = pose_df["Reference_Ligand"].replace(
+        incorrect_lig_to_correct_lig_dict
+    )
+    pose_df["Query_Ligand"] = pose_df["Query_Ligand"].replace(
+        incorrect_lig_to_correct_lig_dict
+    )
 
     # drop any query ligands that are not in the reference structures
     pose_df = pose_df[
         pose_df["Query_Ligand"].isin(pose_df["Reference_Ligand"].unique())
     ]
+
+    # add padding to pose_df
+    if add_padding:
+        logger.info("Padding the data with the missing pairs")
+        query_ligs = pose_df["Query_Ligand"].unique()
+        ref_structures = pose_df["Reference_Structure"].unique()
+
+        posed_pairs = {
+            pose_df["Query_Ligand"][i]: pose_df["Reference_Structure"][i]
+            for i in range(len(pose_df))
+        }
+
+        from itertools import product
+
+        possible_pairs = set(product(ref_structures, query_ligs))
+
+        missing_pairs = possible_pairs - set(posed_pairs.items())
+
+        null_df = pd.DataFrame(
+            {
+                "Reference_Structure": [i for i, j in missing_pairs],
+                "Query_Ligand": [j for i, j in missing_pairs],
+                "Reference_Ligand": [
+                    correct_ref_to_ligand_dict[i] for i, j in missing_pairs
+                ],
+                "RMSD": np.nan,
+                "Pose_ID": 0,
+                "POSIT_Method": "Failed",
+            }
+        )
+
+        pose_df = pd.concat([pose_df, null_df])
+
+        refs = pose_df.Reference_Ligand
+        queries = pose_df.Query_Ligand
+        pairs = {(ref, query) for ref, query in zip(refs, queries)}
+
+        padding_success = len(pairs) == len(possible_pairs)
+        report_dict["padding_success"] = padding_success
+        if not padding_success:
+            report_dict["err_msg"].append(
+                f"Expected {len(possible_pairs)} pairs after padding, got {len(pairs)} pairs"
+            )
 
     refdf = pd.DataFrame(
         {
