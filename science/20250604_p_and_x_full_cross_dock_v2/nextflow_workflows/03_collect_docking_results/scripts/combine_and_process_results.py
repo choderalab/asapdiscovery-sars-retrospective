@@ -118,13 +118,17 @@ def main(
         query_ligs = pose_df["Query_Ligand"].unique()
         ref_structures = pose_df["Reference_Structure"].unique()
 
-        posed_pairs = dict(zip(pose_df["Query_Ligand"], pose_df["Reference_Structure"]))
+        posed_pairs = set(zip(pose_df["Query_Ligand"], pose_df["Reference_Structure"]))
 
         from itertools import product
 
-        possible_pairs = set(product(ref_structures, query_ligs))
+        possible_pairs = {
+            (query, ref) for query, ref in product(query_ligs, ref_structures)
+        }
 
-        missing_pairs = possible_pairs - set(posed_pairs.items())
+        missing_pairs = possible_pairs - posed_pairs
+
+        logger.info(f"Found {len(missing_pairs)} missing pairs to pad")
 
         null_df = pd.DataFrame(
             [
@@ -136,7 +140,7 @@ def main(
                     "Pose_ID": 0,
                     "POSIT_Method": "Failed",
                 }
-                for ref_struct, query_lig in missing_pairs
+                for query_lig, ref_struct in missing_pairs
             ]
         )
 
@@ -147,9 +151,13 @@ def main(
         pairs = {(ref, query) for ref, query in zip(refs, queries)}
 
         padding_success = len(pairs) == len(possible_pairs)
+
+        report_dict["padding_pairs"] = [
+            f"{query} - {ref}" for query, ref in missing_pairs
+        ]
         report_dict["padding_success"] = padding_success
         if not padding_success:
-            report_dict["err_msg"].append(
+            raise ValueError(
                 f"Expected {len(possible_pairs)} pairs after padding, got {len(pairs)} pairs"
             )
 
