@@ -1,12 +1,11 @@
 #!/usr/bin/env nextflow
-
 include {
     CALCULATE_RMSD
     COMBINE_AND_PROCESS_RESULTS
     CONVERT_TO_DOCKING_DATA_MODEL
 } from "./modules.nf"
 
-workflow CALCULATE_RMSD_WORKFLOW {
+workflow COMBINE_DOCKING_RESULTS {
     take:
         name
 
@@ -20,56 +19,37 @@ workflow CALCULATE_RMSD_WORKFLOW {
         ligand_file_3d = Channel
             .fromPath("${params.ligandFiles}/${params.ligandFile3d}", type: 'file')
 
+        // Combine each docked directory with the ligand file
         input_pairs = docked_dirs.combine(ligand_file_3d)
+
+        // Run CALCULATE_RMSD for each pair
         CALCULATE_RMSD(input_pairs)
 
-    emit:
-        rmsd_csvs = CALCULATE_RMSD.out.rmsd_csv
-}
+        // Collect the results into a single value
+        input_csvs = CALCULATE_RMSD.out.rmsd_csv.collect()
 
-workflow PROCESS_RESULTS_WORKFLOW {
-    take:
-        name
-        rmsd_csvs
-
-    main:
-        input_csvs = rmsd_csvs.collect()
+        // Convert method to a channel
         name_ch = Channel.value(name)
+
         COMBINE_AND_PROCESS_RESULTS(
             input_csvs,
             name_ch
         )
 }
 
-// Individual dataset workflows for RMSD calculation
-workflow CALCULATE_FRED_RMSD {
-    CALCULATE_RMSD_WORKFLOW('FRED_1_poses')
+// Create named entry points for each dataset
+workflow PROCESS_FRED {
+    COMBINE_DOCKING_RESULTS('FRED_1_poses')
 }
 
-workflow CALCULATE_ALL_MULTIPOSE_RMSD {
-    CALCULATE_RMSD_WORKFLOW('ALL_50_poses')
+workflow PROCESS_ALL_MULTIPOSE {
+    COMBINE_DOCKING_RESULTS('ALL_50_poses')
+}
+workflow PROCESS_ALL_SINGLE_POSE {
+    COMBINE_DOCKING_RESULTS('ALL_1_poses')
 }
 
-workflow CALCULATE_ALL_SINGLE_POSE_RMSD {
-    CALCULATE_RMSD_WORKFLOW('ALL_1_poses')
-}
-
-// Individual dataset workflows for processing results
-workflow PROCESS_FRED_RESULTS {
-    PROCESS_RESULTS_WORKFLOW('FRED_1_poses', Channel.fromPath('path/to/rmsd/csvs/FRED_1_poses/*.csv'))
-}
-
-workflow PROCESS_ALL_SINGLE_POSE_RESULTS {
-    PROCESS_RESULTS_WORKFLOW('ALL_1_poses', Channel.fromPath('path/to/rmsd/csvs/ALL_1_poses/*.csv'))
-}
-
-// Example workflow entries
-workflow calculate_rmsd {
-    CALCULATE_FRED_RMSD()
-    CALCULATE_ALL_SINGLE_POSE_RMSD()
-}
-
-workflow process_results {
-    PROCESS_FRED_RESULTS()
-    PROCESS_ALL_SINGLE_POSE_RESULTS()
+workflow {
+    PROCESS_FRED()
+    PROCESS_ALL_SINGLE_POSE()
 }
