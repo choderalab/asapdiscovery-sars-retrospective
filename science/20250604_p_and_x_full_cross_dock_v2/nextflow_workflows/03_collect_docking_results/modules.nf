@@ -22,12 +22,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     publishDir "${params.combinedDockingResultsPath}", mode: 'copy', overwrite: true
     conda "${params.drugforge}"
     tag "combine-and-process-results ${name}"
-    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' }
-    maxRetries 3
-    // Dynamic memory allocation
-    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 8.GB : 8.GB }
-    // Dynamic time allocation
-    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
+    label 'cpushort'
 
     input:
     path(dockedLigandRMSDs)
