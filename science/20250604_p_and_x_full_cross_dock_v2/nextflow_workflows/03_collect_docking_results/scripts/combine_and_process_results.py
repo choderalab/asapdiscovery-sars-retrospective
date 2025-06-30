@@ -118,10 +118,7 @@ def main(
         query_ligs = pose_df["Query_Ligand"].unique()
         ref_structures = pose_df["Reference_Structure"].unique()
 
-        posed_pairs = {
-            pose_df["Query_Ligand"][i]: pose_df["Reference_Structure"][i]
-            for i in range(len(pose_df))
-        }
+        posed_pairs = dict(zip(pose_df["Query_Ligand"], pose_df["Reference_Structure"]))
 
         from itertools import product
 
@@ -130,16 +127,17 @@ def main(
         missing_pairs = possible_pairs - set(posed_pairs.items())
 
         null_df = pd.DataFrame(
-            {
-                "Reference_Structure": [i for i, j in missing_pairs],
-                "Query_Ligand": [j for i, j in missing_pairs],
-                "Reference_Ligand": [
-                    correct_ref_to_ligand_dict[i] for i, j in missing_pairs
-                ],
-                "RMSD": np.nan,
-                "Pose_ID": 0,
-                "POSIT_Method": "Failed",
-            }
+            [
+                {
+                    "Reference_Structure": ref_struct,
+                    "Query_Ligand": query_lig,
+                    "Reference_Ligand": correct_ref_to_ligand_dict[ref_struct],
+                    "RMSD": np.nan,
+                    "Pose_ID": 0,
+                    "POSIT_Method": "Failed",
+                }
+                for ref_struct, query_lig in missing_pairs
+            ]
         )
 
         pose_df = pd.concat([pose_df, null_df])
