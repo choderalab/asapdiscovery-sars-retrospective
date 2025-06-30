@@ -1,10 +1,11 @@
 process CALCULATE_RMSD{
+    publishDir "${params.dockedLigandRMSDs}/${name}", mode: 'copy', overwrite: true
     conda "${params.asap}"
     tag "calculate-rmsds ${uuid}"
     label 'cpushort'
 
     input:
-    tuple val(method), val(uuid), path(docked_dir), path(ligand_file_3d)
+    tuple val(name), val(uuid), path(docked_dir), path(ligand_file_3d)
 
     output:
     path("*.csv"), emit: rmsd_csv
@@ -14,7 +15,7 @@ process CALCULATE_RMSD{
     python3 "${params.scripts}"/calculate_rmsd_from_docking_results.py \
     -d "${docked_dir}" \
     -l "${ligand_file_3d}" \
-    -o "${method}_${uuid}_rmsd_results.csv"
+    -o "${name}_${uuid}_rmsd_results.csv"
     """
 }
 process COMBINE_AND_PROCESS_RESULTS {
