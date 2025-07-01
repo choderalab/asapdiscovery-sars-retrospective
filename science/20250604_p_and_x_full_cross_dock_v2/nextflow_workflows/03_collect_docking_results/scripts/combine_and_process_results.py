@@ -219,10 +219,10 @@ def main(
     ):
         df = pd.read_csv(df_path)
         df["Query_Ligand"] = df["Query_Ligand"].apply(
-            lambda x: incorrect_lig_to_correct_lig_dict[x]
+            lambda x: incorrect_lig_to_correct_lig_dict.get(x, x)
         )
         df["Reference_Ligand"] = df["Reference_Ligand"].apply(
-            lambda x: incorrect_lig_to_correct_lig_dict[x]
+            lambda x: incorrect_lig_to_correct_lig_dict.get(x, x)
         )
         if deduplicate:
             df.groupby(common_key_cols + param_args).head(1)
