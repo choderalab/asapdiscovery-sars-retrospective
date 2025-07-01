@@ -225,7 +225,7 @@ def main(
             lambda x: incorrect_lig_to_correct_lig_dict.get(x, x)
         )
         if deduplicate:
-            df.groupby(common_key_cols + param_args).head(1)
+            df = df.groupby(common_key_cols + param_args).head(1)
         return df
 
     if tc_data:
