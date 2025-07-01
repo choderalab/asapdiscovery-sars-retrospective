@@ -21,7 +21,7 @@ process CREATE_EVALUATORS {
     conda "${params.harbor}"
     tag "create-evaluators ${name}"
     memory { 32.GB }
-    time { 2.m }
+    time { 20.m }
     label 'cpushort'
     cache 'lenient'
 
