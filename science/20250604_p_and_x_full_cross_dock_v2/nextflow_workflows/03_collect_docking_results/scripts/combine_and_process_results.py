@@ -266,6 +266,9 @@ def main(
             "Scaffold_Smarts",
             "Scaffold_Type",
         ]
+        query_data["Query_Ligand"] = query_data["Query_Ligand"].apply(
+            lambda x: incorrect_lig_to_correct_lig_dict.get(x, x)
+        )
         dfms.append(
             DataFrameModel(
                 name="QueryData",
@@ -287,6 +290,9 @@ def main(
             "Scaffold_Smarts",
             "Scaffold_Type",
         ]
+        ref_scaffold_df["Reference_Ligand"] = ref_scaffold_df["Reference_Ligand"].apply(
+            lambda x: incorrect_lig_to_correct_lig_dict.get(x, x)
+        )
         ref_scaffold_df = ref_scaffold_df.merge(
             ref_data.dataframe, on="Reference_Ligand", how="outer"
         )
