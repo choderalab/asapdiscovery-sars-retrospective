@@ -106,98 +106,68 @@ workflow RUN_ANALYSIS {
 }
 
 workflow DATESPLIT_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.datesplit)}
+workflow DATESPLIT_FRED {RUN_ANALYSIS(results.fred_single_pose, settings.datesplit)}
+workflow X_TO_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x)}
+workflow X_TO_X_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x_5)}
+workflow X_TO_Y_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_y)}
+workflow X_TO_Y_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_y_5)}
+workflow NOT_X_TO_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x)}
+workflow NOT_X_TO_X_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x_5)}
+workflow X_TO_NOT_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_y)}
+workflow INCREASING_SIMILARITY_TC_ALIGNED_POSIT {
+    RUN_ANALYSIS(results.posit_single_pose, settings.tc)
+}
+workflow INCREASING_SIMILARITY_TC_ALIGNED_FRED {
+    RUN_ANALYSIS(results.fred_single_pose, settings.tc)
+}
+workflow INCREASING_SIMILARITY_MCS_POSIT {
+    RUN_ANALYSIS(results.posit_single_pose, settings.mcs)
+}
+workflow INCREASING_SIMILARITY_MCS_FRED {
+    RUN_ANALYSIS(results.fred_single_pose, settings.mcs)
+}
+workflow INCREASING_SIMILARITY_ECFP4_POSIT {
+    RUN_ANALYSIS(results.posit_single_pose, settings.ecfp4)
+}
+workflow INCREASING_SIMILARITY_ECFP4_FRED {
+    RUN_ANALYSIS(results.fred_single_pose, settings.ecfp4)
+}
+workflow INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE {
+    RUN_ANALYSIS(results.posit_single_pose, settings.ecfp4)
+}
+workflow analyze_posit {
+    take:
+        setup_analysis_check
 
+    main:
+        DATESPLIT_POSIT()
+        X_TO_X_POSIT()
+        X_TO_X_POSIT_5_REFS()
+        X_TO_Y_POSIT()
+        X_TO_Y_POSIT_5_REFS()
+        NOT_X_TO_X_POSIT()
+        NOT_X_TO_X_POSIT_5_REFS()
+        X_TO_NOT_X_POSIT()
+        INCREASING_SIMILARITY_TC_ALIGNED_POSIT()
+        INCREASING_SIMILARITY_MCS_POSIT()
+        INCREASING_SIMILARITY_ECFP4_POSIT()
+        INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE()
+}
+workflow analyze_fred {
+    take:
+        setup_analysis_check
 
+    main:
+        DATESPLIT_FRED()
+        INCREASING_SIMILARITY_TC_ALIGNED_FRED()
+        INCREASING_SIMILARITY_MCS_FRED()
+        INCREASING_SIMILARITY_ECFP4_FRED()
+}
+workflow {
+    take:
+        setup_analysis_check
 
-// workflow DATESPLIT_POSIT {
-//     RUN_DOCKING_ANALYSIS(params.all_sim_parquet, params.all_sim_json, params.datesplit_settings)
-// }
-// workflow DATESPLIT_FRED {
-//     RUN_DOCKING_ANALYSIS('datesplit_fred', params.fred_sim_parquet, params.fred_sim_json, params.datesplit_settings)
-// }
-// workflow X_TO_X_POSIT {
-//     RUN_DOCKING_ANALYSIS('x_to_x_posit', params.all_sim_parquet, params.all_sim_json, params.x_to_x_scaffold_split)
-// }
-// workflow X_TO_X_POSIT_5_REFS {
-//     RUN_DOCKING_ANALYSIS('x_to_x_posit_5_refs', params.all_sim_parquet, params.all_sim_json, params.x_to_x_scaffold_split_5_refs)
-// }
-// workflow X_TO_Y_POSIT {
-//     RUN_DOCKING_ANALYSIS('x_to_y_posit', params.all_sim_parquet, params.all_sim_json, params.x_to_y_scaffold_split)
-// }
-// workflow X_TO_Y_POSIT_5_REFS {
-//     RUN_DOCKING_ANALYSIS('x_to_y_posit_5_refs', params.all_sim_parquet, params.all_sim_json, params.x_to_y_scaffold_split_5_refs)
-// }
-// workflow NOT_X_TO_X_POSIT {
-//     RUN_DOCKING_ANALYSIS('not_x_to_x_posit', params.all_sim_parquet, params.all_sim_json, params.not_x_to_x_scaffold_split)
-// }
-// workflow NOT_X_TO_X_POSIT_5_REFS {
-//     RUN_DOCKING_ANALYSIS('not_x_to_x_posit_5_refs', params.all_sim_parquet, params.all_sim_json, params.not_x_to_x_scaffold_split_5_refs)
-// }
-// workflow X_TO_NOT_X_POSIT {
-//     RUN_DOCKING_ANALYSIS('x_to_not_x_posit', params.all_sim_parquet, params.all_sim_json,  params.x_to_not_x_scaffold_split)
-// }
-// workflow INCREASING_SIMILARITY_TC_ALIGNED_POSIT{
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_tanimoto_combo_aligned_posit', params.all_sim_parquet, params.all_sim_json, params.increasing_similarity_tanimoto_combo_aligned)
-// }
-// workflow INCREASING_SIMILARITY_TC_ALIGNED_FRED{
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_tanimoto_combo_aligned_fred', params.fred_sim_parquet, params.fred_sim_json, params.increasing_similarity_tanimoto_combo_aligned)
-// }
-// workflow INCREASING_SIMILARITY_MCS_POSIT{
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_mcs_posit', params.all_sim_parquet, params.all_sim_json, params.increasing_similarity_mcs)
-// }
-// workflow INCREASING_SIMILARITY_MCS_FRED{
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_mcs_fred', params.fred_sim_parquet, params.fred_sim_json, params.increasing_similarity_mcs)
-// }
-// workflow INCREASING_SIMILARITY_ECFP4_POSIT{
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_posit', params.all_sim_parquet, params.all_sim_json, params.increasing_similarity_ecfp4)
-// }
-// workflow INCREASING_SIMILARITY_ECFP4_FRED{
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_fred', params.fred_sim_parquet, params.fred_sim_json, params.increasing_similarity_ecfp4)
-// }
-// workflow CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW {
-//     CREATE_EVALUATOR_FACTORY_SETTINGS()
-// }
-//
-// workflow INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE {
-//     RUN_DOCKING_ANALYSIS('increasing_similarity_ecfp4_posit_multipose', params.all_multipose_parquet, params.all_multipose_json, params.increasing_similarity_ecfp4)
-// }
-//
-// workflow RUN_DATESPLIT {
-//     DATESPLIT_POSIT()
-//     DATESPLIT_FRED()
-// }
-// workflow RUN_SCAFFOLD_SPLIT {
-//     X_TO_X_POSIT()
-//     X_TO_X_POSIT_5_REFS()
-//
-//     X_TO_Y_POSIT()
-//     X_TO_Y_POSIT_5_REFS()
-//
-//     X_TO_NOT_X_POSIT()
-//
-//     NOT_X_TO_X_POSIT()
-//     NOT_X_TO_X_POSIT_5_REFS()
-// }
-// workflow RUN_SIMILARITY_SPLIT {
-//     INCREASING_SIMILARITY_TC_ALIGNED_POSIT()
-//         INCREASING_SIMILARITY_TC_ALIGNED_FRED()
-//         INCREASING_SIMILARITY_MCS_POSIT()
-//         INCREASING_SIMILARITY_MCS_FRED()
-//         INCREASING_SIMILARITY_ECFP4_POSIT()
-//         INCREASING_SIMILARITY_ECFP4_FRED()
-// }
-//
-// workflow RUN_ANALYSIS {
-//     take:
-//         setup_analysis_check
-//
-//     main:
-//         RUN_DATESPLIT()
-//         RUN_SCAFFOLD_SPLIT()
-//         RUN_SIMILARITY_SPLIT()
-// }
-//
-// workflow {
-//     RUN_ANALYSIS(CREATE_EVALUATOR_FACTORY_SETTINGS_WORKFLOW().out.collect())
-//
-// }
+    main:
+        analyze_posit()
+        analyze_fred()
+}
