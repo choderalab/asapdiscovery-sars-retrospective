@@ -136,38 +136,26 @@ workflow INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE {
     RUN_ANALYSIS(results.posit_single_pose, settings.ecfp4)
 }
 workflow analyze_posit {
-    take:
-        setup_analysis_check
-
-    main:
-        DATESPLIT_POSIT()
-        X_TO_X_POSIT()
-        X_TO_X_POSIT_5_REFS()
-        X_TO_Y_POSIT()
-        X_TO_Y_POSIT_5_REFS()
-        NOT_X_TO_X_POSIT()
-        NOT_X_TO_X_POSIT_5_REFS()
-        X_TO_NOT_X_POSIT()
-        INCREASING_SIMILARITY_TC_ALIGNED_POSIT()
-        INCREASING_SIMILARITY_MCS_POSIT()
-        INCREASING_SIMILARITY_ECFP4_POSIT()
-        INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE()
+    DATESPLIT_POSIT()
+    X_TO_X_POSIT()
+    X_TO_X_POSIT_5_REFS()
+    X_TO_Y_POSIT()
+    X_TO_Y_POSIT_5_REFS()
+    NOT_X_TO_X_POSIT()
+    NOT_X_TO_X_POSIT_5_REFS()
+    X_TO_NOT_X_POSIT()
+    INCREASING_SIMILARITY_TC_ALIGNED_POSIT()
+    INCREASING_SIMILARITY_MCS_POSIT()
+    INCREASING_SIMILARITY_ECFP4_POSIT()
+    INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE()
 }
 workflow analyze_fred {
-    take:
-        setup_analysis_check
-
-    main:
-        DATESPLIT_FRED()
-        INCREASING_SIMILARITY_TC_ALIGNED_FRED()
-        INCREASING_SIMILARITY_MCS_FRED()
-        INCREASING_SIMILARITY_ECFP4_FRED()
+    DATESPLIT_FRED()
+    INCREASING_SIMILARITY_TC_ALIGNED_FRED()
+    INCREASING_SIMILARITY_MCS_FRED()
+    INCREASING_SIMILARITY_ECFP4_FRED()
 }
 workflow {
-    take:
-        setup_analysis_check
-
-    main:
-        analyze_posit()
-        analyze_fred()
+    analyze_posit()
+    analyze_fred()
 }
