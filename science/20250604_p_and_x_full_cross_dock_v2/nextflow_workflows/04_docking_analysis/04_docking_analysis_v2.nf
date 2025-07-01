@@ -46,7 +46,7 @@ workflow RUN_DOCKING_ANALYSIS {
 }
 dataset_names = [
 "posit_single_pose": "ALL_1_poses",
-// "fred_single_pose": "FRED_1_poses",
+"fred_single_pose": "FRED_1_poses",
 ]
 
 def results = [:]
