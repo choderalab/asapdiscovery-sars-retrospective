@@ -2,7 +2,7 @@ process CROSS_DOCK_BY_LIGAND {
     publishDir "${params.dockedFiles}/${posit_method}_${num_poses}_poses", mode: 'link', overwrite: true
     conda "${params.drugforge}"
     tag "cross-dock ${compound_name}"
-    clusterOptions '--partition "cpu" --cpus-per-task=32'
+    clusterOptions '--partition "cpu" --cpus-per-task=1'
     memory 128.GB
     time 48.h
 
@@ -34,8 +34,5 @@ process CROSS_DOCK_BY_LIGAND {
     --no-save-to-cache \
     --use-only-cache \
     --num-poses "${num_poses}" \
-    --use-dask \
-    --dask-type local \
-    --dask-n-workers 32
     """
 }
