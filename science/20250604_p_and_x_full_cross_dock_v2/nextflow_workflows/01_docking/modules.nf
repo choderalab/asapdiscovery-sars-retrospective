@@ -3,14 +3,8 @@ process CROSS_DOCK_BY_LIGAND {
     conda "${params.drugforge}"
     tag "cross-dock ${compound_name}"
     clusterOptions '--partition "cpu" --cpus-per-task=32'
-    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'finish' } // retry if the task is killed bc out of memory or time, otherwise ignore and move on
-
-    // Dynamic memory allocation
-    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 128.GB : 128.GB }
-
-    // Dynamic time allocation
-    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 2.h : 2.h }
-//     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 30.m : 10.m }
+    memory 128.GB
+    time 48.h
 
     input:
     tuple path(input_dir), path(prepped_dir), val(compound_name), path(ligandFile2d)
