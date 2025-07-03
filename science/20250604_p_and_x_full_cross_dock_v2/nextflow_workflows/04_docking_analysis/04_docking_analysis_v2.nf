@@ -79,6 +79,9 @@ settings_map = [
 "x_to_x_5": "x_to_x_scaffold_split_5_refs.yaml",
 "x_to_y": "x_to_y_scaffold_split.yaml",
 "x_to_y_5": "x_to_y_scaffold_split_5_refs.yaml",
+"x_to_not_x": "x_to_not_x_scaffold_split.yaml",
+"not_x_to_x": "not_x_to_x_scaffold_split.yaml",
+"not_x_to_x_5": "not_x_to_x_scaffold_split_5_refs.yaml",
 "ecfp4": "increasing_similarity_ecfp4.yaml",
 "mcs": "increasing_similarity_mcs.yaml",
 "tc": "increasing_similarity_tanimoto_combo_aligned.yaml",]
@@ -111,9 +114,9 @@ workflow X_TO_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x)}
 workflow X_TO_X_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x_5)}
 workflow X_TO_Y_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_y)}
 workflow X_TO_Y_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_y_5)}
-workflow NOT_X_TO_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x)}
-workflow NOT_X_TO_X_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_x_5)}
-workflow X_TO_NOT_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_y)}
+workflow NOT_X_TO_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.not_x_to_x)}
+workflow NOT_X_TO_X_POSIT_5_REFS {RUN_ANALYSIS(results.posit_single_pose, settings.not_x_to_x_5)}
+workflow X_TO_NOT_X_POSIT {RUN_ANALYSIS(results.posit_single_pose, settings.x_to_not_x)}
 workflow INCREASING_SIMILARITY_TC_ALIGNED_POSIT {
     RUN_ANALYSIS(results.posit_single_pose, settings.tc)
 }
