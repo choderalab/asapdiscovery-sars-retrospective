@@ -63,10 +63,10 @@ def main(output):
         "QueryData_Scaffold_ID"
     )
     default_scaffold.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
-        5
+        1
     )
     default_scaffold.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = (
-        5
+        1
     )
 
     # x_to_x default
@@ -88,6 +88,8 @@ def main(output):
     evf.reference_split_settings.use = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
+    evf.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = 5
     evf.to_yaml_file(output)
 
     # x_to_y default
@@ -106,6 +108,9 @@ def main(output):
     evf.reference_split_settings.use = True
     evf.reference_split_settings.random_split_settings.use = True
     evf.reference_split_settings.n_reference_structures = [5]
+    evf.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = 5
+    evf.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = 5
+
     evf.to_yaml_file(output)
 
     # x to not x scaffold split
@@ -143,6 +148,12 @@ def main(output):
     not_x_to_x.reference_split_settings.use = True
     not_x_to_x.reference_split_settings.random_split_settings.use = True
     not_x_to_x.reference_split_settings.n_reference_structures = [5]
+    not_x_to_x.pairwise_split_settings.scaffold_split_settings.reference_scaffold_min_count = (
+        5
+    )
+    not_x_to_x.pairwise_split_settings.scaffold_split_settings.query_scaffold_min_count = (
+        5
+    )
     not_x_to_x.to_yaml_file(output)
 
     # similarity split
