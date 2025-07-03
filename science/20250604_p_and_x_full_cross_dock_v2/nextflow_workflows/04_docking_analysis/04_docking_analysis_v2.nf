@@ -135,6 +135,15 @@ workflow INCREASING_SIMILARITY_ECFP4_FRED {
 workflow INCREASING_SIMILARITY_ECFP4_POSIT_MULTIPOSE {
     RUN_ANALYSIS(results.posit_single_pose, settings.ecfp4)
 }
+workflow posit_scaffold_splits {
+    X_TO_X_POSIT()
+    X_TO_X_POSIT_5_REFS()
+    X_TO_Y_POSIT()
+    X_TO_Y_POSIT_5_REFS()
+    NOT_X_TO_X_POSIT()
+    NOT_X_TO_X_POSIT_5_REFS()
+    X_TO_NOT_X_POSIT()
+}
 workflow analyze_posit {
     DATESPLIT_POSIT()
     X_TO_X_POSIT()
