@@ -4,7 +4,7 @@ process CROSS_DOCK_BY_LIGAND {
     tag "cross-dock ${compound_name}"
     clusterOptions '--partition "cpu" --cpus-per-task=1'
     memory 128.GB
-    time 48.h
+    time 100.h
 
     input:
     tuple path(input_dir), path(prepped_dir), val(compound_name), path(ligandFile2d)
