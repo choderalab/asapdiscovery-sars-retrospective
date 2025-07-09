@@ -185,7 +185,7 @@ workflow MULTIPOSE_ANALYSIS {
     RUN_EVALUATORS(
         name,
         results.posit_multipose.docking_results_parquet,
-        results.posit_multipose.docking_results_json
+        results.posit_multipose.docking_results_json,
         eval_inputs_ch,
     )
 
