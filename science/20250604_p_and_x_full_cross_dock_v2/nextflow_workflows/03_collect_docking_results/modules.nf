@@ -23,6 +23,7 @@ process COMBINE_AND_PROCESS_RESULTS {
     conda "${params.drugforge}"
     tag "combine-and-process-results ${name}"
     label 'cpushort'
+    memory 128.GB
 
     input:
     path(dockedLigandRMSDs)
