@@ -23,7 +23,7 @@ import harbor.analysis.cross_docking as cd
     required=True,
     help="Path to the output directory where the results will be stored",
 )
-def main(input_parquet, output):
+def main(output):
     # data = cd.DockingDataModel.deserialize(input_parquet)
     output.mkdir(exist_ok=True, parents=True)
 
