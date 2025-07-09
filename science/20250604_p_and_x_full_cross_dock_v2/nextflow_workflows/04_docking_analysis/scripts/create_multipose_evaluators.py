@@ -25,6 +25,7 @@ import harbor.analysis.cross_docking as cd
 )
 def main(input_parquet, output):
     # data = cd.DockingDataModel.deserialize(input_parquet)
+    output.mkdir(exist_ok=True, parents=True)
 
     ref_structure_column = "Reference_Structure"
     name = "multipose_evaluators"

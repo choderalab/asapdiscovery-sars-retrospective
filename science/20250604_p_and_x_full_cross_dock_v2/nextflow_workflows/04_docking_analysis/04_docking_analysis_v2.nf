@@ -176,9 +176,10 @@ workflow {
 
 workflow MULTIPOSE_ANALYSIS {
     name = "posit_multipose_analysis"
+    CREATE_MULTIPOSE_EVALUATORS(name)
 
     // Create channel from JSON files only after evaluator creation
-    eval_inputs_ch = CREATE_MULTIPOSE_EVALUATORS(name).output.evaluator_json_directory
+    eval_inputs_ch = CREATE_MULTIPOSE_EVALUATORS.output.evaluator_json_directory
         .flatMap { dir -> file("${dir}/*.json") }
         .buffer(size: params.K)
 
