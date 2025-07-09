@@ -66,3 +66,7 @@ def main(input_parquet, output):
 
     df = pd.DataFrame.from_records([ev.get_records() for ev in evs])
     df.to_csv(output / f"pose_split_evaluators.csv")
+
+
+if __name__ == "__main__":
+    main()
