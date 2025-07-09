@@ -47,6 +47,7 @@ workflow RUN_DOCKING_ANALYSIS {
 dataset_names = [
 "posit_single_pose": "ALL_1_poses",
 "fred_single_pose": "FRED_1_poses",
+"posit_multipose": "ALL_50_poses",
 ]
 
 def results = [:]
@@ -170,4 +171,35 @@ workflow analyze_fred {
 workflow {
     analyze_posit()
     analyze_fred()
+}
+
+include {
+    CREATE_MULTIPOSE_EVALUATORS
+} from "./multipose_analysis.nf"
+
+workflow MULTIPOSE_ANALYSIS {
+
+    name = "posit_multipose_analysis"
+
+    // Create channel from JSON files only after evaluator creation
+    eval_inputs_ch = CREATE_MULTIPOSE_EVALUATORS("multipose_evaluators").output.evaluator_json_directory
+        .flatMap { dir -> file("${dir}/*.json") }
+        .buffer(size: params.K)
+
+    RUN_EVALUATORS(
+        name,
+        results.posit_multipose.docking_results_parquet,
+        results.posit_multipose.docking_results_json
+        eval_inputs_ch,
+    )
+
+    // Collect all evaluator results before combining
+    all_results = RUN_EVALUATORS.output.evaluator_results
+        .flatten()
+        .collect()
+
+    COMBINE_EVALUATIONS(
+        name,
+        all_results
+    )
 }
