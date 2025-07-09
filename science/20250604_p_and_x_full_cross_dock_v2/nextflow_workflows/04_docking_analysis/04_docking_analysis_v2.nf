@@ -4,6 +4,7 @@ include {
     CREATE_EVALUATORS
     RUN_EVALUATORS
     COMBINE_EVALUATIONS
+    CREATE_MULTIPOSE_EVALUATORS
 } from "./modules.nf"
 params.K = 10
 
@@ -173,12 +174,7 @@ workflow {
     analyze_fred()
 }
 
-include {
-    CREATE_MULTIPOSE_EVALUATORS
-} from "./multipose_analysis.nf"
-
 workflow MULTIPOSE_ANALYSIS {
-
     name = "posit_multipose_analysis"
 
     // Create channel from JSON files only after evaluator creation
