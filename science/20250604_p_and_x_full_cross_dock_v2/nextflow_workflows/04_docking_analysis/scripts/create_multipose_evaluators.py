@@ -36,7 +36,9 @@ def main(output):
     )
     n_poses = [1, 2, 5, 10, 25, 50]
     pose_selectors = [
-        cd.PoseSelector(variable="PoseID", ascending=True, number_to_return=n)
+        cd.PoseSelector(
+            name="PoseSelector", variable="PoseID", ascending=True, number_to_return=n
+        )
         for n in n_poses
     ]
 
