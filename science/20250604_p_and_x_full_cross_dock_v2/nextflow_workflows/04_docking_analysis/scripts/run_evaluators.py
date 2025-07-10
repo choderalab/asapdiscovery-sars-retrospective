@@ -22,7 +22,13 @@ from harbor.analysis.utils import FileLogger
     default="./",
     help="Path to the output directory where the results will be stored.",
 )
-def run_evaluators(evaluator_jsons, input_parquet, output):
+@click.option(
+    "--n-cpus",
+    type=int,
+    default=1,
+    help="Number of CPUs to use for parallel processing.",
+)
+def run_evaluators(evaluator_jsons, input_parquet, output, n_cpus):
     output.mkdir(exist_ok=True, parents=True)
 
     logger = FileLogger(
@@ -39,7 +45,10 @@ def run_evaluators(evaluator_jsons, input_parquet, output):
 
     logger.info(f"Number of evaluators: {len(evaluators)}")
 
-    results = [results for results in Results.calculate_results(data, evaluators)]
+    results = [
+        results
+        for results in Results.calculate_results(data, evaluators, n_cpus=n_cpus)
+    ]
 
     logger.info(f"Writing results to disk at {output}")
     results_df = Results.df_from_results(results)

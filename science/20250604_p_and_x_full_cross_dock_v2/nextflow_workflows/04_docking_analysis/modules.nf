@@ -73,6 +73,7 @@ process RUN_EVALUATORS {
     // Dynamic time allocation
     time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 1.h : 1.h }
     // set n cpus to request
+    cpus 32
     'lenient'
 
     input:
@@ -90,6 +91,7 @@ process RUN_EVALUATORS {
     python3 "${params.scripts}"/run_evaluators.py \
     evaluator_jsons_* \
     --input-parquet "${docking_results_parquet}" \
+    --n-cpus 32
     """
 }
 process COMBINE_EVALUATIONS {
