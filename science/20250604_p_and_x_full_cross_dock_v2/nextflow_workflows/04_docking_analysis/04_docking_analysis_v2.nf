@@ -181,7 +181,7 @@ workflow MULTIPOSE_ANALYSIS {
     // Create channel from JSON files only after evaluator creation
     eval_inputs_ch = CREATE_MULTIPOSE_EVALUATORS.output.evaluator_json_directory
         .flatMap { dir -> file("${dir}/*.json") }
-        .buffer(size: params.K)
+        .buffer(size: 1)
 
     RUN_EVALUATORS(
         name,
