@@ -25,10 +25,12 @@ import harbor.analysis.cross_docking as cd
 )
 def main(output):
     # data = cd.DockingDataModel.deserialize(input_parquet)
+    name = "multipose_evaluators"
+    output = output / name
     output.mkdir(exist_ok=True, parents=True)
 
     ref_structure_column = "Reference_Structure"
-    name = "multipose_evaluators"
+
     n_refs = cd.generate_logarithmic_scale(
         403,
     )
