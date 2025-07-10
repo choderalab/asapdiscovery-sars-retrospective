@@ -34,6 +34,11 @@ def main(output):
     n_refs = cd.generate_logarithmic_scale(
         403,
     )
+    n_poses = [1, 2, 5, 10, 25, 50]
+    pose_selectors = [
+        cd.PoseSelector(variable="PoseID", ascending=True, number_to_return=n)
+        for n in n_poses
+    ]
 
     scorers = [
         cd.POSITScorer(variable="PoseData_docking-confidence-POSIT"),
@@ -51,17 +56,21 @@ def main(output):
     ]
 
     evs = []
-    for scorer in scorers:
-        for dataset_split in dataset_splits:
-            for n in n_refs:
-                ev = cd.Evaluator(
-                    scorer=scorer,
-                    evaluator=cd.BinaryEvaluation(variable="PoseData_RMSD", cutoff=2),
-                    n_bootstraps=1000,
-                )
-                ev.dataset_split = dataset_split
-                ev.dataset_split.n_reference_structures = n
-                evs.append(ev)
+    for pose_selector in pose_selectors:
+        for scorer in scorers:
+            for dataset_split in dataset_splits:
+                for n in n_refs:
+                    ev = cd.Evaluator(
+                        pose_selector=pose_selector,
+                        scorer=scorer,
+                        evaluator=cd.BinaryEvaluation(
+                            variable="PoseData_RMSD", cutoff=2
+                        ),
+                        n_bootstraps=1000,
+                    )
+                    ev.dataset_split = dataset_split
+                    ev.dataset_split.n_reference_structures = n
+                    evs.append(ev)
 
     for i, evaluator in enumerate(evs):
         evaluator.to_json_file(output / f"evaluator_{name}_{i}.json")
