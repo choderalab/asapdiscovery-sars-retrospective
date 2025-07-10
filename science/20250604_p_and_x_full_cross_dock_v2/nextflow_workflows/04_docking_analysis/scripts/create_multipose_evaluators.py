@@ -57,7 +57,7 @@ def main(output):
                 ev = cd.Evaluator(
                     scorer=scorer,
                     evaluator=cd.BinaryEvaluation(variable="PoseData_RMSD", cutoff=2),
-                    n_bootstraps=1,
+                    n_bootstraps=1000,
                 )
                 ev.dataset_split = dataset_split
                 ev.dataset_split.n_reference_structures = n
