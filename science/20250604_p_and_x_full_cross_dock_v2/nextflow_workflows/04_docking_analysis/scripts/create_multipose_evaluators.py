@@ -43,7 +43,7 @@ def main(output):
     ]
 
     scorers = [
-        cd.POSITScorer(variable="PoseData_docking-confidence-POSIT"),
+        # cd.POSITScorer(variable="PoseData_docking-confidence-POSIT"),
         cd.RMSDScorer(variable="PoseData_RMSD", cutoff=2),
     ]
     dataset_splits = [
