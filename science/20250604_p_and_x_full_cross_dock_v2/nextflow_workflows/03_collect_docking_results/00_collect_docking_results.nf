@@ -76,4 +76,5 @@ workflow calculate_rmsd {
 workflow process_results {
     PROCESS_FRED_RESULTS()
     PROCESS_ALL_SINGLE_POSE_RESULTS()
+    PROCESS_ALL_MULTIPOSE_RESULTS()
 }
