@@ -52,6 +52,6 @@ workflow ECFP_ANALYSIS {
 workflow COMBINE_SIMILARITY_DATA {
     // This assumes CSV files already exist in the expected locations
     // You might need to adjust paths based on your directory structure
-    csv_files = Channel.fromPath("results/*_tanimoto*.csv").collect()
+    csv_files = Channel.fromPath("${params.chemicalSimilarityData}/*/*.csv").collect()
     COMBINE_CHEMICAL_SIMILARITY_DATA(csv_files)
 }
