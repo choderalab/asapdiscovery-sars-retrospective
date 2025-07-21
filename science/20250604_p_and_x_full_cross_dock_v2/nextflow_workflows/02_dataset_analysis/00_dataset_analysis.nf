@@ -41,3 +41,17 @@ workflow {
     // Run scaffolding
     RUN_BEMIS_MURCKO_CLUSTERING(ligand_file_2d)
 }
+
+// Entry point: Calculate ECFP Tanimoto similarity only
+workflow ECFP_ANALYSIS {
+    ligand_file_3d = Channel.fromPath("${params.ligandFiles}/${params.ligandFile3d}")
+    CALCULATE_ECFP_TANIMOTO(ligand_file_3d)
+}
+
+// Entry point: Combine existing CSV files (assumes CSV files already exist)
+workflow COMBINE_SIMILARITY_DATA {
+    // This assumes CSV files already exist in the expected locations
+    // You might need to adjust paths based on your directory structure
+    csv_files = Channel.fromPath("results/*_tanimoto*.csv").collect()
+    COMBINE_CHEMICAL_SIMILARITY_DATA(csv_files)
+}
