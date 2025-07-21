@@ -46,33 +46,36 @@ def main(output):
         # cd.POSITScorer(variable="PoseData_docking-confidence-POSIT"),
         cd.RMSDScorer(variable="PoseData_RMSD", cutoff=2),
     ]
-    dataset_splits = [
-        cd.DateSplit(
-            date_column="RefData_Date",
-            randomize_by_n_days=1,
-            reference_structure_column=ref_structure_column,
-        ),
-        cd.RandomSplit(
-            reference_structure_column=ref_structure_column,
-        ),
-    ]
+
+    dataset_splits = []
+    for n in n_refs:
+        dataset_splits.append(
+            cd.DateSplit(
+                date_column="RefData_Date",
+                randomize_by_n_days=1,
+                n_reference_structures=n,
+                reference_structure_column=ref_structure_column,
+            )
+        )
+        dataset_splits.append(
+            cd.RandomSplit(
+                reference_structure_column=ref_structure_column,
+                n_reference_structures=n,
+            )
+        )
 
     evs = []
     for pose_selector in pose_selectors:
         for scorer in scorers:
             for dataset_split in dataset_splits:
-                for n in n_refs:
-                    ev = cd.Evaluator(
-                        pose_selector=pose_selector,
-                        scorer=scorer,
-                        evaluator=cd.BinaryEvaluation(
-                            variable="PoseData_RMSD", cutoff=2
-                        ),
-                        n_bootstraps=1000,
-                    )
-                    ev.dataset_split = dataset_split
-                    ev.dataset_split.n_reference_structures = n
-                    evs.append(ev)
+                ev = cd.Evaluator(
+                    pose_selector=pose_selector,
+                    dataset_split=dataset_split,
+                    scorer=scorer,
+                    evaluator=cd.BinaryEvaluation(variable="PoseData_RMSD", cutoff=2),
+                    n_bootstraps=1000,
+                )
+                evs.append(ev)
 
     for i, evaluator in enumerate(evs):
         evaluator.to_json_file(output / f"evaluator_{name}_{i}.json")
