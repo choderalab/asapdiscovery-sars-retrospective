@@ -80,7 +80,7 @@ def main():
     # radii = [2, 3, 4, 5]
     radii = [2, 5]
     # bit_sizes = [1024, 2048]
-    bit_sizes = [2028]
+    bit_sizes = [2048]
     dfs = []
     for radius, bit_size in itertools.product(radii, bit_sizes):
         logger.info(
