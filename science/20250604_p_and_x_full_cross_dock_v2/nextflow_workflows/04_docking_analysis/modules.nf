@@ -63,6 +63,28 @@ process CREATE_MULTIPOSE_EVALUATORS {
     --output "${name}" \
     """
 }
+process CREATE_EVALUATORS_MODULAR {
+    publishDir "${params.evaluationResults}", mode: 'copy', overwrite: false
+    conda "${params.harbor}"
+    tag "create-evaluators ${name}"
+    memory { 32.GB }
+    time { 20.m }
+    label 'cpushort'
+    cache 'lenient'
+
+    input:
+    val(name)
+    val(script_path)
+
+    output:
+    path("${name}/*"), emit: evaluator_json_directory
+
+    script:
+    """
+    python3 "${params.script_path}".py \
+    --output "${name}" \
+    """
+}
 process RUN_EVALUATORS {
     conda "${params.harbor}"
     tag "run-evaluators ${name}"

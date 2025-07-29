@@ -5,6 +5,7 @@ include {
     RUN_EVALUATORS
     COMBINE_EVALUATIONS
     CREATE_MULTIPOSE_EVALUATORS
+    CREATE_EVALUATORS_MODULAR
 } from "./modules.nf"
 params.K = 10
 
@@ -200,3 +201,31 @@ workflow MULTIPOSE_ANALYSIS {
         all_results
     )
 }
+workflow SCAFFOLD_DATE_SPLIT {
+    name = "posit_scaffold_date_split"
+    CREATE_EVALUATORS_MODULAR(
+        name,
+        "${params.scripts}/create_evaluators_scaffold_datesplit.py"
+    )
+
+    // Create channel from JSON files only after evaluator creation
+    eval_inputs_ch = CREATE_EVALUATORS_MODULAR.output.evaluator_json_directory
+        .flatMap { dir -> file("${dir}/*.json") }
+        .buffer(size: 1)
+
+    RUN_EVALUATORS(
+        name,
+        results.posit_single_pose.docking_results_parquet,
+        results.posit_single_pose.docking_results_json,
+        eval_inputs_ch,
+    )
+
+    // Collect all evaluator results before combining
+    all_results = RUN_EVALUATORS.output.evaluator_results
+        .flatten()
+        .collect()
+
+    COMBINE_EVALUATIONS(
+        name,
+        all_results
+    )
