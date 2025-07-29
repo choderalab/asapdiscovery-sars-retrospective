@@ -72,6 +72,7 @@ process CREATE_EVALUATORS_MODULAR {
     input:
     val(name)
     path(script_path)
+    path(docking_results_parquet)
 
     output:
     path("${name}/*"), emit: evaluator_json_directory
@@ -80,6 +81,7 @@ process CREATE_EVALUATORS_MODULAR {
     """
     python3 "${script_path}" \
     --output "${name}" \
+    --input-parquet "${docking_results_parquet}" \
     """
 }
 process RUN_EVALUATORS {
