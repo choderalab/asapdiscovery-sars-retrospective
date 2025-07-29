@@ -73,6 +73,7 @@ process CREATE_EVALUATORS_MODULAR {
     val(name)
     path(script_path)
     path(docking_results_parquet)
+    path(docking_results_json)
 
     output:
     path("${name}/*"), emit: evaluator_json_directory

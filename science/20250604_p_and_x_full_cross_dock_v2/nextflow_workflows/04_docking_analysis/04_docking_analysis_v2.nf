@@ -210,6 +210,7 @@ workflow SCAFFOLD_DATE_SPLIT {
         name,
         script_path,
         results.posit_single_pose.docking_results_parquet,
+        results.posit_single_pose.docking_results_json,
     )
 
     // Create channel from JSON files only after evaluator creation
