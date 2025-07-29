@@ -81,7 +81,7 @@ process CREATE_EVALUATORS_MODULAR {
 
     script:
     """
-    python3 "${params.script_path}".py \
+    python3 "${script_path}" \
     --output "${name}" \
     """
 }
