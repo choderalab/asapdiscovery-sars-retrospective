@@ -74,7 +74,7 @@ process CREATE_EVALUATORS_MODULAR {
 
     input:
     val(name)
-    val(script_path)
+    path(script_path)
 
     output:
     path("${name}/*"), emit: evaluator_json_directory
