@@ -214,7 +214,7 @@ workflow SCAFFOLD_DATE_SPLIT {
     // Create channel from JSON files only after evaluator creation
     eval_inputs_ch = CREATE_EVALUATORS_MODULAR.output.evaluator_json_directory
         .flatMap { dir -> file("${dir}/*.json") }
-        .buffer(size: 8)
+        .buffer(size: 1)
 
     RUN_EVALUATORS_LIGHTWEIGHT(
         name,
