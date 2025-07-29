@@ -10,19 +10,31 @@ import harbor.analysis.cross_docking as cd
 
 @click.command()
 @click.option(
+    "-i",
+    "--input-parquet",
+    required=True,
+    help="Path to input parquet file made by DockingDataModel",
+    type=click.Path(exists=True, path_type=Path),
+)
+@click.option(
     "-o",
     "--output",
     type=Path,
-    required=True,
+    required=False,
+    default=Path("./"),
     help="Path to the output directory where the results will be stored",
 )
-def main(output):
+def main(input_parquet, output):
     name = "scaffold_datesplit_evaluators"
+
+    data = cd.DockingDataModel.deserialize(input_parquet)
+
     output = output / name
     output.mkdir(exist_ok=True, parents=True)
 
     ref_structure_column = "Reference_Structure"
 
+    n_refs_per_scaffold_list = [1, 2, 5, 10, 20, -1]
     n_refs = [1, 2, 5, 10, 20, 30, 40, 50, 100, 137, 200, 300, 403]
     n_poses = [1]
     pose_selectors = [
@@ -53,16 +65,24 @@ def main(output):
                 n_reference_structures=n,
             )
         )
-        if n <= 137:  # Only 137 total scaffolds in dataset
-            dataset_splits.append(
-                cd.ScaffoldDateSplit(
-                    date_column="RefData_Date",
-                    scaffold_id_column="RefData_Scaffold_ID",
-                    randomize_by_n_days=1,
-                    n_reference_structures=n,
-                    reference_structure_column=ref_structure_column,
-                )
+        for n_refs_per_scaffold in n_refs_per_scaffold_list:
+            unique_refs = (
+                data.dataframe.sort_values("RefData_Date")
+                .groupby("RefData_Scaffold_ID")
+                .head(n_refs_per_scaffold)[ref_structure_column]
+                .unique()
             )
+            if len(unique_refs) >= n:
+                dataset_splits.append(
+                    cd.ScaffoldDateSplit(
+                        date_column="RefData_Date",
+                        scaffold_id_column="RefData_Scaffold_ID",
+                        randomize_by_n_days=1,
+                        n_reference_structures=n,
+                        reference_structure_column=ref_structure_column,
+                        n_refs_per_scaffold=n_refs_per_scaffold,
+                    )
+                )
 
     evs = []
     for pose_selector in pose_selectors:
