@@ -208,7 +208,7 @@ workflow SCAFFOLD_DATE_SPLIT {
 
     CREATE_EVALUATORS_MODULAR(
         name,
-        script_path
+        script_path,
         results.posit_single_pose.docking_results_parquet,
     )
 
