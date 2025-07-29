@@ -205,7 +205,6 @@ workflow SCAFFOLD_DATE_SPLIT {
     name = "posit_scaffold_date_split"
     script_path = "${params.scripts}/create_evaluators_scaffold_datesplit.py"
 
-    println "Script path: ${script_path}"
     CREATE_EVALUATORS_MODULAR(
         name,
         script_path
