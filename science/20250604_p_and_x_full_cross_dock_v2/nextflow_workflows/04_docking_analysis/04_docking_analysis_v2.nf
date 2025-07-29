@@ -3,6 +3,7 @@ include {
     CREATE_EVALUATOR_FACTORY_SETTINGS
     CREATE_EVALUATORS
     RUN_EVALUATORS
+    RUN_EVALUATORS_LIGHTWEIGHT
     COMBINE_EVALUATIONS
     CREATE_MULTIPOSE_EVALUATORS
     CREATE_EVALUATORS_MODULAR
@@ -213,9 +214,9 @@ workflow SCAFFOLD_DATE_SPLIT {
     // Create channel from JSON files only after evaluator creation
     eval_inputs_ch = CREATE_EVALUATORS_MODULAR.output.evaluator_json_directory
         .flatMap { dir -> file("${dir}/*.json") }
-        .buffer(size: 1)
+        .buffer(size: 8)
 
-    RUN_EVALUATORS(
+    RUN_EVALUATORS_LIGHTWEIGHT(
         name,
         results.posit_single_pose.docking_results_parquet,
         results.posit_single_pose.docking_results_json,
@@ -223,7 +224,7 @@ workflow SCAFFOLD_DATE_SPLIT {
     )
 
     // Collect all evaluator results before combining
-    all_results = RUN_EVALUATORS.output.evaluator_results
+    all_results = RUN_EVALUATORS_LIGHTWEIGHT.output.evaluator_results
         .flatten()
         .collect()
 

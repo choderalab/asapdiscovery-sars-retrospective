@@ -116,6 +116,37 @@ process RUN_EVALUATORS {
     --n-cpus 32
     """
 }
+process RUN_EVALUATORS_LIGHTWEIGHT {
+    conda "${params.harbor}"
+    tag "run-evaluators ${name}"
+    errorStrategy = { task.exitStatus in [137,140,143,247] ? 'retry' : 'terminate' }
+    maxRetries 3
+    // Dynamic memory allocation
+    memory { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 32.GB : 32.GB }
+    // Dynamic time allocation
+    time { task.attempt > 1 ? (2 ** (task.attempt - 1)) * 1.h : 1.h }
+    // set n cpus to request
+    cpus 8
+    'lenient'
+
+    input:
+    val(name)
+    path(docking_results_parquet)
+    path(docking_results_json)
+    path("evaluator_jsons_*")
+
+
+    output:
+    path("*.csv"), emit: evaluator_results
+
+    script:
+    """
+    python3 "${params.scripts}"/run_evaluators.py \
+    evaluator_jsons_* \
+    --input-parquet "${docking_results_parquet}" \
+    --n-cpus 38
+    """
+}
 process COMBINE_EVALUATIONS {
     publishDir "${params.evaluationResults}", mode: 'copy', overwrite: true
     conda "${params.harbor}"
