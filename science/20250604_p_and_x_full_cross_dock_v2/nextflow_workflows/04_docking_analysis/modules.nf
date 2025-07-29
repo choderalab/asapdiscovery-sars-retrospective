@@ -144,7 +144,7 @@ process RUN_EVALUATORS_LIGHTWEIGHT {
     python3 "${params.scripts}"/run_evaluators.py \
     evaluator_jsons_* \
     --input-parquet "${docking_results_parquet}" \
-    --n-cpus 38
+    --n-cpus 8
     """
 }
 process COMBINE_EVALUATIONS {
