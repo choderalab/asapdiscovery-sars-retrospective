@@ -53,15 +53,16 @@ def main(output):
                 n_reference_structures=n,
             )
         )
-        dataset_splits.append(
-            cd.ScaffoldDateSplit(
-                date_column="RefData_Date",
-                scaffold_id_column="RefData_Scaffold_ID",
-                randomize_by_n_days=1,
-                n_reference_structures=n,
-                reference_structure_column=ref_structure_column,
+        if n <= 137:  # Only 137 total scaffolds in dataset
+            dataset_splits.append(
+                cd.ScaffoldDateSplit(
+                    date_column="RefData_Date",
+                    scaffold_id_column="RefData_Scaffold_ID",
+                    randomize_by_n_days=1,
+                    n_reference_structures=n,
+                    reference_structure_column=ref_structure_column,
+                )
             )
-        )
 
     evs = []
     for pose_selector in pose_selectors:

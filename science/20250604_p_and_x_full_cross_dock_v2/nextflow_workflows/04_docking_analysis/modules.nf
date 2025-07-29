@@ -67,10 +67,7 @@ process CREATE_EVALUATORS_MODULAR {
     publishDir "${params.evaluationResults}", mode: 'copy', overwrite: false
     conda "${params.harbor}"
     tag "create-evaluators ${name}"
-    memory { 32.GB }
-    time { 20.m }
-    label 'cpushort'
-    cache 'lenient'
+    label 'local'
 
     input:
     val(name)
