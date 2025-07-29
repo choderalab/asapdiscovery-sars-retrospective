@@ -95,6 +95,13 @@ workflow POSIT_MULTIPOSE {
         'PairwiseSelector'
     )
 }
+workflow FRED_MULTIPOSE {
+    RUN_LIGAND_DOCKING_MULTIPOSE(
+        50,
+        'FRED',
+        'PairwiseSelector'
+    )
+}
 
 workflow POSIT_SINGLE_POSE {
     RUN_LIGAND_DOCKING(
