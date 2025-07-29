@@ -229,3 +229,4 @@ workflow SCAFFOLD_DATE_SPLIT {
         name,
         all_results
     )
+}
