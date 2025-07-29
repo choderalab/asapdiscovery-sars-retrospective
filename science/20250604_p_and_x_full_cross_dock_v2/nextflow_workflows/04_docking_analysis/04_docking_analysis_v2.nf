@@ -203,9 +203,12 @@ workflow MULTIPOSE_ANALYSIS {
 }
 workflow SCAFFOLD_DATE_SPLIT {
     name = "posit_scaffold_date_split"
+    script_path = "${params.scripts}/create_evaluators_scaffold_datesplit.py"
+
+    println "Script path: ${script_path}"
     CREATE_EVALUATORS_MODULAR(
         name,
-        "${params.scripts}/create_evaluators_scaffold_datesplit.py"
+        script_path
     )
 
     // Create channel from JSON files only after evaluator creation
