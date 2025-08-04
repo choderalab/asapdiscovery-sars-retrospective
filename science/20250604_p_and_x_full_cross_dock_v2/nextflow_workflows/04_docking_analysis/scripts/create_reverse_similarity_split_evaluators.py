@@ -8,14 +8,23 @@ import pandas as pd
 import harbor.analysis.cross_docking as cd
 
 
+@click.command()
+@click.option(
+    "-i",
+    "--input-parquet",
+    required=True,
+    help="Path to input parquet file made by DockingDataModel",
+    type=click.Path(exists=True, path_type=Path),
+)
 @click.option(
     "-o",
     "--output",
     type=Path,
-    required=True,
+    required=False,
+    default=Path("./"),
     help="Path to the output directory where the results will be stored",
 )
-def main(output):
+def main(input_parquet, output):
     name = "reverse_similarity_split"
     output = output / name
     output.mkdir(exist_ok=True, parents=True)
