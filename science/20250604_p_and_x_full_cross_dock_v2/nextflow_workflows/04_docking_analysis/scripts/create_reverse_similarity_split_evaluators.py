@@ -88,7 +88,7 @@ def main(input_parquet, output):
                     dataset_before_similarity=True,
                     scorer=scorer,
                     evaluator=cd.BinaryEvaluation(variable="PoseData_RMSD", cutoff=2),
-                    n_bootstraps=3,
+                    n_bootstraps=1000,
                 )
                 evs.append(ev)
 
