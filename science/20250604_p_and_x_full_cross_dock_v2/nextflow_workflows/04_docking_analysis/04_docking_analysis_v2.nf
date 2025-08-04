@@ -51,6 +51,7 @@ dataset_names = [
 "posit_single_pose": "ALL_1_poses",
 "fred_single_pose": "FRED_1_poses",
 "posit_multipose": "ALL_50_poses",
+"fred_multipose": "FRED_50_poses",
 ]
 
 def results = [:]
