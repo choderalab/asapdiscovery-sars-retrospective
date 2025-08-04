@@ -235,7 +235,7 @@ workflow SCAFFOLD_DATE_SPLIT {
         all_results
     )
 }
-workflow SCAFFOLD_DATE_SPLIT {
+workflow POSIT_REVERSE_SIMILARITY_SPLIT {
     name = "posit_reverse_similarity_split"
     script_path = "${params.scripts}/create_reverse_similarity_split_evaluators.py"
 
