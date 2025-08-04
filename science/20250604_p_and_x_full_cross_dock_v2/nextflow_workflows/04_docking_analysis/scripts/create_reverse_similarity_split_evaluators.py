@@ -62,6 +62,35 @@ def main(input_parquet, output):
                 n_similar=n_most_similar,
             )
         )
+        similarity_splits.append(
+            cd.SimilaritySplit(
+                similarity_column="TanimotoComboData_Tanimoto",
+                groupby={
+                    "TanimotoComboData_Type": "TanimotoCombo",
+                    "TanimotoComboData_Aligned": True,
+                },
+                query_ligand_column="Query_Ligand",
+                reference_ligand_column="RefData_Ligand",
+                include_similar=True,
+                higher_is_more_similar=True,
+                sort_instead_of_threshold=True,
+                split_level=1,
+                n_similar=n_most_similar,
+            )
+        )
+        similarity_splits.append(
+            cd.SimilaritySplit(
+                similarity_column="ECFPData_Tanimoto",
+                groupby={"ECFPData_fingerprint": "ECFP4_2048"},
+                query_ligand_column="Query_Ligand",
+                reference_ligand_column="RefData_Ligand",
+                include_similar=True,
+                higher_is_more_similar=True,
+                sort_instead_of_threshold=True,
+                split_level=1,
+                n_similar=n_most_similar,
+            )
+        )
     scorers = [
         cd.POSITScorer(variable="PoseData_docking-confidence-POSIT"),
         cd.RMSDScorer(variable="PoseData_RMSD", cutoff=2),
