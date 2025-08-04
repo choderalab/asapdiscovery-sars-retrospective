@@ -176,7 +176,7 @@ workflow {
     analyze_fred()
 }
 
-workflow MULTIPOSE_ANALYSIS {
+workflow POSIT_MULTIPOSE_ANALYSIS {
     name = "posit_multipose_analysis"
     CREATE_MULTIPOSE_EVALUATORS(name)
 
@@ -189,6 +189,32 @@ workflow MULTIPOSE_ANALYSIS {
         name,
         results.posit_multipose.docking_results_parquet,
         results.posit_multipose.docking_results_json,
+        eval_inputs_ch,
+    )
+
+    // Collect all evaluator results before combining
+    all_results = RUN_EVALUATORS.output.evaluator_results
+        .flatten()
+        .collect()
+
+    COMBINE_EVALUATIONS(
+        name,
+        all_results
+    )
+}
+workflow FRED_MULTIPOSE_ANALYSIS {
+    name = "fred_multipose_analysis"
+    CREATE_MULTIPOSE_EVALUATORS(name)
+
+    // Create channel from JSON files only after evaluator creation
+    eval_inputs_ch = CREATE_MULTIPOSE_EVALUATORS.output.evaluator_json_directory
+        .flatMap { dir -> file("${dir}/*.json") }
+        .buffer(size: 1)
+
+    RUN_EVALUATORS(
+        name,
+        results.fred_multipose.docking_results_parquet,
+        results.fred_multipose.docking_results_json,
         eval_inputs_ch,
     )
 
