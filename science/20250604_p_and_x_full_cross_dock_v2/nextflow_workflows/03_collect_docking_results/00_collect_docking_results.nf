@@ -67,6 +67,14 @@ workflow PROCESS_ALL_MULTIPOSE_RESULTS {
     PROCESS_RESULTS_WORKFLOW('ALL_50_poses', Channel.fromPath("${params.dockedLigandRMSDs}/ALL_50_poses/*.csv"))
 }
 
+workflow CALCULATE_FRED_MULTIPOSE_RMSD {
+    CALCULATE_RMSD_WORKFLOW('FRED_50_poses')
+}
+
+workflow PROCESS_FRED_MULTIPOSE_RESULTS {
+    PROCESS_RESULTS_WORKFLOW('FRED_50_poses', Channel.fromPath("${params.dockedLigandRMSDs}/FRED_50_poses/*.csv"))
+}
+
 // Example workflow entries
 workflow calculate_rmsd {
     CALCULATE_FRED_RMSD()
