@@ -28,8 +28,8 @@ def main(input_parquet, output):
     name = "reverse_similarity_split"
     output = output / name
     output.mkdir(exist_ok=True, parents=True)
-    n_refs = cd.generate_logarithmic_scale(403)
-    n_most_similars = [1, 2, 5, 10]
+    n_refs = [1, 2, 5, 10, 20, 30, 40, 50, 100, 137, 200, 300, 403]
+    n_most_similars = [1, 2, 5, 10, 50]
     ref_structure_column = "Reference_Structure"
     dataset_splits = []
     for n_ref in n_refs:
