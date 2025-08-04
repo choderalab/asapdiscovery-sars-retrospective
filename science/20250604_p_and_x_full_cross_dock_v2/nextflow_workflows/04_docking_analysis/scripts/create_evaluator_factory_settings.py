@@ -197,7 +197,7 @@ def main(output):
     )
     sim_split.to_yaml_file(output)
 
-    # MCS
+    # ECFP
     sim_split = default.__deepcopy__()
     sim_split.name = "increasing_similarity_ecfp4"
     sim_split.pairwise_split_settings.use = True

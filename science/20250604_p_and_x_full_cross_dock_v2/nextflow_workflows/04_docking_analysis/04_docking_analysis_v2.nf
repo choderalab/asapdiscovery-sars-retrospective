@@ -235,3 +235,36 @@ workflow SCAFFOLD_DATE_SPLIT {
         all_results
     )
 }
+workflow SCAFFOLD_DATE_SPLIT {
+    name = "posit_reverse_similarity_split"
+    script_path = "${params.scripts}/create_reverse_similarity_split_evaluators.py"
+
+    CREATE_EVALUATORS_MODULAR(
+        name,
+        script_path,
+        results.posit_single_pose.docking_results_parquet,
+        results.posit_single_pose.docking_results_json,
+    )
+
+    // Create channel from JSON files only after evaluator creation
+    eval_inputs_ch = CREATE_EVALUATORS_MODULAR.output.evaluator_json_directory
+        .flatMap { dir -> file("${dir}/*.json") }
+        .buffer(size: 1)
+
+    RUN_EVALUATORS_LIGHTWEIGHT(
+        name,
+        results.posit_single_pose.docking_results_parquet,
+        results.posit_single_pose.docking_results_json,
+        eval_inputs_ch,
+    )
+
+    // Collect all evaluator results before combining
+    all_results = RUN_EVALUATORS_LIGHTWEIGHT.output.evaluator_results
+        .flatten()
+        .collect()
+
+    COMBINE_EVALUATIONS(
+        name,
+        all_results
+    )
+}
