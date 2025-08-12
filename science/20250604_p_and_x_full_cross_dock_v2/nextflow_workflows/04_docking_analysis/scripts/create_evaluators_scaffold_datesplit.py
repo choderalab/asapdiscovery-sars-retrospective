@@ -73,6 +73,8 @@ def main(input_parquet, output):
                 .unique()
             )
             if len(unique_refs) >= n:
+
+                # Only add the split if we have enough scaffolds with enough references
                 dataset_splits.append(
                     cd.ScaffoldDateSplit(
                         date_column="RefData_Date",
@@ -83,6 +85,19 @@ def main(input_parquet, output):
                         n_refs_per_scaffold=n_refs_per_scaffold,
                     )
                 )
+                if len(unique_refs) > n:
+                    # If not exactly one of the n_refs, add another split
+                    # with the actual number of unique refs
+                    dataset_splits.append(
+                        cd.ScaffoldDateSplit(
+                            date_column="RefData_Date",
+                            scaffold_id_column="RefData_Scaffold_ID",
+                            randomize_by_n_days=1,
+                            n_reference_structures=len(unique_refs),
+                            reference_structure_column=ref_structure_column,
+                            n_refs_per_scaffold=n_refs_per_scaffold,
+                        )
+                    )
 
     evs = []
     for pose_selector in pose_selectors:
