@@ -171,4 +171,5 @@ cython_debug/
 *.stderr
 
 # Misc Data Folder
-#data/
+logs/
+.DS_Store

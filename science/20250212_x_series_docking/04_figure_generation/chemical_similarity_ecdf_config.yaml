@@ -1,0 +1,90 @@
+# ECDF Plot Configuration
+
+# Figure layout settings
+layout:
+  # Setting the alpha param to 0 make it transparent
+  plot_bgcolor: rgba(0, 0, 0, 0)
+  paper_bgcolor: rgba(0, 0, 0, 0)
+
+  height: 500
+  width: 700
+  template: simple_white
+  font_family: Helvetica
+  legend_title_text: "<b> Similarity Metric </b>"
+
+  # Legend settings
+  legend:
+    yanchor: bottom
+    y: 0
+    xanchor: right
+    x: 1
+    font:
+      size: 18
+      family: Helvetica
+    title:
+      font:
+        size: 18
+        family: Helvetica
+
+  # Plot margins
+  margin:
+    l: 0
+    r: 20
+    t: 40
+    b: 0
+
+# X-axis settings
+xaxis:
+  title_text: "<b> Tanimoto Coefficient </b>"
+  title_font:
+    size: 24
+  color: black
+  tickfont:
+    size: 16
+    family: Helvetica
+    color: black
+  tickmode: auto
+  nticks: 10
+  tickangle: 0
+  ticklen: 8
+  tickwidth: 2
+  showgrid: false
+  gridcolor: lightgray
+  gridwidth: 1
+  range: [0,1]
+
+# Y-axis settings
+yaxis:
+  title_text: "<b> Fraction of Pairwise Ligand Similarities </b>"
+  title_font:
+    size: 24
+  color: black
+  tickfont:
+    size: 16
+    family: Helvetica
+    color: black
+  tickmode: auto
+  nticks: 8
+  tickformat: .1f
+  ticklen: 8
+  tickwidth: 2
+  showgrid: false
+  gridcolor: lightgray
+  gridwidth: 1
+  range: [0, 1]
+
+# Trace-specific settings (optional)
+# You can specify properties for specific traces by their group name
+traces:
+  general:
+    line:
+      width: 6
+#  by_group:
+#    "Group 1":  # Replace with your actual group name
+#      line:
+#        width: 3
+#        color: rgb(31, 119, 180)
+#    "Group 2":  # Replace with your actual group name
+#      line:
+#        width: 3
+#        color: rgb(255, 127, 14)

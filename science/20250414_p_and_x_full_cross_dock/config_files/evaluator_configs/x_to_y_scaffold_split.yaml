@@ -1,0 +1,67 @@
+# pose_selection_settings: 
+# reference_split_settings: 
+# pairwise_split_settings: 
+# scorer_settings: 
+# success_rate_evaluator_settings: 
+# combine_reference_and_similarity_splits: If both reference  and pairwise splits are set to use=True, evaluate them at the same time. 
+# n_bootstraps: Number of bootstrapped samples to run
+# query_ligand_column: Name of the column containing the query ligand id
+# reference_ligand_column: Name of the column containing the reference ligand id
+# reference_structure_column: Name of the column to distinguish reference structures by
+name: x_to_y_scaffold_split_all_refs
+pose_selection_settings:
+  use: true
+  pose_id_column: Pose_ID
+  n_poses:
+  - 1
+reference_split_settings:
+  use: false
+  random_split_settings:
+    use: false
+  date_split_settings:
+    use: false
+    reference_structure_date_column: Reference_Structure_Date
+    randomize_by_n_days: 1
+  n_reference_structures:
+  - null
+  update_reference_settings:
+    use: false
+    use_logarithmic_scaling: false
+    log_base: 10
+pairwise_split_settings:
+  use: true
+  similarity_split_settings:
+    use: false
+    similarity_column_name: Tanimoto
+    similarity_range:
+    - 0.0
+    - 1.0
+    similarity_n_thresholds: 21
+  scaffold_split_settings:
+    use: true
+    scaffold_split_option: x_to_y
+    query_scaffold_id_column: cluster_id
+    reference_scaffold_id_column: cluster_id_Reference
+    query_scaffold_id_subset: null
+    reference_scaffold_id_subset: null
+    query_scaffold_min_count: 10
+    reference_scaffold_min_count: 10
+scorer_settings:
+  use: true
+  rmsd_scorer_settings:
+    use: true
+    rmsd_column_name: RMSD
+    rmsd_name: RMSD
+  posit_scorer_settings:
+    use: true
+    posit_score_column_name: docking-confidence-POSIT
+    posit_name: POSIT_Probability
+success_rate_evaluator_settings:
+  use: true
+  success_rate_column: RMSD
+  rmsd_cutoff: 2.0
+combine_reference_and_similarity_splits: true
+n_bootstraps: 1000
+query_ligand_column: Query_Ligand
+reference_ligand_column: Reference_Ligand
+reference_structure_column: Reference_Structure

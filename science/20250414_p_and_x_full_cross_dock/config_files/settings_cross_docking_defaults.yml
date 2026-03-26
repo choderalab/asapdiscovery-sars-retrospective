@@ -1,0 +1,22 @@
+date_dict_path: null
+n_bootstraps: 1000
+n_per_split: null
+n_poses:
+- 1
+n_structures:
+- 1
+pose_id_column: Pose_ID
+posit_name: POSIT_Probability
+posit_score_column_name: docking-confidence-POSIT
+query_ligand_column: Query_Ligand
+randomize_by_n_days: 1
+reference_ligand_column: Reference_Ligand
+reference_structure_column: Reference_Structure
+reference_structure_date_column: Reference_Structure_Date
+rmsd_column_name: RMSD
+rmsd_cutoff: 2.0
+rmsd_name: RMSD
+use_date_split: true
+use_posit_scorer: true
+use_random_split: true
+use_rmsd_scorer: true
